@@ -18,7 +18,7 @@ The package has support for more crypto curves, plugins, examples and more platf
 
 Nano Package -
 
-.. image:: nano_pkg_blk_diagram.jpg
+.. image:: doc/nano_pkg_blk_diagram.jpg
   :width: 400
   :alt: Block Diagram
 
