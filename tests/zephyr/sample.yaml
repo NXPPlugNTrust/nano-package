@@ -1,0 +1,9 @@
+sample:
+  description: SE05x tests
+  name: se05x_tests
+common:
+    tags: introduction
+    harness_config:
+      type: one_line
+      regex:
+        - "se05x tests! (.*)"

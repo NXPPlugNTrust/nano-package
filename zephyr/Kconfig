@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0
+
+config PLUGANDTRUST
+	bool "PLUGANDTRUST Support"
+	help
+	  This option enables the PLUGANDTRUST library.
+	select I2C
+	select TINYCRYPT
+	select TINYCRYPT_AES
+	select TINYCRYPT_AES_CBC
+	select TINYCRYPT_AES_CMAC
+	select TINYCRYPT_CTR_PRNG
+
+config PLUGANDTRUST_I2C_PORT_NAME
+	string "I2C port used to connect SE05x"
+	default "I2C_0"
+	help
+	  I2C port used to connect SE05x.
+
+config PLUGANDTRUST_SCP03
+	bool "Enable secure channel for SE05x"
+	help
+	  This option enables secure channel for SE05x.
+
+config PLUGANDTRUST_MBEDTLS_ALT
+	bool "Use ALT implementation for mbedTLS of SE05x"
+	help
+	  This option enables secure channel for SE05x.
+
+module = PLUGANDTRUST
+module-str = plugandtrust
+source "subsys/logging/Kconfig.template.log_config"

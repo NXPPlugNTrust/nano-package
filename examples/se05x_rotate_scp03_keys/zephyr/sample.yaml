@@ -1,0 +1,9 @@
+sample:
+  description: se05x crypto example
+  name: se05x_crypto
+common:
+    tags: introduction
+    harness_config:
+      type: one_line
+      regex:
+        - "se05x crypto! (.*)"
