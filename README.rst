@@ -112,7 +112,7 @@ Refer `simw-nanopkg/se05x_crypto/k64/readme.rst`. :numref:`ex_se05x_crypto_k64` 
 
 **Examples on Zephyr OS**
 
-Integration of nano package in Zephyr OS is maintained in branch - **int/zephyr**
+Integration of nano package in Zephyr OS is maintained in branch - **feature/zephyr-integration**
 
 Refer `simw-nanopkg/zephyr/readme.rst`. :numref:`se05x_zephyr_integration` :ref:`se05x_zephyr_integration`
 
