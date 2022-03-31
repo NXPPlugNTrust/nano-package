@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
+
+PROJECT(ex_se05x_rotate_scp03_keys)
+
+ADD_EXECUTABLE(${PROJECT_NAME} main.c ../src/ex_se05x_rotate_scp03_keys.c)
+
+ADD_SUBDIRECTORY(../../../lib build)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC se05x_lib)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ssl crypto)
+
+ADD_DEFINITIONS(-DEX_SE05X_USE_OPENSSL)
+
+
+
