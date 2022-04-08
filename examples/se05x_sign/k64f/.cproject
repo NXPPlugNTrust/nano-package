@@ -127,6 +127,7 @@
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/components/serial_manager"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/drivers"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/CMSIS/Core/Include"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/utilities/str"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/utilities/debug_console"/>
@@ -336,7 +337,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="components/serial_manager/fsl_component_serial_port_virtual.c|components/serial_manager/fsl_component_serial_port_usb.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/usb_cdc_adapter|lib/platform/k64/board|lib/platform/linux|lib/apdu/scp03|devices/MK64F12/mcuxpresso/startup_mk64f12.cpp|CMSIS/DSP|CMSIS/Driver|k64/se_pit_config.c|k64/timer_kinetis.c|k64/ax_reset.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="components/serial_manager/fsl_component_serial_port_spi.c|components/serial_manager/fsl_component_serial_port_virtual.c|components/serial_manager/fsl_component_serial_port_usb.c|components/serial_manager/fsl_component_serial_port_swo.c|components/serial_manager/usb_cdc_adapter|lib/platform/k64/board|lib/platform/linux|lib/apdu/scp03|devices/MK64F12/mcuxpresso/startup_mk64f12.cpp|CMSIS/DSP|CMSIS/Driver|k64/se_pit_config.c|k64/timer_kinetis.c|k64/ax_reset.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -467,6 +468,7 @@
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/components/serial_manager"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/drivers"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/CMSIS/Core/Include"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/utilities/str"/>
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/devices/MK64F12/utilities/debug_console"/>
@@ -681,7 +683,7 @@
 					<sourceEntries>
 						<entry excluding="DSP|Driver" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="CMSIS"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="board"/>
-						<entry excluding="serial_manager/fsl_component_serial_port_virtual.c|serial_manager/fsl_component_serial_port_usb.c|serial_manager/fsl_component_serial_port_swo.c|serial_manager/usb_cdc_adapter" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="components"/>
+						<entry excluding="components/serial_manager/fsl_component_serial_port_spi.c|serial_manager/fsl_component_serial_port_virtual.c|serial_manager/fsl_component_serial_port_usb.c|serial_manager/fsl_component_serial_port_swo.c|serial_manager/usb_cdc_adapter" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="components"/>
 						<entry excluding="MK64F12/mcuxpresso/startup_mk64f12.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="devices"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="doc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
