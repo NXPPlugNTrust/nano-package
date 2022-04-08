@@ -5,7 +5,7 @@ SE05x Crypto Example - frdm-k64
 
 **Prequisite**
 
-1. Download the frdmk64f SDK from https://mcuxpresso.nxp.com/en/select.
+1. Download the frdmk64f SDK from https://mcuxpresso.nxp.com/en/select (version - 2.12). Ensure MMCAU is selected.
 
 2. unzip and place the sdk in parallel to the nano package as shown in the image below. Rename the sdk folder to "frdmk64f-sdk".
 
