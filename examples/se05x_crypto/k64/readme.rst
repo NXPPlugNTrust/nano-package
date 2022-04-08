@@ -22,7 +22,7 @@ SE05x Crypto Example - frdm-k64
 
 3. Select the Project and click on Finish.
 
-.. image:: import.JPG
+.. image:: Import.JPG
   :width: 400
   :alt: Import
 

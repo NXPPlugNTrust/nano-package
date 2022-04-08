@@ -9,7 +9,7 @@ SE05x Sign Example - frdm-k64
 
 2. unzip and place the sdk in parallel to the nano package as shown in the image below. Rename the sdk folder to "frdmk64f-sdk".
 
-.. image:: folder.jpg
+.. image:: folder.JPG
   :width: 400
   :alt: folder
 
@@ -22,7 +22,7 @@ SE05x Sign Example - frdm-k64
 
 3. Select the Project and click on Finish
 
-.. image:: import.jpg
+.. image:: Import.JPG
   :width: 400
   :alt: Import
 
