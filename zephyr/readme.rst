@@ -13,13 +13,21 @@ Refer 'modules/crypto/nxp-plugandtrust/doc/plug-and-trust-nano-package-api-doc.p
 
 Clone Plug-and-Trust nano package in Zephyr crypto modules -- `<ZEPHYR_PROJECT>/modules/crypto`.
 
-Update west.yml file with Plug-and-Trust module path
+Update west.yml file with NXP github remote and Plug-and-Trust module path
 ::
 
-	name: simw-nanopkg
+	remotes:
+    - name: upstream
+      url-base: https://github.com/zephyrproject-rtos
+    - name: nxp-git
+      url-base: https://github.com/NXPPlugNTrust
+
+    ...
+
+	name: nano-package
 	path: modules/crypto/nxp-plugandtrust
-	revision: -
-	remote: -
+	revision: c15d0316334000724f0c94ee7943696edf3d6917
+	remote: nxp-git
 
 
 **Build Options**
