@@ -15,7 +15,7 @@ if(CONFIG_PLUGANDTRUST)
     ../lib/t1oi2c/phNxpEse_Api.c
     ../lib/t1oi2c/phNxpEsePal_i2c.c
     ../lib/t1oi2c/phNxpEseProto7816_3.c
-    ../lib/Platform/zephyr/sm_i2c.c
+    ../lib/platform/zephyr/sm_i2c.c
     ../lib/platform/zephyr/sm_timer.c
   )
 
