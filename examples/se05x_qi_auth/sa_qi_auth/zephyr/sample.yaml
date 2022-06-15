@@ -1,9 +1,9 @@
 sample:
-  description: SE05x tests
-  name: se05x_tests
+  description: SE05x sign example
+  name: se05x_sign
 common:
     tags: introduction
     harness_config:
       type: one_line
       regex:
-        - "se05x tests! (.*)"
+        - "se05x sign! (.*)"

@@ -335,6 +335,7 @@ smStatus_t DoAPDUTx(
 #ifdef WITH_PLATFORM_SCP03
     apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
 #else
+    (void)hasle;
     if (cmdBufLen > 0) {
         memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
         memcpy(cmdBuf, hdr, 4);
@@ -375,6 +376,7 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 #ifdef WITH_PLATFORM_SCP03
     apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
 #else
+    (void)hasle;
     if (cmdBufLen > 0) {
         memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
         memcpy(cmdBuf, hdr, 4);

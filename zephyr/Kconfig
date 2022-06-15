@@ -27,6 +27,12 @@ config PLUGANDTRUST_MBEDTLS_ALT
 	help
 	  This option enables secure channel for SE05x.
 
+config PLUGANDTRUST_APDU_BUFFER_SIZE
+	int "Max APDU buffer size"
+	default 170
+	help
+	  Max APDU buffer size.
+
 module = PLUGANDTRUST
 module-str = plugandtrust
 source "subsys/logging/Kconfig.template.log_config"

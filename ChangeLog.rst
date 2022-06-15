@@ -6,6 +6,12 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.1.0**
+
+- Features
+	- Added Secure Authenticator (Qi) examples
+	- Integration of twister framework from zephyr OS
+
 **Release v1.0.0**
 
 - Initial commit

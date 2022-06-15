@@ -8,8 +8,13 @@
 /* ********************** Include files ********************** */
 #include "se05x_APDU_apis.h"
 #include "sm_port.h"
+#include "test_se05x.h"
 
 /* ********************** Global variables ********************** */
+Se05xSession_t se05x_session = {
+    0,
+};
+
 /**** SCP03 KEYS ****/
 // The Default Platform SCP keys for ease of use configurations are present in
 // SE050 Configuration: https://www.nxp.com/docs/en/application-note/AN12436.pdf
@@ -19,13 +24,7 @@ uint8_t scp03_enc_key[16] = {
 uint8_t scp03_mac_key[16] = {
     0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0x00, 0x02};
 
-/* ********************** Extern functions ********************** */
-extern void test_se05x_nist256(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
-extern void test_se05x_nist256_ecdsa(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
-extern void test_se05x_bin_objects(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
-extern void test_se05x_aes(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
-extern void test_se05x_misc(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
-extern void test_se05x_nist256_ecdh(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
+extern void test_fail(void);
 
 /* ********************** Functions ********************** */
 
@@ -47,7 +46,7 @@ bool se05x_object_exists(pSe05xSession_t session_ctx, uint32_t keyID)
     return TRUE;
 }
 
-void ex_set_scp03_keys(pSe05xSession_t session_ctx)
+static void ex_set_scp03_keys(pSe05xSession_t session_ctx)
 {
     session_ctx->pScp03_enc_key    = &scp03_enc_key[0];
     session_ctx->pScp03_mac_key    = &scp03_mac_key[0];
@@ -58,11 +57,8 @@ void ex_set_scp03_keys(pSe05xSession_t session_ctx)
     return;
 }
 
-void test_se05x(uint8_t *pass, uint8_t *fail, uint8_t *ignore)
+void test_setup(void)
 {
-    Se05xSession_t se05x_session = {
-        0,
-    };
     smStatus_t status;
 
     SMLOG_I("Starting se05x tests ... \n");
@@ -71,19 +67,19 @@ void test_se05x(uint8_t *pass, uint8_t *fail, uint8_t *ignore)
 
     status = Se05x_API_SessionOpen(&se05x_session);
     if (status != SM_OK) {
+        test_fail();
         SMLOG_E("Error in Se05x_API_SessionOpen \n");
         return;
     }
+}
 
-    test_se05x_nist256(&se05x_session, pass, fail, ignore);
-    test_se05x_nist256_ecdsa(&se05x_session, pass, fail, ignore);
-    test_se05x_bin_objects(&se05x_session, pass, fail, ignore);
-    test_se05x_aes(&se05x_session, pass, fail, ignore);
-    test_se05x_misc(&se05x_session, pass, fail, ignore);
-    test_se05x_nist256_ecdh(&se05x_session, pass, fail, ignore);
+void test_teardown(void)
+{
+    smStatus_t status;
 
     status = Se05x_API_SessionClose(&se05x_session);
     if (status != SM_OK) {
+        test_fail();
         SMLOG_E("Error in Se05x_API_SessionClose \n");
         return;
     }

@@ -1,17 +1,21 @@
 .. _se05x_zephyr_integration:
 
 Getting Started with Zephyr + SE05x
+###################################
+
+Overview
 ===================================
 
-**Overview**
+Plug-and-Trust nano package can be used to add the EdgeLock SE05x and A5000
+secure elements and authenticators support in Zephyr OS.
 
-Plug-and-trust nano package can be used to add the EdgeLock SE05x and A5000 secure elements and authenticators support in Zephyr OS.
+Refer :file:`doc/plug-and-trust-nano-package-api-doc.pdf`
+for Plug and Trust Crypto APIs.
 
-Refer 'modules/crypto/nxp-plugandtrust/doc/plug-and-trust-nano-package-api-doc.pdf' for Plug and Trust Crypto APIs.
+Zephyr Integration / Build
+===================================
 
-**Zephyr Integration / Build**
-
-Clone Plug-and-Trust nano package in Zephyr crypto modules -- `<ZEPHYR_PROJECT>/modules/crypto`.
+Clone Plug-and-Trust nano package in Zephyr crypto modules -- :file:`<ZEPHYR_PROJECT>/modules/crypto`.
 
 Update west.yml file with NXP github remote and Plug-and-Trust module path
 ::
@@ -30,7 +34,8 @@ Update west.yml file with NXP github remote and Plug-and-Trust module path
 	remote: nxp-git
 
 
-**Build Options**
+Build Options
+===================================
 
 Use the below options in prj.conf file of the example.
 
@@ -41,7 +46,8 @@ Use the below options in prj.conf file of the example.
 	CONFIG_PLUGANDTRUST_I2C_PORT_NAME="I2C_0" => Set I2C port used by SE05x on host.
 	CONFIG_PLUGANDTRUST_LOG_LEVEL_DBG=y/n =====> Enable / Disable Plug and Trust logs.
 
-**Examples**
+Examples
+===================================
 
 Build Plug and Trust examples on Zephyr OS as
 ::
@@ -52,4 +58,32 @@ Build Plug and Trust examples on Zephyr OS as
 
 .. note ::
 
-	Currently examples are tested with Frdm-k64 board.
+	Currently examples are tested with frdm_k64f board.
+
+
+Test Runner (Twister)
+===================================
+
+Using the zephyr twister script, Plug and Trust examples / tests can be run on K64F as
+::
+
+	python3 scripts/twister -p frdm_k64f --device-testing -device-serial <serial_port> -T ../modules/crypto/nxp-plugandtrust/ --west-flash --west-runner=jlink
+
+
+.. note ::
+
+	Twister script is tested with ubuntu 20.04 machine.
+
+
+.. _zephyr_demos:
+
+Zephyr examples
+========================
+
+.. toctree::
+   :maxdepth: 1
+
+   zephyr/sa_qi/qi_auth_readme
+
+   zephyr/sa_qi/qi_prov_readme
+

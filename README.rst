@@ -102,19 +102,19 @@ Examples
 
 **Examples on linux**
 
-Refer `simw-nanopkg/examples/<example>/readme.rst`.  :numref:`linux_examples` :ref:`linux_examples`
+Refer `simw-nanopkg/examples/<example>/readme.rst`. :ref:`linux_examples`
 
 **Examples on k64**
 
-Refer `simw-nanopkg/se05x_sign/k64f/readme.rst`. :numref:`ex_se05x_sign_k64` :ref:`ex_se05x_sign_k64`
+Refer `simw-nanopkg/se05x_sign/k64f/readme.rst`. :ref:`ex_se05x_sign_k64`
 
-Refer `simw-nanopkg/se05x_crypto/k64/readme.rst`. :numref:`ex_se05x_crypto_k64` :ref:`ex_se05x_crypto_k64`
+Refer `simw-nanopkg/se05x_crypto/k64/readme.rst`. :ref:`ex_se05x_crypto_k64`
 
 **Examples on Zephyr OS**
 
 Integration of nano package in Zephyr OS is maintained in branch - **feature/zephyr-integration**
 
-Refer `simw-nanopkg/zephyr/readme.rst`. :numref:`se05x_zephyr_integration` :ref:`se05x_zephyr_integration`
+Refer `simw-nanopkg/zephyr/readme.rst`. :ref:`se05x_zephyr_integration`
 
 
 .. note::

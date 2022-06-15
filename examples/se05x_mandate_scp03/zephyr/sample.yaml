@@ -1,9 +1,8 @@
 sample:
-  description: se05x crypto example
-  name: se05x_crypto
-common:
-    tags: introduction
-    harness_config:
-      type: one_line
-      regex:
-        - "se05x crypto! (.*)"
+  description: se05x mandate scp03 example
+  name: se05x_mandate_scp03
+tests:
+  nxp-plugandtrust.examples.se05x_mandate_scp03:
+    platform_allow: frdm_k64f
+    build_only: true
+    tags: se05x

@@ -7,6 +7,7 @@
 
 /* ********************** Include files ********************** */
 #include "se05x_APDU_apis.h"
+#include "test_se05x.h"
 #include "test_se05x_utils.h"
 
 #define TEST_SE05X_AES_OBJ_ID_BASE 0x7B000100

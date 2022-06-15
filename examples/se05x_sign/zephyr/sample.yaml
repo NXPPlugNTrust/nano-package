@@ -1,9 +1,16 @@
 sample:
-  description: SE05x sign example
+  description: se05x sign example
   name: se05x_sign
 common:
-    tags: introduction
+    harness: console
     harness_config:
       type: one_line
       regex:
-        - "se05x sign! (.*)"
+        - "SE05x Sign Example Success"
+tests:
+  nxp-plugandtrust.examples.se05x_sign:
+    extra_args:
+      CONFIG_LOG=y
+      CONFIG_PLUGANDTRUST_LOG_LEVEL_DBG=y
+    platform_allow: frdm_k64f
+    tags: se05x
