@@ -18,7 +18,7 @@
 
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 0
+#define VERSION_MINOR 1
 #define VERSION_DEV 0
 
 /**
@@ -26,7 +26,11 @@
 * Increasing the buffer size will require changes in T10I2C layer.
 * The stack is tested only with Buffer size of 170 Bytes.
 */
+#if defined(CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE) && CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE > 0
+#define MAX_APDU_BUFFER CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE
+#else
 #define MAX_APDU_BUFFER 170
+#endif
 
 /** NXP reserved object id */
 #define SE05X_OBJID_SE05X_APPLET_RES_START 0x7FFF0000u
@@ -186,6 +190,7 @@ typedef enum
     kSE05x_P2_ENCRYPT_ONESHOT = 0x37,
     kSE05x_P2_DECRYPT_ONESHOT = 0x38,
     kSE05x_P2_SCP             = 0x52,
+    kSE05x_P2_ONESHOT         = 0x0E,
 } SE05x_P2_t;
 
 /** ECC Curve Identifiers */

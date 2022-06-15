@@ -38,11 +38,6 @@
         return SE05X_TEST_PASS;                 \
     }
 
-/* ********************** Functions Prototypes ********************** */
-
-/* Check if the keyID exists in se05x */
-bool se05x_object_exists(pSe05xSession_t session_ctx, uint32_t keyID);
-
 /* ********************** Functions ********************** */
 
 static void UPDATE_RESULT(uint8_t ret, uint8_t *pass, uint8_t *fail, uint8_t *ignore)
