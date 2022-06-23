@@ -22,10 +22,10 @@ Pre-requisites
 - The secure element should be trust provisioned with correct keys and 
   certificates for Qi Authentication. Keys and certificates can be provisioned 
   for test purpose by updating keys in :file:`examples/se05x_qi_auth/sa_qi_provisioning/sa_qi_credentials.c`
-  and running example :ref:`ex-se05x-qi-provisioning`.
+  and running example ``Secure Authenticator (Qi) Provisioning demo``.
 
 - By default WPC Root certificate is used in the certificate chain.
-  If example :ref:`ex-se05x-qi-provisioning` is run, you would need to disable 
+  If example ``Secure Authenticator (Qi) Provisioning demo`` is run, you would need to disable 
   macro ``USE_ROOT_WPCCA`` in :file:`sa_qi_rootcert.c` to use test RootCA:
 
   .. literalinclude:: /../../../../examples/se05x_qi_auth/sa_qi_auth/sa_qi_rootcert.c
@@ -77,7 +77,7 @@ Building
 =======================================================================
 
 Build the example ``examples/se05x_qi_auth/sa_qi_auth`` for ``lpcxpresso55s69_cpu0`` with 
-Zephyr build system. See :ref:`se05x_zephyr_integration` for details on how to build with Zephyr.
+Zephyr build system. See ``Getting Started with Zephyr + SE05x`` for details on how to build with Zephyr.
 
 
 Porting
