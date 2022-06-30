@@ -5,7 +5,7 @@
 
 .. _ex-se05x-qi-auth:
 
-Secure Authenticator (Qi) Authentication demo
+Qi 1.3 Authentication demo
 #########################################################
 
 Overview
