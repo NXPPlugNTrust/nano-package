@@ -6,6 +6,10 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.1.1**
+
+- Added a check to prevent a potential buffer overflow issue in T=1OI2C stack
+
 **Release v1.1.0**
 
 - Features

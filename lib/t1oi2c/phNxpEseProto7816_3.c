@@ -21,6 +21,7 @@
 #include "sm_timer.h"
 #include "se05x_tlv.h"
 #include "sm_port.h"
+#include <limits.h>
 
 /**
  * \addtogroup ISO7816-3_protocol_lib
@@ -560,6 +561,12 @@ static bool_t phNxpEseProro7816_SaveRxframeData(uint8_t *p_data, uint32_t data_l
     uint32_t offset                = 0;
     phNxpEseRx_Cntx_t *pRx_EseCntx = &phNxpEseProto7816_3_Var.phNxpEseRx_Cntx;
     if (pRx_EseCntx->pRsp != NULL) {
+        if((UINT_MAX - pRx_EseCntx->pRsp->len) < data_len) {
+            return FALSE;
+        }
+        if (data_len + pRx_EseCntx->pRsp->len > MAX_APDU_BUFFER) {
+            return FALSE;
+        }
         offset = pRx_EseCntx->pRsp->len;
         phNxpEse_memcpy((pRx_EseCntx->pRsp->p_data + offset), p_data, data_len);
         pRx_EseCntx->pRsp->len += data_len;
