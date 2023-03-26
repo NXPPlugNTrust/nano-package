@@ -45,7 +45,7 @@
     printf(COLOR_GREEN);                                    \
     printf(" :");                                           \
     for (size_t bufIndex = 0; bufIndex < LEN; bufIndex++) { \
-        printf("%02hhx ", BUF[bufIndex]);                   \
+        printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
     printf("\n")
@@ -54,7 +54,7 @@
     printf(MSG);                                            \
     printf(" :");                                           \
     for (size_t bufIndex = 0; bufIndex < LEN; bufIndex++) { \
-        printf("%02hhx ", BUF[bufIndex]);                   \
+        printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
     printf("\n")
@@ -68,10 +68,10 @@
 #define sm_free free
 
 #define SM_MUTEX_DEFINE(x) pthread_mutex_t x
-#define SM_MUTEX_INIT(x) pthread_mutex_init(&x, NULL)
-#define SM_MUTEX_DEINIT(x) pthread_mutex_destroy(&x)
-#define SM_MUTEX_LOCK(x) pthread_mutex_lock(&x)
-#define SM_MUTEX_UNLOCK(x) pthread_mutex_unlock(&x)
+#define SM_MUTEX_INIT(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_init(&x, NULL) == 0, SM_NOT_OK)
+#define SM_MUTEX_DEINIT(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_destroy(&x) == 0, SM_NOT_OK)
+#define SM_MUTEX_LOCK(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_lock(&x) == 0, SM_NOT_OK)
+#define SM_MUTEX_UNLOCK(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_unlock(&x) == 0, SM_NOT_OK)
 
 #ifndef FALSE
 #define FALSE false

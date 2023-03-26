@@ -10,6 +10,7 @@
 #include "smCom.h"
 #include "sm_port.h"
 #include "se05x_types.h"
+#include <limits.h>
 
 /* ********************** Function Prototypes ********************** */
 #ifdef WITH_PLATFORM_SCP03
@@ -35,7 +36,7 @@ int tlvSet_U8(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint8_t value)
     pBuf = *buf;
     ENSURE_OR_RETURN_ON_ERROR(pBuf != NULL, 1);
 
-    if (((*bufLen) + size_of_tlv) > MAX_APDU_BUFFER) {
+    if ((*bufLen) > (MAX_APDU_BUFFER - size_of_tlv)) {
         return 1;
     }
     *pBuf++ = (uint8_t)tag;
@@ -57,7 +58,7 @@ int tlvSet_U16(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint16_t value)
     pBuf = *buf;
     ENSURE_OR_RETURN_ON_ERROR(pBuf != NULL, 1);
 
-    if (((*bufLen) + size_of_tlv) > MAX_APDU_BUFFER) {
+    if ((*bufLen) > (MAX_APDU_BUFFER - size_of_tlv)) {
         return 1;
     }
     *pBuf++ = (uint8_t)tag;
@@ -80,7 +81,7 @@ int tlvSet_U32(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint32_t value)
     pBuf = *buf;
     ENSURE_OR_RETURN_ON_ERROR(pBuf != NULL, 1);
 
-    if (((*bufLen) + size_of_tlv) > MAX_APDU_BUFFER) {
+    if ((*bufLen) > (MAX_APDU_BUFFER - size_of_tlv)) {
         return 1;
     }
     *pBuf++ = (uint8_t)tag;
@@ -113,6 +114,10 @@ int tlvSet_u8buf(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, const uint8_t *
     */
     const size_t size_of_length = (cmdLen <= 0x7f ? 1 : (cmdLen <= 0xFf ? 2 : 3));
     const size_t size_of_tlv    = 1 + size_of_length + cmdLen;
+
+    if ((UINT_MAX - size_of_tlv) < (*bufLen)) {
+        return 1;
+    }
 
     if (((*bufLen) + size_of_tlv) > MAX_APDU_BUFFER) {
         SMLOG_E("Not enough buffer \n");
@@ -212,6 +217,7 @@ int tlvSet_header(uint8_t **buf, size_t *bufLen, tlvHeader_t *hdr)
     ENSURE_OR_RETURN_ON_ERROR(buf != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(bufLen != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(hdr != NULL, 1);
+    ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 5) >= *bufLen), 1);
 
     pBuf = *buf;
 
@@ -340,6 +346,8 @@ smStatus_t DoAPDUTx(
         memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
         memcpy(cmdBuf, hdr, 4);
         cmdBuf[4] = cmdBufLen;
+
+        ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
         cmdBufLen += 5;
     }
     else {
@@ -381,6 +389,7 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
         memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
         memcpy(cmdBuf, hdr, 4);
         cmdBuf[4] = cmdBufLen;
+        ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
         cmdBufLen += 5;
     }
     else {

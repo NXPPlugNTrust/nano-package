@@ -6,6 +6,11 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.2.0**
+
+- Added security fix on 24-Feb-2023 to prevent buffer overflow on the T=1oI2C stack.
+- se05x_GetInfo example added to get SE05X platform information.
+
 **Release v1.1.1**
 
 - Added a check to prevent a potential buffer overflow issue in T=1OI2C stack

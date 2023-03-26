@@ -19,6 +19,7 @@
 #include "sm_timer.h"
 #include "se05x_tlv.h"
 #include "sm_port.h"
+#include <limits.h>
 
 #define RECIEVE_PACKET_SOF 0xA5
 #define CHAINED_PACKET_WITHSEQN 0x60
@@ -581,6 +582,11 @@ ESESTATUS phNxpEse_WriteFrame(void *conn_ctx, uint32_t data_len, const uint8_t *
 
     /* Create local copy of cmd_data */
     T_SMLOG_D("%s Enter ..", __FUNCTION__);
+
+    if (data_len > UINT8_MAX){
+        return ESESTATUS_FAILED;
+    }
+
     nxpese_ctxt->p_cmd_data = (uint8_t *)p_data;
     nxpese_ctxt->cmd_len    = data_len;
     if (nxpese_ctxt->EseLibStatus != ESE_STATUS_CLOSE) {

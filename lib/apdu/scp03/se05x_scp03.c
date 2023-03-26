@@ -12,6 +12,7 @@
 #include "smCom.h"
 #include "se05x_scp03_crypto.h"
 #include "se05x_scp03.h"
+#include <limits.h>
 
 /* ********************** Global variables ********************** */
 
@@ -156,6 +157,7 @@ static int nxScp03_GP_InitializeUpdate(pSe05xSession_t session_ctx,
     ENSURE_OR_RETURN_ON_ERROR(pCardChallengeLen != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(cardCryptoGram != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(pCardCryptoGramLen != NULL, 1);
+    ENSURE_OR_RETURN_ON_ERROR((hostChallengeLen < UINT8_MAX), 1);
 
     ENSURE_OR_RETURN_ON_ERROR(*pKeyDivDataLen == SCP_GP_IU_KEY_DIV_DATA_LEN, 1);
     ENSURE_OR_RETURN_ON_ERROR(*pKeyInfoLen == SCP_GP_IU_KEY_INFO_LEN, 1);
@@ -167,7 +169,7 @@ static int nxScp03_GP_InitializeUpdate(pSe05xSession_t session_ctx,
     memcpy(session_ctx->apdu_buffer, &hdr, 4);
     session_ctx->apdu_buffer[4] = hostChallengeLen;
 
-    ENSURE_OR_RETURN_ON_ERROR((hostChallengeLen + 5) < MAX_APDU_BUFFER, 1);
+    ENSURE_OR_RETURN_ON_ERROR(hostChallengeLen < (MAX_APDU_BUFFER - 5), 1);
     memcpy((session_ctx->apdu_buffer + 5), hostChallenge, hostChallengeLen);
 
     SMLOG_D("Sending GP Initialize Update Command !!! \n");
@@ -599,6 +601,7 @@ smStatus_t Se05x_API_SCP03_PadCommandAPDU(pSe05xSession_t session_ctx, uint8_t *
     ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(cmdBuf != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(pCmdBufLen != NULL, SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= (*pCmdBufLen)), SM_NOT_OK);
 
     // pad the payload and adjust the length of the APDU
     cmdBuf[(*pCmdBufLen)] = SCP_DATA_PAD_BYTE;
@@ -606,6 +609,7 @@ smStatus_t Se05x_API_SCP03_PadCommandAPDU(pSe05xSession_t session_ctx, uint8_t *
     zeroBytesToPad = (SCP_KEY_SIZE - ((*pCmdBufLen) % SCP_KEY_SIZE)) % SCP_KEY_SIZE;
     while (zeroBytesToPad > 0) {
         cmdBuf[(*pCmdBufLen)] = 0x00;
+        ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= (*pCmdBufLen)), SM_NOT_OK);
         *pCmdBufLen += 1;
         zeroBytesToPad--;
     }
@@ -711,6 +715,7 @@ smStatus_t Se05x_API_SCP03_RestoreSwRAPDU(pSe05xSession_t session_ctx,
     ENSURE_OR_RETURN_ON_ERROR(pRspBufLen != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(plaintextResponse != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(sw != NULL, SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR((plaintextRespLen >= SCP_KEY_SIZE), SM_NOT_OK);
 
     while ((i > 1) && (i > (plaintextRespLen - SCP_KEY_SIZE))) {
         if (plaintextResponse[i - 1] == 0x00) {
@@ -724,6 +729,7 @@ smStatus_t Se05x_API_SCP03_RestoreSwRAPDU(pSe05xSession_t session_ctx,
                 // response buffer is small
                 return SM_NOT_OK;
             }
+            ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= i), SM_NOT_OK);
             memcpy(rspBuf, plaintextResponse, i + 1);
             *pRspBufLen = (i + 1);
 
@@ -761,6 +767,7 @@ smStatus_t Se05x_API_SCP03_CalculateMacRspApdu(
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
     ret = hcrypto_cmac_update(cmac_ctx, se05x_mcv, SCP_KEY_SIZE);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(inDataLen >= 10, SM_NOT_OK);
     ret = hcrypto_cmac_update(cmac_ctx, inData, inDataLen - 8 - 2);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
     ret = hcrypto_cmac_update(cmac_ctx, (inData + (inDataLen - 2)), 2);
@@ -845,7 +852,7 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
 
     if (se05xCmdLCW > 0) {
         if (se05xCmdLCW == 1) {
-            ENSURE_OR_RETURN_ON_ERROR((sizeof(*hdr) + 1 + cmdBufLen) < MAX_APDU_BUFFER, SM_NOT_OK);
+            ENSURE_OR_RETURN_ON_ERROR( cmdBufLen < (MAX_APDU_BUFFER - sizeof(*hdr) - 1), SM_NOT_OK);
             if (cmdBufLen > 0) {
                 memmove(cmdBuf + sizeof(*hdr) + 1, cmdBuf, cmdBufLen);
             }
@@ -854,7 +861,7 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
             cmdBuf[i++] = (uint8_t)se05xCmdLC;
         }
         else {
-            ENSURE_OR_RETURN_ON_ERROR((sizeof(*hdr) + 3 + cmdBufLen) < MAX_APDU_BUFFER, SM_NOT_OK);
+            ENSURE_OR_RETURN_ON_ERROR((cmdBufLen < (MAX_APDU_BUFFER - sizeof(*hdr) - 3)), SM_NOT_OK);
             if (cmdBufLen > 0) {
                 memmove(cmdBuf + sizeof(*hdr) + 3, cmdBuf, cmdBufLen);
             }
