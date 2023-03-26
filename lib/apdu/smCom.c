@@ -16,6 +16,7 @@
 #include "phEseStatus.h"
 #include "smCom.h"
 #include "sm_port.h"
+#include <limits.h>
 
 /* ********************** Global vaiables ********************** */
 SM_MUTEX_DEFINE(g_sm_mutex);
@@ -81,6 +82,9 @@ smStatus_t smComT1oI2C_TransceiveRaw(void *conn_ctx, uint8_t *pTx, size_t txLen,
     phNxpEse_data pCmdTrans;
     phNxpEse_data pRspTrans = {0};
     ESESTATUS status;
+
+    ENSURE_OR_RETURN_ON_ERROR((UINT8_MAX >= txLen), SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR((UINT8_MAX >= (*pRxLen)), SM_NOT_OK);
 
     pCmdTrans.len    = txLen;
     pCmdTrans.p_data = pTx;

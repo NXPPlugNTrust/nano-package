@@ -43,7 +43,7 @@
     printf(COLOR_GREEN);                                    \
     printf(" :");                                           \
     for (size_t bufIndex = 0; bufIndex < LEN; bufIndex++) { \
-        printf("%hhx", BUF[bufIndex]);                      \
+        printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
     printf("\n")
@@ -52,7 +52,7 @@
     printf(MSG);                                            \
     printf(" :");                                           \
     for (size_t bufIndex = 0; bufIndex < LEN; bufIndex++) { \
-        printf("%hhx", BUF[bufIndex]);                      \
+        printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
     printf("\n")

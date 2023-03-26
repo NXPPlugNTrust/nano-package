@@ -1,0 +1,9 @@
+sample:
+  description: SE05x GetInfo example
+  name: se05x_GetInfo
+common:
+    tags: introduction
+    harness_config:
+      type: one_line
+      regex:
+        - "SE05x GetInfo! (.*)"

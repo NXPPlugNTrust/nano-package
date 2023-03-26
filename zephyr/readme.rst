@@ -77,7 +77,7 @@ Using the zephyr twister script, Plug and Trust examples / tests can be run on K
 
 .. _zephyr_demos:
 
-Zephyr examples
+Qi examples
 ========================
 
 .. toctree::
