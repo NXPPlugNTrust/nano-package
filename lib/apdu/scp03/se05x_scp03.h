@@ -146,6 +146,12 @@ smStatus_t Se05x_API_SCP03_RestoreSwRAPDU(pSe05xSession_t session_ctx,
     size_t plaintextRespLen,
     uint8_t *sw);
 
+/**
+ * TODO:
+ * @param pCtrblock
+ */
+void nxpSCP03_Dec_CommandCounter(uint8_t *pCtrblock);
+
 /** Se05x_API_SCP03_IncCommandCounter
  *
  * Increment scp03 commnd counter.

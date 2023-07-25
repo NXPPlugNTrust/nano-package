@@ -21,6 +21,14 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
     uint8_t *rspBuf,
     size_t *pRspBufLen,
     uint8_t hasle);
+
+smStatus_t Se05_API_AES_TransmitData(pSe05xSession_t session_ctx,
+                                        const tlvHeader_t *hdr,
+                                        uint8_t *cmdBuf,
+                                        size_t cmdBufLen,
+                                        uint8_t *rspBuf,
+                                        size_t *pRspBufLen,
+                                        uint8_t hasle);
 #endif
 
 /* ********************** Function ********************** */
@@ -317,12 +325,51 @@ cleanup:
     return retVal;
 }
 
+int tlvGet_u16(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint16_t *pRsp)
+{
+    int retVal    = 1;
+    uint8_t *pBuf = buf + (*pBufIndex);
+    uint8_t got_tag;
+    size_t rspLen;
+
+    if (bufLen < 4) {
+        goto cleanup;
+    }
+    if ((*pBufIndex) > bufLen - 4) {
+        goto cleanup;
+    }
+
+    got_tag = *pBuf++;
+    if (got_tag != tag) {
+        goto cleanup;
+    }
+    rspLen = *pBuf++;
+    if (rspLen > 2) {
+        goto cleanup;
+    }
+    *pRsp = (*pBuf++) << 8;
+    *pRsp |= *pBuf++;
+    *pBufIndex += (1 + 1 + (rspLen));
+    retVal = 0;
+    cleanup:
+    return retVal;
+}
+
+
 int tlvGet_Result(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t tag, SE05x_Result_t *presult)
 {
     uint8_t uType   = 0;
     size_t uTypeLen = 1;
     int retVal      = tlvGet_u8buf(buf, pBufIndex, bufLen, tag, &uType, &uTypeLen);
     *presult        = (SE05x_Result_t)uType;
+    return retVal;
+}
+
+int tlvGet_SecureObjectType(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t tag, SE05x_SecObjTyp_t *pType)
+{
+    uint8_t uType = 0;
+    int retVal    = tlvGet_U8(buf, pBufIndex, bufLen, tag, &uType);
+    *pType        = (SE05x_SecObjTyp_t)uType;
     return retVal;
 }
 
@@ -339,7 +386,13 @@ smStatus_t DoAPDUTx(
     }
 
 #ifdef WITH_PLATFORM_SCP03
-    apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
+    if (session_ctx->has_session) {
+        // If AES authenticated session
+        apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
+    }
+    else {
+        apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
+    }
 #else
     (void)hasle;
     if (cmdBufLen > 0) {
@@ -382,7 +435,13 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     ENSURE_OR_GO_EXIT(rspBuf != NULL);
 
 #ifdef WITH_PLATFORM_SCP03
-    apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+    if (session_ctx->has_session) {
+        // If AES authenticated session
+        apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+    }
+    else {
+        apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+    }
 #else
     (void)hasle;
     if (cmdBufLen > 0) {
@@ -404,4 +463,50 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 
 exit:
     return apduStatus;
+}
+
+smStatus_t DoAPDUTxRx_Raw(pSe05xSession_t session_ctx,
+                          const tlvHeader_t *hdr,
+                          uint8_t *cmdBuf,
+                          size_t cmdBufLen,
+                          uint8_t *rspBuf,
+                          size_t *pRspBufLen,
+                          uint8_t hasle)
+{
+    uint8_t txBuf[200] = {0};
+    size_t i = 0;
+    memcpy(&txBuf[i], hdr, sizeof(*hdr));
+    smStatus_t ret = SM_NOT_OK;
+    i += sizeof(*hdr);
+    if (cmdBufLen > 0) {
+        // The Lc field must be extended in case the length does not fit
+        // into a single byte (Note, while the standard would allow to
+        // encode 0x100 as 0x00 in the Lc field, nobody who is sane in his mind
+        // would actually do that).
+        if ((cmdBufLen < 0xFF) && !hasle) {
+            txBuf[i++] = (uint8_t)cmdBufLen;
+        }
+        else {
+            txBuf[i++] = 0x00;
+            txBuf[i++] = 0xFFu & (cmdBufLen >> 8);
+            txBuf[i++] = 0xFFu & (cmdBufLen);
+        }
+        memcpy(&txBuf[i], cmdBuf, cmdBufLen);
+        i += cmdBufLen;
+    }
+    else {
+        if (cmdBufLen == 0) {
+            txBuf[i++] = 0x00;
+        }
+    }
+
+    if (hasle) {
+        txBuf[i++] = 0x00;
+        txBuf[i++] = 0x00;
+    }
+
+    uint32_t U32rspLen = (uint32_t)*pRspBufLen;
+    ret                = (smStatus_t)smComT1oI2C_TransceiveRaw(session_ctx->conn_context, txBuf, (uint16_t)i, rspBuf, &U32rspLen);
+    *pRspBufLen            = U32rspLen;
+    return ret;
 }

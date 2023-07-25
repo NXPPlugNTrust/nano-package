@@ -820,4 +820,359 @@ smStatus_t Se05x_API_WriteSymmKey(pSe05xSession_t session_ctx,
  */
 smStatus_t Se05x_API_DeleteSecureObject(pSe05xSession_t session_ctx, uint32_t objectID);
 
+/** Se05x_API_GetRandom
+ *
+ * Gets random data from the SE05X .
+ *
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +-------+------------+-----------------------------+
+ * | Field | Value      | Description                 |
+ * +=======+============+=============================+
+ * | CLA   | 0x80       |                             |
+ * +-------+------------+-----------------------------+
+ * | INS   | INS_MGMT   | See :cpp:type:`SE05x_INS_t` |
+ * +-------+------------+-----------------------------+
+ * | P1    | P1_DEFAULT | See :cpp:type:`SE05x_P1_t`  |
+ * +-------+------------+-----------------------------+
+ * | P2    | P2_RANDOM  | See :cpp:type:`SE05x_P2_t`  |
+ * +-------+------------+-----------------------------+
+ * | Lc    | #(Payload) |                             |
+ * +-------+------------+-----------------------------+
+ * |       | TLV[TAG_1] | 2-byte requested size.      |
+ * +-------+------------+-----------------------------+
+ * | Le    | 0x00       | Expecting random data       |
+ * +-------+------------+-----------------------------+
+ * @endrst
+ *
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+--------------+
+ * | Value      | Description  |
+ * +============+==============+
+ * | TLV[TAG_1] | Random data. |
+ * +------------+--------------+
+ * @endrst
+ *
+ * # R-APDU Trailer
+ *
+ * @rst
+ * +-------------+--------------------------------+
+ * | SW          | Description                    |
+ * +=============+================================+
+ * | SW_NO_ERROR | Data is returned successfully. |
+ * +-------------+--------------------------------+
+ * @endrst
+ *
+ *
+ *
+ * @param[in]  session_ctx     The session context
+ * @param[in]  size            The size
+ * @param      randomData      The random data
+ * @param      prandomDataLen  The prandom data length
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_GetRandom(pSe05xSession_t session_ctx, uint16_t size, uint8_t *randomData, size_t *prandomDataLen);
+
+/** Se05x_API_CreateSession
+ *
+ * Creates a session on SE05X .
+ *
+ * Depending on the authentication object being referenced, a specific method of
+ * authentication applies. The response needs to adhere to this authentication
+ * method.
+ *
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +---------+-------------------+------------------------------+
+ * | Field   | Value             | Description                  |
+ * +=========+===================+==============================+
+ * | CLA     | 0x80              |                              |
+ * +---------+-------------------+------------------------------+
+ * | INS     | INS_MGMT          | See :cpp:type:`SE05x_INS_t`  |
+ * +---------+-------------------+------------------------------+
+ * | P1      | P1_DEFAULT        | See :cpp:type:`SE05x_P1_t`   |
+ * +---------+-------------------+------------------------------+
+ * | P2      | P2_SESSION_CREATE | See :cpp:type:`SE05x_P2_t`   |
+ * +---------+-------------------+------------------------------+
+ * | Lc      | #(Payload)        | Payload length.              |
+ * +---------+-------------------+------------------------------+
+ * | Payload | TLV[TAG_1]        | 4-byte authentication object |
+ * |         |                   | identifier.                  |
+ * +---------+-------------------+------------------------------+
+ * | Le      | 0x0A              | Expecting TLV with 8-byte    |
+ * |         |                   | session ID.                  |
+ * +---------+-------------------+------------------------------+
+ * @endrst
+ *
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+----------------------------+
+ * | Value      | Description                |
+ * +============+============================+
+ * | TLV[TAG_1] | 8-byte session identifier. |
+ * +------------+----------------------------+
+ * @endrst
+ *
+ * # R-APDU Trailer
+ *
+ * SW_NO_ERROR:
+ *   * The command is handled successfully.
+ *
+ * SW_CONDITIONS_NOT_SATISFIED:
+ *   * The authenticator does not exist
+ *   * The provided input data are incorrect.
+ *   * The session is invalid.
+ *
+ * @param[in] session_ctx Session Context [0:kSE05x_pSession]
+ * @param[in] authObjectID auth [1:kSE05x_TAG_1]
+ * @param[out] sessionId  [0:kSE05x_TAG_1]
+ * @param[in,out] psessionIdLen Length for sessionId
+ *
+ *
+ */
+smStatus_t Se05x_API_CreateSession(
+        pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen);
+
+/** Se05x_API_ReadIDList
+ *
+ * Get a list of present Secure Object identifiers.
+ *
+ * The offset in TAG_1 is an 0-based offset in the list of object. As the user
+ * does not know how many objects would be returned, the offset needs to be based
+ * on the return values from the previous ReadIDList. If the applet only returns
+ * a part of the result, it will indicate that more identifiers are available (by
+ * setting TLV[TAG_1] in the response to 0x01). The user can then retrieve the
+ * next chunk of identifiers by calling ReadIDList with an offset that equals the
+ * amount of identifiers listed in the previous response.
+ *
+ * _Example 1:_ first ReadIDList command TAG_1=0, response TAG_1=0,
+ * TAG_2=complete list
+ *
+ * _Example 2:_ first ReadIDList command TAG_1=0, response TAG_1=1, TAG_2=first
+ * chunk (m entries) second ReadIDList command TAG_1=m, response TAG_1=1,
+ * TAG_2=second chunk (n entries) thirst ReadIDList command TAG_1=(m+n), response
+ * TAG_1=0, TAG_2=third last chunk
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +-------+------------+-----------------------------------------------+
+ * | Field | Value      | Description                                   |
+ * +=======+============+===============================================+
+ * | CLA   | 0x80       |                                               |
+ * +-------+------------+-----------------------------------------------+
+ * | INS   | INS_READ   | See :cpp:type:`SE05x_INS_t`                   |
+ * +-------+------------+-----------------------------------------------+
+ * | P1    | P1_DEFAULT | See :cpp:type:`SE05x_P1_t`                    |
+ * +-------+------------+-----------------------------------------------+
+ * | P2    | P2_LIST    | See :cpp:type:`SE05x_P2_t`                    |
+ * +-------+------------+-----------------------------------------------+
+ * | Lc    | #(Payload) |                                               |
+ * +-------+------------+-----------------------------------------------+
+ * |       | TLV[TAG_1] | 2-byte offset                                 |
+ * +-------+------------+-----------------------------------------------+
+ * |       | TLV[TAG_2] | 1-byte type filter: 1 byte from               |
+ * |       |            | :cpp:type:`SE05x_SecObjTyp_t` or 0xFF for all |
+ * |       |            | types.                                        |
+ * +-------+------------+-----------------------------------------------+
+ * | Le    | 0x00       |                                               |
+ * +-------+------------+-----------------------------------------------+
+ * @endrst
+ *
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+-------------------------------------------+
+ * | Value      | Description                               |
+ * +============+===========================================+
+ * | TLV[TAG_1] | 1-byte :cpp:type:`MoreIndicatorRef`       |
+ * +------------+-------------------------------------------+
+ * | TLV[TAG_2] | Byte array containing 4-byte identifiers. |
+ * +------------+-------------------------------------------+
+ * @endrst
+ *
+ * # R-APDU Trailer
+ *
+ * @rst
+ * +-------------+--------------------------------+
+ * | SW          | Description                    |
+ * +=============+================================+
+ * | SW_NO_ERROR | Data is returned successfully. |
+ * +-------------+--------------------------------+
+ * @endrst
+ *
+ *
+ *
+ * @param[in] session_ctx Session Context [0:kSE05x_pSession]
+ * @param[in] outputOffset output offset [1:kSE05x_TAG_1]
+ * @param[in] filter filter [2:kSE05x_TAG_2]
+ * @param[out] pmore If more ids are present [0:kSE05x_TAG_1]
+ * @param[out] idlist Byte array containing 4-byte identifiers [1:kSE05x_TAG_2]
+ * @param[in,out] pidlistLen Length for idlist
+ */
+smStatus_t Se05x_API_ReadIDList(pSe05xSession_t session_ctx,
+                                uint16_t outputOffset,
+                                uint8_t filter,
+                                uint8_t *pmore,
+                                uint8_t *idlist,
+                                size_t *pidlistLen);
+
+/** Se05x_API_ReadType
+ *
+ * Get the type of a Secure Object.
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +-------+------------+-----------------------------+
+ * | Field | Value      | Description                 |
+ * +=======+============+=============================+
+ * | CLA   | 0x80       |                             |
+ * +-------+------------+-----------------------------+
+ * | INS   | INS_READ   | See :cpp:type:`SE05x_INS_t` |
+ * +-------+------------+-----------------------------+
+ * | P1    | P1_DEFAULT | See :cpp:type:`SE05x_P1_t`  |
+ * +-------+------------+-----------------------------+
+ * | P2    | P2_TYPE    | See :cpp:type:`SE05x_P2_t`  |
+ * +-------+------------+-----------------------------+
+ * | Lc    | #(Payload) |                             |
+ * +-------+------------+-----------------------------+
+ * |       | TLV[TAG_1] | 4-byte object identifier.   |
+ * +-------+------------+-----------------------------+
+ * | Le    | 0x00       |                             |
+ * +-------+------------+-----------------------------+
+ * @endrst
+ *
+
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+-----------------------------------+
+ * | Value      | Description                       |
+ * +============+===================================+
+ * | TLV[TAG_1] | Type of the Secure Object: one of |
+ * |            | :cpp:type:`SE05x_SecObjTyp_t`     |
+ * +------------+-----------------------------------+
+ * | TLV[TAG_2] | :cpp:type:`TransientIndicatorRef` |
+ * +------------+-----------------------------------+
+ * @endrst
+ *
+ *
+ * # R-APDU Trailer
+ *
+ * @rst
+ * +-------------+--------------------------------+
+ * | SW          | Description                    |
+ * +=============+================================+
+ * | SW_NO_ERROR | Data is returned successfully. |
+ * +-------------+--------------------------------+
+ * @endrst
+ *
+ *
+ * @param[in]  session_ctx       The session context
+ * @param[in]  objectID          The object id
+ * @param      ptype             The ptype
+ * @param      pisTransient      The pis transient
+ * @param[in]  attestation_type  The attestation type
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_ReadType(pSe05xSession_t session_ctx,
+                              uint32_t objectID,
+                              SE05x_SecureObjectType_t *ptype,
+                              uint8_t *pisTransient,
+                              const SE05x_AttestationType_t attestation_type);
+
+/** Se05x_API_ReadSize
+ *
+ * ReadSize
+ *
+ * Get the size of a Secure Object (in bytes):
+ *
+ *   * For EC keys: the size of the curve is returned.
+ *
+ *   * For RSA keys: the key size is returned.
+ *
+ *   * For AES/DES/HMAC keys, the key size is returned.
+ *
+ *   * For binary files: the file size is returned
+ *
+ *   * For userIDs: nothing is returned (SW_CONDITIONS_NOT_SATISFIED).
+ *
+ *   * For counters: the counter length is returned.
+ *
+ *   * For PCR: the PCR length is returned.
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +-------+------------+-----------------------------+
+ * | Field | Value      | Description                 |
+ * +=======+============+=============================+
+ * | CLA   | 0x80       |                             |
+ * +-------+------------+-----------------------------+
+ * | INS   | INS_READ   | See :cpp:type:`SE05x_INS_t` |
+ * +-------+------------+-----------------------------+
+ * | P1    | P1_DEFAULT | See :cpp:type:`SE05x_P1_t`  |
+ * +-------+------------+-----------------------------+
+ * | P2    | P2_SIZE    | See :cpp:type:`SE05x_P2_t`  |
+ * +-------+------------+-----------------------------+
+ * | Lc    | #(Payload) |                             |
+ * +-------+------------+-----------------------------+
+ * |       | TLV[TAG_1] | 4-byte object identifier.   |
+ * +-------+------------+-----------------------------+
+ * | Le    | 0x00       |                             |
+ * +-------+------------+-----------------------------+
+ * @endrst
+ *
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+-----------------------------+
+ * | Value      | Description                 |
+ * +============+=============================+
+ * | TLV[TAG_1] | Byte array containing size. |
+ * +------------+-----------------------------+
+ * @endrst
+ *
+ * # R-APDU Trailer
+ *
+ * @rst
+ * +-------------+--------------------------------+
+ * | SW          | Description                    |
+ * +=============+================================+
+ * | SW_NO_ERROR | Data is returned successfully. |
+ * +-------------+--------------------------------+
+ * @endrst
+ *
+ *
+ * @param[in]  session_ctx  The session context
+ * @param[in]  objectID     The object id
+ * @param      psize        The psize
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_ReadSize(pSe05xSession_t session_ctx, uint32_t objectID, uint16_t *psize);
+
+
+smStatus_t Se05x_API_ReadECCurveList(pSe05xSession_t session_ctx, uint8_t *data, size_t *pdataLen);
+
+smStatus_t Se05x_API_CreateECCurve(pSe05xSession_t session_ctx, SE05x_ECCurve_t curveID);
+
+#define PROCESS_ECC_CURVE(NAME) \
+    smStatus_t Se05x_API_CreateCurve_##NAME(Se05xSession_t *pSession, uint32_t obj_id)
+
+PROCESS_ECC_CURVE(secp256k1);
+PROCESS_ECC_CURVE(prime256v1);
+
+#undef PROCESS_ECC_CURVE
+
 #endif //#ifndef SE05X_APDU_APIS_H_INC

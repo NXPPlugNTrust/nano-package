@@ -9,8 +9,8 @@
 #define SM_PORT_H_INC
 
 /* ********************** Include files ********************** */
-#include <kernel.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 /* ********************** Defines ********************** */
 

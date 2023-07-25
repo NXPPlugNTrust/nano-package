@@ -12,27 +12,115 @@
 #include "smCom.h"
 #include "se05x_scp03_crypto.h"
 #include "se05x_scp03.h"
+#include "se05x_APDU_apis.h"
 #include <limits.h>
 
 /* ********************** Global variables ********************** */
 
-uint8_t se05x_sessionEncKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_sessionMacKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_sessionRmacKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_cCounter[16] = {
-    0,
-};
-uint8_t se05x_mcv[SCP_CMAC_SIZE] = {
-    0,
-};
+uint8_t se05x_sessionEncKey[AES_KEY_LEN_nBYTE] = {0};
+uint8_t se05x_sessionMacKey[AES_KEY_LEN_nBYTE] = {0};
+uint8_t se05x_sessionRmacKey[AES_KEY_LEN_nBYTE] = {0};
+uint8_t se05x_cCounter[16] = {0};
+uint8_t se05x_mcv[SCP_CMAC_SIZE] = {0};
+
 
 /* ********************** Functions ********************** */
+
+/**
+ *  Prepends the session id onto the command using the same buffer.
+ *  The original command is moved down the buffer and the session id
+ *  is added to the beginning.
+ *
+ * @param pSession_ctx
+ * @param cmdbuf
+ * @param cmdlen
+ * @param max_cmdbuf
+ * @param wrapped_cmd_len
+ * @param hasle
+ * @return
+ */
+smStatus_t ex_se05x_wrap_session_command(Se05xSession_t *pSession_ctx, uint8_t *cmdbuf, size_t cmdlen,
+                                          size_t max_cmdbuf, size_t *wrapped_cmd_len, bool hasle)
+{
+    smStatus_t retStatus = SM_NOT_OK;
+    tlvHeader_t *sess_hdr;
+    size_t SCmd_Lc       = (cmdlen == 0) ? 0 : (((cmdlen < 0xFF) && !hasle) ? 1 : 3);
+    size_t STag1_Len     = 0 /* cla ins */ + 4 + SCmd_Lc + cmdlen;
+    size_t i             = 0;
+    size_t ses_info_len  = 4U /* hdr */ + 1U /* len of session id and command */ +
+                           1U /* kSE05x_TAG_SESSION_ID tag */ +
+                           1U /* session id len */ +
+                           sizeof(pSession_ctx->session_id) + 1U /*kSE05x_TAG_1*/;
+
+    if (cmdlen <= 0x7Fu) {
+        ses_info_len++;
+    } else if (cmdlen <= 0xFFu) {
+        ses_info_len += 2U;
+    } else if (cmdlen <= 0xFFFFu) {
+        ses_info_len += 3U;
+    }
+
+    // TODO: This doesn't seem correct
+    if (hasle) {
+        ses_info_len += 2u;
+    }
+
+    // Make room at beginning of buffer for session command
+    // Is there enough room to move the command further down the buffer?
+    if (max_cmdbuf < (ses_info_len + cmdlen)) {
+        return SM_NOT_OK;
+    }
+
+    memmove(cmdbuf + ses_info_len, cmdbuf, cmdlen);
+
+    // set header and session id
+    sess_hdr = (tlvHeader_t*)cmdbuf;
+    sess_hdr->hdr[0] = 0x80 /*kSE05x_CLA*/;
+    sess_hdr->hdr[1] = kSE05x_INS_PROCESS;
+    sess_hdr->hdr[2] = kSE05x_P1_DEFAULT;
+    sess_hdr->hdr[3] = kSE05x_P2_DEFAULT;
+
+    i = sizeof(tlvHeader_t);
+
+    // Placeholder for now, this is the length of the session id and
+    // the original command, not including the length byt itself
+    cmdbuf[i++]  = 0;
+    cmdbuf[i++] = kSE05x_TAG_SESSION_ID;
+    cmdbuf[i++] = (uint8_t)sizeof(pSession_ctx->session_id);
+    memcpy(&cmdbuf[i], pSession_ctx->session_id, sizeof(pSession_ctx->session_id));
+    i += sizeof(pSession_ctx->session_id);
+
+    cmdbuf[i++] = kSE05x_TAG_1;
+
+    if (STag1_Len <= 0x7Fu) {
+        ENSURE_OR_GO_CLEANUP(i < max_cmdbuf);
+        cmdbuf[i++] = (uint8_t)cmdlen;
+    }
+    else if (STag1_Len <= 0xFFu) {
+        ENSURE_OR_GO_CLEANUP(i + 1 < max_cmdbuf);
+        cmdbuf[i++] = (uint8_t)(0x80 /* Extended */ | 0x01 /* Additional Length */);
+        cmdbuf[i++] = (uint8_t)((cmdlen >> 0 * 8) & 0xFF);
+    }
+    else if (STag1_Len <= 0xFFFFu) {
+        ENSURE_OR_GO_CLEANUP(i + 2 < max_cmdbuf);
+        cmdbuf[i++] = (uint8_t)(0x80 /* Extended */ | 0x02 /* Additional Length */);
+        cmdbuf[i++] = (uint8_t)((cmdlen >> 8) & 0xFF);
+        cmdbuf[i++] = (uint8_t)((cmdlen)&0xFF);
+    }
+
+    // length of the session id and command itself
+    cmdbuf[4] = (i + cmdlen - 5);
+
+    // The original command should start at cmdbuf[i]
+
+    *wrapped_cmd_len = i + cmdlen /* original cmd len */;
+    retStatus = SM_OK;
+
+cleanup:
+
+    return retStatus;
+}
+
 
 smStatus_t Se05x_API_SCP03_GetSessionKeys(pSe05xSession_t session_ctx,
     uint8_t *encKey,
@@ -136,12 +224,15 @@ static int nxScp03_GP_InitializeUpdate(pSe05xSession_t session_ctx,
     uint8_t *cardCryptoGram,
     uint16_t *pCardCryptoGramLen)
 {
-    smStatus_t retStatus        = SM_NOT_OK;
-    uint8_t keyVersion          = 0x0b;
-    uint8_t *pRspbuf            = NULL;
-    size_t rspbufLen            = sizeof(session_ctx->apdu_buffer);
-    tlvHeader_t hdr             = {{CLA_GP_7816, INS_GP_INITIALIZE_UPDATE, keyVersion, 0x00}};
-    uint16_t parsePos           = 0;
+    smStatus_t retStatus = SM_NOT_OK;
+
+    // keyVersion 0x00 for AES auth session
+    uint8_t keyVersion = session_ctx->has_session ? 0x00 : 0x0b;
+    uint8_t *pRspbuf = NULL;
+    size_t cmdlen = 0;
+    size_t rspbufLen = sizeof(session_ctx->apdu_buffer);
+    tlvHeader_t hdr = {{CLA_GP_7816, INS_GP_INITIALIZE_UPDATE, keyVersion, 0x00}};
+    uint16_t parsePos = 0;
     uint32_t iuResponseLenSmall = SCP_GP_IU_KEY_DIV_DATA_LEN + SCP_GP_IU_KEY_INFO_LEN + SCP_GP_CARD_CHALLENGE_LEN +
                                   SCP_GP_IU_CARD_CRYPTOGRAM_LEN + SCP_GP_SW_LEN;
     uint32_t iuResponseLenBig = SCP_GP_IU_KEY_DIV_DATA_LEN + SCP_GP_IU_KEY_INFO_LEN + SCP_GP_CARD_CHALLENGE_LEN +
@@ -172,9 +263,21 @@ static int nxScp03_GP_InitializeUpdate(pSe05xSession_t session_ctx,
     ENSURE_OR_RETURN_ON_ERROR(hostChallengeLen < (MAX_APDU_BUFFER - 5), 1);
     memcpy((session_ctx->apdu_buffer + 5), hostChallenge, hostChallengeLen);
 
+    cmdlen = hostChallengeLen + 5;
+
+    /* Wrap the command as session command, use the same APDU buffer */
+    if (session_ctx->has_session) {
+        retStatus = ex_se05x_wrap_session_command(session_ctx, session_ctx->apdu_buffer, cmdlen,
+                                                  sizeof(session_ctx->apdu_buffer), &cmdlen, 0);
+
+        if (retStatus != SM_OK) {
+            return 1;
+        }
+    }
+
     SMLOG_D("Sending GP Initialize Update Command !!! \n");
     retStatus = smComT1oI2C_TransceiveRaw(
-        session_ctx->conn_context, session_ctx->apdu_buffer, (hostChallengeLen + 5), pRspbuf, &rspbufLen);
+        session_ctx->conn_context, session_ctx->apdu_buffer, cmdlen, pRspbuf, &rspbufLen);
     if (retStatus != SM_OK) {
         SMLOG_D("Error in sending GP Initialize Update Command \n");
         return 1;
@@ -416,6 +519,86 @@ static int nxScp03_HostLocal_CalculateHostCryptogram(pSe05xSession_t session_ctx
     return 0;
 }
 
+/* Refer 4.5.1.3 ProcessSessionCmd in se05x apdu spec doc */
+smStatus_t ex_se05x_process_session_command(pSe05xSession_t session_ctx,
+                                            const tlvHeader_t *hdr,
+                                            uint8_t *cmdBuf,
+                                            size_t cmdBufLen,
+                                            tlvHeader_t *out_hdr,
+                                            uint8_t *out,
+                                            size_t *outLen,
+                                            size_t hasle)
+{
+    smStatus_t retStatus = SM_NOT_OK;
+    size_t SCmd_Lc       = (cmdBufLen == 0) ? 0 : (((cmdBufLen < 0xFF) && !hasle) ? 1 : 3);
+    size_t STag1_Len     = 0 /* cla ins */ + 4 + SCmd_Lc + cmdBufLen;
+    size_t i             = 0;
+
+    ENSURE_OR_GO_CLEANUP(hdr != NULL);
+    ENSURE_OR_GO_CLEANUP(cmdBuf != NULL);
+    ENSURE_OR_GO_CLEANUP(out_hdr != NULL);
+    ENSURE_OR_GO_CLEANUP(out != NULL);
+    ENSURE_OR_GO_CLEANUP(outLen != NULL);
+
+    out_hdr->hdr[0] = 0x80 /*kSE05x_CLA*/;
+    out_hdr->hdr[1] = kSE05x_INS_PROCESS;
+    out_hdr->hdr[2] = kSE05x_P1_DEFAULT;
+    out_hdr->hdr[3] = kSE05x_P2_DEFAULT;
+
+    /* Add session id */
+    ENSURE_OR_GO_CLEANUP(i + (1 + 1 + sizeof(session_ctx->session_id)) < (*outLen)) /* Tag + lenght + 8 */
+    out[i++] = kSE05x_TAG_SESSION_ID;
+    out[i++] = sizeof(session_ctx->session_id);
+    memcpy(&out[i], session_ctx->session_id, sizeof(session_ctx->session_id));
+    i += sizeof(session_ctx->session_id);
+
+    /* Add actual command with kSE05x_TAG_1 tag */
+    ENSURE_OR_GO_CLEANUP(i < (*outLen));
+    out[i++] = kSE05x_TAG_1;
+    if (STag1_Len <= 0x7Fu) {
+        ENSURE_OR_GO_CLEANUP(i < (*outLen));
+        out[i++] = (uint8_t)STag1_Len;
+    }
+    else if (STag1_Len <= 0xFFu) {
+        ENSURE_OR_GO_CLEANUP(i + 1 < (*outLen));
+        out[i++] = (uint8_t)(0x80 /* Extended */ | 0x01 /* Additional Length */);
+        out[i++] = (uint8_t)((STag1_Len >> 0 * 8) & 0xFF);
+    }
+    else if (STag1_Len <= 0xFFFFu) {
+        ENSURE_OR_GO_CLEANUP(i + 2 < (*outLen));
+        out[i++] = (uint8_t)(0x80 /* Extended */ | 0x02 /* Additional Length */);
+        out[i++] = (uint8_t)((STag1_Len >> 8) & 0xFF);
+        out[i++] = (uint8_t)((STag1_Len)&0xFF);
+    }
+    ENSURE_OR_GO_CLEANUP(i + sizeof(*hdr) < (*outLen));
+    memcpy(&out[i], hdr, sizeof(*hdr));
+    i += sizeof(*hdr);
+    if (cmdBufLen > 0) {
+        if ((cmdBufLen < 0xFF) && !hasle) {
+            ENSURE_OR_GO_CLEANUP(i < (*outLen));
+            out[i++] = (uint8_t)cmdBufLen;
+        }
+        else {
+            ENSURE_OR_GO_CLEANUP(i + 2 < (*outLen));
+            out[i++] = 0x00;
+            out[i++] = 0xFFu & (cmdBufLen >> 8);
+            out[i++] = 0xFFu & (cmdBufLen);
+        }
+    }
+    if (cmdBufLen > 0) {
+        ENSURE_OR_GO_CLEANUP(i + cmdBufLen < (*outLen));
+        memcpy(&out[i], cmdBuf, cmdBufLen);
+        i += cmdBufLen;
+    }
+
+    retStatus = SM_OK;
+    *outLen   = i;
+    cleanup:
+    return retStatus;
+}
+
+
+
 static int nxScp03_GP_ExternalAuthenticate(
     pSe05xSession_t session_ctx, uint8_t *key, size_t keylen, uint8_t *updateMCV, uint8_t *hostCryptogram)
 {
@@ -473,17 +656,27 @@ static int nxScp03_GP_ExternalAuthenticate(
     memcpy(updateMCV, macToAdd, AES_KEY_LEN_nBYTE);
     memcpy(&txBuf[5 + SCP_GP_IU_CARD_CRYPTOGRAM_LEN], macToAdd, SCP_GP_IU_CARD_CRYPTOGRAM_LEN);
 
-    SMLOG_D("Sending GP External Authenticate Command !!!");
-
     memcpy(session_ctx->apdu_buffer, &hdr, 4);
     session_ctx->apdu_buffer[4] = (2 * SCP_GP_IU_CARD_CRYPTOGRAM_LEN);
     memcpy((session_ctx->apdu_buffer + 5), &txBuf[5], (2 * SCP_GP_IU_CARD_CRYPTOGRAM_LEN));
 
+    size_t wraped_cmd_len = (2 * SCP_GP_IU_CARD_CRYPTOGRAM_LEN) + 5;
+
+    if (session_ctx->has_session) {
+        size_t cmdlen = (2 * SCP_GP_IU_CARD_CRYPTOGRAM_LEN) + 5;
+        retStatus = ex_se05x_wrap_session_command(session_ctx, session_ctx->apdu_buffer, cmdlen,
+                                                  sizeof(session_ctx->apdu_buffer),
+                                                  &wraped_cmd_len, false);
+    }
+
+    SMLOG_D("Sending GP External Authenticate Command !!!");
+
     retStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context,
-        session_ctx->apdu_buffer,
-        ((2 * SCP_GP_IU_CARD_CRYPTOGRAM_LEN) + 5),
-        session_ctx->apdu_buffer,
-        &rspbufLen);
+                            session_ctx->apdu_buffer,
+                            wraped_cmd_len,
+                            session_ctx->apdu_buffer,
+                            &rspbufLen);
+
     if (retStatus != SM_OK) {
         SMLOG_D("GP_ExternalAuthenticate transmit failed");
         return 1;
@@ -523,12 +716,27 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
     ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_enc_key_len == SCP_KEY_SIZE, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_mac_key_len == SCP_KEY_SIZE, SM_NOT_OK);
 
+    // create session if using an
+    smStatus_t smstat;
+    if (session_ctx->use_auth_session) {
+        size_t sessid_len = sizeof(session_ctx->session_id);
+        smstat = Se05x_API_CreateSession(session_ctx, session_ctx->auth_id, session_ctx->session_id, &sessid_len);
+
+        if (smstat != SM_OK) {
+            SMLOG_E("Se05x_API_CreateSession() failed.");
+            return smstat;
+        }
+
+        session_ctx->has_session = true;
+    }
+
     session_ctx->scp03_session = 0;
 
 #ifndef INITIAL_HOST_CHALLANGE
     ret = hcrypto_get_random(hostChallenge, hostChallenge_len);
     ENSURE_OR_RETURN_ON_ERROR((ret == 0), SM_NOT_OK);
 #endif
+
 
     SMLOG_MAU8_D(" hostChallenge ==>", hostChallenge, hostChallenge_len);
 
@@ -575,8 +783,11 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
 
     SMLOG_MAU8_D("hostCryptogram ==>", hostCryptogram, SCP_GP_IU_CARD_CRYPTOGRAM_LEN);
 
-    ret =
-        nxScp03_GP_ExternalAuthenticate(session_ctx, se05x_sessionMacKey, AES_KEY_LEN_nBYTE, se05x_mcv, hostCryptogram);
+
+    ret = nxScp03_GP_ExternalAuthenticate(session_ctx, se05x_sessionMacKey,
+                                          AES_KEY_LEN_nBYTE, se05x_mcv, hostCryptogram);
+
+
     if (ret != 0) {
         SMLOG_E("GP_ExternalAuthenticate failed \n"); // with Status %04X", status);
         return SM_NOT_OK;
@@ -654,7 +865,7 @@ void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx)
     return;
 }
 
-static void nxpSCP03_Dec_CommandCounter(uint8_t *pCtrblock)
+void nxpSCP03_Dec_CommandCounter(uint8_t *pCtrblock)
 {
     int i = 15;
     while (i > 0) {

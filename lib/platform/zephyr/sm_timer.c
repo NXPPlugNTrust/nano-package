@@ -15,7 +15,7 @@
 
 /* ********************** Include files ********************** */
 #include "sm_timer.h"
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 /* ********************** Functions ********************** */
 

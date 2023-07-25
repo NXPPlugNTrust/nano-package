@@ -11,6 +11,7 @@ if(CONFIG_PLUGANDTRUST)
     ../lib/apdu/smCom.c
     ../lib/apdu/se05x_tlv.c
     ../lib/apdu/scp03/se05x_scp03.c
+    ../lib/apdu/scp03/se05x_aes_sess.c
     ../lib/apdu/scp03/tc/se05x_scp03_crypto_tc.c
     ../lib/t1oi2c/phNxpEse_Api.c
     ../lib/t1oi2c/phNxpEsePal_i2c.c

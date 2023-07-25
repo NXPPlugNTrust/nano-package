@@ -14,11 +14,17 @@
 /* ********************** Constants ********************** */
 typedef enum
 {
-    SM_NOT_OK                              = 0xFFFF,
-    SM_OK                                  = 0x9000,
+    SM_NOT_OK  = 0xFFFF,
+    SM_OK = 0x9000,
+    SM_ERR_WRONG_LENGTH = 0x6700,               // Wrong length (e.g. C-APDU does not fit into APDU buffer)
+    SM_ERR_WRONG_DATA  = 0x6A80,                 // Wrong data provided
+    SM_ERR_SECURITY_STATUS = 0x6982,            // Security status not satisfied
+    SM_ERR_DATA_INVALID = 0x6984,               // Data invalid - policy set invalid for the given object
+    SM_ERR_FILE_FULL = 0x6A84,                  // Not enough memory space available (either transient or persistent memory)
     SM_ERR_CONDITIONS_OF_USE_NOT_SATISFIED = 0x6985,
-    SM_ERR_ACCESS_DENIED_BASED_ON_POLICY   = 0x6986,
+    SM_ERR_ACCESS_DENIED_BASED_ON_POLICY = 0x6986,
 } smStatus_t;
+
 
 /* ********************** Function Prototypes ********************** */
 
@@ -35,7 +41,10 @@ int tlvSet_KeyID(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint32_t keyID)
 int tlvSet_header(uint8_t **buf, size_t *bufLen, tlvHeader_t *hdr);
 int tlvGet_U8(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint8_t *pRsp);
 int tlvGet_u8buf(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint8_t *rsp, size_t *pRspLen);
+int tlvGet_u16(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint16_t *pRsp);
 int tlvGet_Result(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t tag, SE05x_Result_t *presult);
+int tlvGet_SecureObjectType(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t tag, SE05x_SecObjTyp_t *pType);
+
 smStatus_t DoAPDUTx(
     pSe05xSession_t session_ctx, const tlvHeader_t *hdr, uint8_t *cmdBuf, size_t cmdBufLen, uint8_t hasle);
 smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
@@ -45,6 +54,14 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     uint8_t *rspBuf,
     size_t *pRspBufLen,
     uint8_t hasle);
+
+smStatus_t DoAPDUTxRx_Raw(pSe05xSession_t session_ctx,
+                          const tlvHeader_t *hdr,
+                          uint8_t *cmdBuf,
+                          size_t cmdBufLen,
+                          uint8_t *rspBuf,
+                          size_t *pRspBufLen,
+                          uint8_t hasle);
 
 /* ********************** Defines ********************** */
 
@@ -93,6 +110,10 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 
 #define TLVSET_ECCurve(DESCRIPTION, PBUF, PBUFLEN, TAG, VALUE) \
     tlvSet_ECCurve(PBUF, PBUFLEN, TAG, VALUE);                 \
+    DO_LOG_V(TAG, DESCRIPTION, VALUE)
+
+#define TLVSET_ECCurveParam(DESCRIPTION, PBUF, PBUFLEN, TAG, VALUE) \
+    tlvSet_U8(PBUF, PBUFLEN, TAG, VALUE);                 \
     DO_LOG_V(TAG, DESCRIPTION, VALUE)
 
 #define TLVSET_Header(PBUF, PBUFLEN, HDR) tlvSet_header(PBUF, PBUFLEN, HDR);
