@@ -731,6 +731,7 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
     }
 
     session_ctx->scp03_session = 0;
+    session_ctx->has_encrypted_session = true;
 
 #ifndef INITIAL_HOST_CHALLANGE
     ret = hcrypto_get_random(hostChallenge, hostChallenge_len);

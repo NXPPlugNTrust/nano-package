@@ -22,9 +22,8 @@
 /* clang-format on */
 
 /* ********************** Function Prototypes ********************** */
-#ifdef WITH_PLATFORM_SCP03
 smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx);
-#endif //#ifdef WITH_PLATFORM_SCP03
+
 
 /* ********************** Functions ********************** */
 
@@ -41,9 +40,7 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
     size_t tx_len              = 0;
     smStatus_t ret             = SM_NOT_OK;
     unsigned char appletName[] = APPLET_NAME;
-#ifdef WITH_PLATFORM_SCP03
     unsigned char ssdName[] = SSD_NAME;
-#endif
     unsigned char *appSsdName = NULL;
     size_t appSsdNameLen      = 0;
 
@@ -65,12 +62,11 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
     ENSURE_OR_GO_CLEANUP(SM_OK == ret);
 
     if (session_ctx->skip_applet_select == 1) {
-#ifndef WITH_PLATFORM_SCP03
-        return ret;
-#else
+        if(!session_ctx->has_encrypted_session) {
+            return ret;
+        }
         appSsdName    = &ssdName[0];
         appSsdNameLen = sizeof(ssdName);
-#endif
     }
     else {
         appSsdName    = &appletName[0];
@@ -107,16 +103,14 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
         ENSURE_OR_GO_CLEANUP(SM_OK == ret);
     }
 
-#ifdef WITH_PLATFORM_SCP03
-    if (session_ctx->session_resume) {
-        SMLOG_I("Resuming Secure Channel to SE05x !\n");
+    if (session_ctx->has_encrypted_session) {
+        if (session_ctx->session_resume) {
+            SMLOG_I("Resuming Secure Channel to SE05x !\n");
+        } else {
+            SMLOG_I("Establish Secure Channel to SE05x !\n");
+            ret = Se05x_API_SCP03_CreateSession(session_ctx);
+        }
     }
-    else
-    {
-        SMLOG_I("Establish Secure Channel to SE05x !\n");
-        ret = Se05x_API_SCP03_CreateSession(session_ctx);
-    }
-#endif //#ifdef WITH_PLATFORM_SCP03
 
 cleanup:
     return ret;

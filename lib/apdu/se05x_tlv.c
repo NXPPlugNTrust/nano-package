@@ -13,7 +13,6 @@
 #include <limits.h>
 
 /* ********************** Function Prototypes ********************** */
-#ifdef WITH_PLATFORM_SCP03
 smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
     const tlvHeader_t *hdr,
     uint8_t *cmdBuf,
@@ -29,7 +28,6 @@ smStatus_t Se05_API_AES_TransmitData(pSe05xSession_t session_ctx,
                                         uint8_t *rspBuf,
                                         size_t *pRspBufLen,
                                         uint8_t hasle);
-#endif
 
 /* ********************** Function ********************** */
 
@@ -385,33 +383,35 @@ smStatus_t DoAPDUTx(
         ENSURE_OR_GO_EXIT(cmdBuf != NULL);
     }
 
-#ifdef WITH_PLATFORM_SCP03
-    if (session_ctx->has_session) {
-        // If AES authenticated session
-        apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
-    }
-    else {
-        apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
-    }
-#else
-    (void)hasle;
-    if (cmdBufLen > 0) {
-        memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
-        memcpy(cmdBuf, hdr, 4);
-        cmdBuf[4] = cmdBufLen;
 
-        ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
-        cmdBufLen += 5;
+    if (session_ctx->has_encrypted_session) {
+        if (session_ctx->has_session) {
+            // If AES authenticated session
+            apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
+        }
+        else {
+            apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, &rxBufLen, hasle);
+        }
+    } else {
+
+        /* Plain session, no encryption */
+        (void) hasle;
+        if (cmdBufLen > 0) {
+            memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
+            memcpy(cmdBuf, hdr, 4);
+            cmdBuf[4] = cmdBufLen;
+
+            ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
+            cmdBufLen += 5;
+        } else {
+            memcpy(cmdBuf, hdr, 4);
+            cmdBufLen = 4;
+        }
+        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, &rxBufLen);
+        if (rxBufLen >= 2) {
+            apduStatus = rspBuf[(rxBufLen) - 2] << 8 | rspBuf[(rxBufLen) - 1];
+        }
     }
-    else {
-        memcpy(cmdBuf, hdr, 4);
-        cmdBufLen = 4;
-    }
-    apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, &rxBufLen);
-    if (rxBufLen >= 2) {
-        apduStatus = rspBuf[(rxBufLen)-2] << 8 | rspBuf[(rxBufLen)-1];
-    }
-#endif //#ifdef WITH_PLATFORM_SCP03
 
 exit:
     return apduStatus;
@@ -423,8 +423,7 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     size_t cmdBufLen,
     uint8_t *rspBuf,
     size_t *pRspBufLen,
-    uint8_t hasle)
-{
+    uint8_t hasle) {
     smStatus_t apduStatus = SM_NOT_OK;
 
     ENSURE_OR_GO_EXIT(hdr != NULL);
@@ -434,32 +433,32 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     ENSURE_OR_GO_EXIT(pRspBufLen != NULL);
     ENSURE_OR_GO_EXIT(rspBuf != NULL);
 
-#ifdef WITH_PLATFORM_SCP03
-    if (session_ctx->has_session) {
-        // If AES authenticated session
-        apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+    if (session_ctx->has_encrypted_session) {
+        if (session_ctx->has_session) {
+            // If AES authenticated session
+            apduStatus = Se05_API_AES_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+        }
+        else {
+            apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
+        }
+    } else {
+        /* unencrypted connection */
+        (void) hasle;
+        if (cmdBufLen > 0) {
+            memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
+            memcpy(cmdBuf, hdr, 4);
+            cmdBuf[4] = cmdBufLen;
+            ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
+            cmdBufLen += 5;
+        } else {
+            memcpy(cmdBuf, hdr, 4);
+            cmdBufLen = 4;
+        }
+        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, pRspBufLen);
+        if (*pRspBufLen >= 2) {
+            apduStatus = rspBuf[(*pRspBufLen) - 2] << 8 | rspBuf[(*pRspBufLen) - 1];
+        }
     }
-    else {
-        apduStatus = Se05x_API_SCP03_TransmitData(session_ctx, hdr, cmdBuf, cmdBufLen, rspBuf, pRspBufLen, hasle);
-    }
-#else
-    (void)hasle;
-    if (cmdBufLen > 0) {
-        memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
-        memcpy(cmdBuf, hdr, 4);
-        cmdBuf[4] = cmdBufLen;
-        ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
-        cmdBufLen += 5;
-    }
-    else {
-        memcpy(cmdBuf, hdr, 4);
-        cmdBufLen = 4;
-    }
-    apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, pRspBufLen);
-    if (*pRspBufLen >= 2) {
-        apduStatus = rspBuf[(*pRspBufLen) - 2] << 8 | rspBuf[(*pRspBufLen) - 1];
-    }
-#endif //#ifdef WITH_PLATFORM_SCP03
 
 exit:
     return apduStatus;

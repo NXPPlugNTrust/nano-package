@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 
 /* ********************** Constants ********************** */
@@ -132,6 +133,14 @@ typedef struct
     uint8_t scp03_session;
     /** Set 1 to resume session */
     uint8_t session_resume;
+
+    /** An encrypted session with se050 is being used. */
+    bool has_encrypted_session;
+
+    /** The OEFID. This is a NXP term, short for "Order Entry Form"
+     *  Used to determine the default platform SCP03 keys.
+     */
+    uint16_t OEFID;
 
     /* Vars used for authenticated session,
      * currently only AES authenticated session are implemented. */
