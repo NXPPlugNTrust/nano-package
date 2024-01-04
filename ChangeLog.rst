@@ -6,6 +6,12 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.2.1**
+
+- Updated log messages for k64 port files
+- Added retry on I2C failed error. (Disabled by default). To enable - uncomment T1OI2C_RETRY_ON_I2C_FAILED in phNxpEsePal_i2c.h.
+- Increased t=1oi2c retry count. (MAX_RETRY_COUNT).
+
 **Release v1.2.0**
 
 - Added security fix on 24-Feb-2023 to prevent buffer overflow on the T=1oI2C stack.

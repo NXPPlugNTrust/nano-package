@@ -169,3 +169,13 @@ for the private key has been used to contain:
            10:00
 
 Refer `zephyr/samples/net/cloud/google_iot_mqtt/README.rst` to build GCP cloud example.
+
+
+Memory Details
+---------------
+
+Following are the memory details of se05x sign example (plain session) when build in release mode for K64.
+
+Text - 43136
+Data - 2520
+Bss - 41672
