@@ -51,7 +51,7 @@
 /*!
  * \brief Max retry count for Write
  */
-#define MAX_RETRY_COUNT 3
+#define MAX_RETRY_COUNT   8
 
 /*!
  * \brief ESE wakeup delay in case of write error retry
@@ -71,6 +71,10 @@
  */
 // #define I2C_MASTER_SLAVE_ADDR_7BIT (0x90U >> 1)  //slve bit address is 20U but driver do right shift so set to 40U
 #define SMCOM_I2C_ADDRESS (0x90)
+
+
+// Enable t=1oi2c retry
+//#define T1OI2C_RETRY_ON_I2C_FAILED
 
 /*!
  * \ingroup eSe_PAL_I2C

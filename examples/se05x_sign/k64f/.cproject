@@ -687,7 +687,7 @@
 						<entry excluding="MK64F12/mcuxpresso/startup_mk64f12.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="devices"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="doc"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="drivers"/>
-						<entry excluding="platform/k64/board|platform/linux|apdu/scp03" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lib"/>
+						<entry excluding="apdu/smCom_jrcpv2.c|platform/zephyr|platform/k64/board|platform/linux|apdu/scp03" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="lib"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="main"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="mbedtls"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="mmcau"/>

@@ -39,6 +39,18 @@ phNxpEse_data gRsp = {
 };
 
 /******************************************************************************
+ * Function         phNxpEse_set_gRsp_null
+ *
+ * Description      This function will set buffer pinter in gRsp to NULL
+ *
+ ******************************************************************************/
+static void phNxpEse_set_gRsp_null(void)
+{
+    gRsp.p_data = NULL;
+    gRsp.len    = 0;
+}
+
+/******************************************************************************
  * Function         phNxpEse_init
  *
  * Description      This function is called by smCom during the
@@ -84,6 +96,7 @@ ESESTATUS phNxpEse_init(void *conn_ctx, phNxpEse_initParams initParams, phNxpEse
         wConfigStatus = ESESTATUS_FAILED;
         T_SMLOG_E("phNxpEseProto7816_Open failed ");
     }
+    phNxpEse_set_gRsp_null();
     return wConfigStatus;
 }
 
@@ -173,14 +186,17 @@ ESESTATUS phNxpEse_Transceive(void *conn_ctx, phNxpEse_data *pCmd, phNxpEse_data
 
     if ((pCmd->len == 0) || pCmd->p_data == NULL) {
         T_SMLOG_E(" phNxpEse_Transceive - Invalid Parameter no data");
+        phNxpEse_set_gRsp_null();
         return ESESTATUS_INVALID_PARAMETER;
     }
     else if ((ESE_STATUS_CLOSE == nxpese_ctxt->EseLibStatus)) {
         T_SMLOG_E(" %s ESE Not Initialized ", __FUNCTION__);
+        phNxpEse_set_gRsp_null();
         return ESESTATUS_NOT_INITIALISED;
     }
     else if ((ESE_STATUS_BUSY == nxpese_ctxt->EseLibStatus)) {
         T_SMLOG_E(" %s ESE - BUSY ", __FUNCTION__);
+        phNxpEse_set_gRsp_null();
         return ESESTATUS_BUSY;
     }
     else {
@@ -201,6 +217,7 @@ ESESTATUS phNxpEse_Transceive(void *conn_ctx, phNxpEse_data *pCmd, phNxpEse_data
         }
 
         T_SMLOG_D(" %s Exit status 0x%x ", __FUNCTION__, status);
+        phNxpEse_set_gRsp_null();
         return status;
     }
 }
@@ -409,6 +426,7 @@ ESESTATUS phNxpEse_read(void *conn_ctx, uint32_t *data_len, uint8_t **pp_data)
     else {
         if (ret > rspBufLen) {
             T_SMLOG_E("Rsp buffer is small \n");
+            phNxpEse_set_gRsp_null();
             return ESESTATUS_FAILED;
         }
         T_SMLOG_MAU8_D("RAW Rx<", nxpese_ctxt->p_read_buff, ret);
@@ -417,8 +435,7 @@ ESESTATUS phNxpEse_read(void *conn_ctx, uint32_t *data_len, uint8_t **pp_data)
         status = ESESTATUS_SUCCESS;
     }
 exit:
-    gRsp.p_data = NULL;
-    gRsp.len    = 0;
+    phNxpEse_set_gRsp_null();
     return status;
 }
 
@@ -713,6 +730,7 @@ ESESTATUS phNxpEse_getAtr(void *conn_ctx, phNxpEse_data *pRsp)
     gRsp.len    = pRsp->len;
 
     status = phNxpEseProto7816_GetAtr(conn_ctx, pRsp);
+    phNxpEse_set_gRsp_null();
     if (status == FALSE) {
         T_SMLOG_E("%s Get ATR Failed ", __FUNCTION__);
         return ESESTATUS_FAILED;
@@ -740,6 +758,7 @@ ESESTATUS phNxpEse_getCip(void *conn_ctx, phNxpEse_data *pRsp)
     gRsp.len    = pRsp->len;
 
     status = phNxpEseProto7816_GetCip(conn_ctx, pRsp);
+    phNxpEse_set_gRsp_null();
     if (status == FALSE) {
         T_SMLOG_E("%s Get CIP Failed ", __FUNCTION__);
         return ESESTATUS_FAILED;

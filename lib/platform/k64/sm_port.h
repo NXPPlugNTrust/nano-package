@@ -24,14 +24,17 @@
 #define SMLOG_I(...)     \
     printf(COLOR_BLUE);  \
     printf(__VA_ARGS__); \
+    printf("\r\n");      \
     printf(COLOR_RESET)
 #define SMLOG_E(...)     \
     printf(COLOR_RED);   \
     printf(__VA_ARGS__); \
+    printf("\r\n");      \
     printf(COLOR_RESET)
 #define SMLOG_W(...)      \
     printf(COLOR_YELLOW); \
     printf(__VA_ARGS__);  \
+    printf("\r\n");       \
     printf(COLOR_RESET)
 
 #ifdef SMLOG_DEBUG_MESSAGES
@@ -46,7 +49,7 @@
         printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
-    printf("\n")
+    printf("\r\n")
 #define SMLOG_MAU8_D(MSG, BUF, LEN)                         \
     printf(COLOR_GREEN);                                    \
     printf(MSG);                                            \
@@ -55,7 +58,7 @@
         printf("%02x ", BUF[bufIndex]);                     \
     }                                                       \
     printf(COLOR_RESET);                                    \
-    printf("\n")
+    printf("\r\n")
 #else
 #define SMLOG_D(...)
 #define SMLOG_AU8_D(BUF, LEN)
