@@ -6,6 +6,11 @@ ChangeLog
 ChangeLog
 ---------
 
+
+**Release v1.2.2**
+
+- MbedTLS alt ecdsa bug fix - Updated function used to extract r and s using mbedtls APIs
+
 **Release v1.2.1**
 
 - Updated log messages for k64 port files
