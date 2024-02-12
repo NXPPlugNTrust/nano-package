@@ -1,57 +1,13 @@
 ----------------------------------
 
 NXP Software Content Register
-
-Package: Plug&Trust Nano Package
-Version: 1.2.0
+Release:  nano-package.git
+Version: 1.2.2
+Outgoing License: Apache-2.0
+License File: LICENSE.txt
+Description and comments: Plug&Trust Nano Package
+Release Location: https://github.com/NXPPlugNTrust/nano-package.git
+Origin: NXP (Apache-2.0)
+             Mbedtls ALT files (Apache-2.0) Version: 2.26.0 - https://github.com/Mbed-TLS/mbedtls
 
 -----------------------------------
-
-APDU Files
-- Name: SE05x APDU files
-- License: Apache-2.0
-- Type of content: source code
-- Description: SE05x lib files
-- Origin: NXP(Apache-2.0)
-- Location: lib\apdu
-
-Mbedtls ALT
-- Name: Mbedtls ALT files
-- License: Apache-2.0
-- Type of content: source code
-- Description: Mbedtls ALT files
-- Origin: https://tls.mbed.org/
-          NXP (Apache-2.0)
-- Location: lib\mbedtls_alt
-
-K64 board files
-- Name: K64 board specific files
-- License: BSD-3-Clause
-- Type of content: source code
-- Description: K64 board specific files
-- Origin: NXP (BSD-3-Clause)
-- Location: lib\platform\k64\board\*
-
-Platform Port Files
-- Name: Platform Port Files
-- License: Apache-2.0
-- Type of content: source code
-- Description: Platform Port Files
-- Origin: NXP (Apache-2.0)
-- Location: lib\platform\k64\*, lib\platform\linux\*, lib\platform\zephyr\*
-
-T1oI2C
-- Name: T1oI2C
-- License: Apache-2.0
-- Type of content: source code
-- Description: T1oI2C
-- Origin: NXP (Apache-2.0)
-- Location: lib\t1oi2c
-
-zephyr
-- Name: zephyr
-- License: Apache-2.0
-- Type of content: Build files
-- Description: Enabler to run the nano package on Zephyr OS
-- Origin: NXP (Apache-2.0)
-- Location: zephyr
