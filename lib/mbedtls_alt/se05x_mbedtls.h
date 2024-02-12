@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 NXP
+ * Copyright 2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -20,5 +20,6 @@ extern Se05xSession_t pSession;
     }
 
 smStatus_t se05x_open_session(void);
+smStatus_t se05x_close_session(void);
 
 #endif /* __SE05X_MBEDTLS_H__ */

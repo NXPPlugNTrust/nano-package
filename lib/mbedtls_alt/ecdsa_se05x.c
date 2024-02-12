@@ -4,7 +4,7 @@
  * @version 1.0
  * @par License
  *
- * Copyright 2022 NXP
+ * Copyright 2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  *
  * @par Description
@@ -43,74 +43,6 @@ extern int mbedtls_ecdsa_sign_o(mbedtls_ecp_group *grp,
     int (*f_rng)(void *, unsigned char *, size_t),
     void *p_rng);
 
-/** @brief Ec Signature To RandS.
- * This function generates RandS from signature.
- *
- * @param signature - Buffer containing the signature to read and verify.
- * @param sigLen - Size of signature in bytes.
- *
- * @returns Status of the operation
- * @retval 0 The operation has completed successfully.
- * @retval -1 The requested function could not be performed.
- */
-static int EcSignatureToRandS(uint8_t *signature, size_t *sigLen)
-{
-    int result         = -1;
-    uint8_t rands[128] = {0};
-    int index          = 0;
-    size_t i           = 0;
-    size_t len         = 0;
-    if (signature[index++] != 0x30) {
-        goto exit;
-    }
-    if (signature[index++] != (*sigLen - 2)) {
-        goto exit;
-    }
-    if (signature[index++] != 0x02) {
-        goto exit;
-    }
-
-    len = signature[index++];
-    if (len & 0x80) {
-        /* Signature length will never exceed 0x7F */
-        len = signature[index++];
-    }
-    if (len & 0x01) {
-        len--;
-        index++;
-    }
-
-    for (i = 0; i < len; i++) {
-        rands[i] = signature[index++];
-    }
-
-    if (signature[index++] != 0x02) {
-        goto exit;
-    }
-
-    len = signature[index++];
-    if (len & 0x80) {
-        /* Signature length will never exceed 0x7F */
-        len = signature[index++];
-    }
-    if (len & 0x01) {
-        len--;
-        index++;
-    }
-
-    len = len + i;
-    for (; i < len; i++) {
-        rands[i] = signature[index++];
-    }
-
-    memcpy(&signature[0], &rands[0], i);
-    *sigLen = i;
-
-    result = 0;
-
-exit:
-    return result;
-}
 
 int mbedtls_ecdsa_sign(mbedtls_ecp_group *grp,
     mbedtls_mpi *r,
@@ -130,9 +62,12 @@ int mbedtls_ecdsa_sign(mbedtls_ecp_group *grp,
     uint8_t buffer[150]     = {0};
     uint8_t signature[128]  = {0};
     size_t signature_len    = sizeof(signature);
+    const unsigned char *end = NULL;
+    unsigned char *p = NULL;
+    size_t len = 0;
     size_t rawPrivatekeylen = mbedtls_mpi_size(d);
-    int ret                 = mbedtls_mpi_write_binary(d, buffer, rawPrivatekeylen);
 
+    int ret                 = mbedtls_mpi_write_binary(d, buffer, rawPrivatekeylen);
     if (ret != 0) {
         SMLOG_E("Error %d\r\n", ret);
         return -1;
@@ -151,18 +86,21 @@ int mbedtls_ecdsa_sign(mbedtls_ecp_group *grp,
     status = se05x_open_session();
     if (status != SM_OK) {
         SMLOG_E("Failed to initialize SE05x session\r\n");
-        return -1;
+        ret = -1;
+        goto exit;
     }
 
     status = Se05x_API_CheckObjectExists(&pSession, keyID, &result);
     if (status != SM_OK) {
         SMLOG_E("Error in Se05x_API_CheckObjectExists\r\n");
-        return -1;
+        ret = -1;
+        goto exit;
     }
 
     if (result != kSE05x_Result_SUCCESS) {
         SMLOG_E("Object not provisioned\r\n");
-        return -1;
+        ret = -1;
+        goto exit;
     }
 
     SMLOG_I("Using SE05x for ecdsa sign");
@@ -170,33 +108,40 @@ int mbedtls_ecdsa_sign(mbedtls_ecp_group *grp,
         &pSession, keyID, kSE05x_ECSignatureAlgo_SHA_256, (uint8_t *)buf, blen, signature, &signature_len);
     if (status != SM_OK) {
         SMLOG_E("Error in Se05x_API_ECDSASign \n");
-        return -1;
+        ret = -1;
+        goto exit;
     }
 
-    ret = EcSignatureToRandS(signature, &signature_len);
-    if (ret != 0) {
-        SMLOG_E("EcSignatureToRandS failed\r\n");
-        return -1;
+    end = signature + signature_len;
+    p = (unsigned char *) signature;
+
+    if ((ret = mbedtls_asn1_get_tag(&p, end, &len,
+                                MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) != 0) {
+        SMLOG_E("Error in mbedtls_asn1_get_tag \n");
+        goto exit;
     }
 
-    if ((signature_len % 2) != 0) {
-        SMLOG_E("Invalid R and S values\r\n");
-        return -1;
+    if (p + len != end) {
+        ret = -1;
+        goto exit;
     }
 
-    ret = mbedtls_mpi_read_binary(r, (const unsigned char *)&signature[0], (signature_len / 2));
-    if (ret != 0) {
-        SMLOG_E("mbedtls_mpi_read_binary failed\r\n");
-        return -1;
+    ret  = mbedtls_asn1_get_mpi(&p, end, r);
+    if (ret != 0){
+        SMLOG_E("Error in mbedtls_asn1_get_mpi \n");
+        goto exit;
     }
 
-    ret = mbedtls_mpi_read_binary(s, (const unsigned char *)&signature[signature_len / 2], (signature_len / 2));
-    if (ret != 0) {
-        SMLOG_E("mbedtls_mpi_read_binary failed\r\n");
-        return -1;
+    ret = mbedtls_asn1_get_mpi(&p, end, s);
+    if (ret != 0){
+        SMLOG_E("Error in mbedtls_asn1_get_mpi \n");
+        goto exit;
     }
 
-    return 0;
+    ret = 0;
+exit:
+    se05x_close_session();
+    return ret;
 }
 
 #endif /* MBEDTLS_ECDSA_SIGN_ALT */
