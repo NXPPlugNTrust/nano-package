@@ -112,7 +112,7 @@ Refer `simw-nanopkg/se05x_crypto/k64/readme.rst`.
 
 **Examples on Zephyr OS**
 
-Integration of nano package in Zephyr OS is maintained in branch - **feature/zephyr-integration**
+Integration of nano package in Zephyr OS (Tested with release tag - zephyr-v3.0.0) is maintained in branch - **feature/zephyr-integration**
 
 Refer `simw-nanopkg/zephyr/readme.rst`.
 
@@ -137,6 +137,8 @@ Mbedtls Alt files
 Nano package provides MbedTLS Alt files as an alternative/additional approach to access the secure element using mbedTLS.
 
 In the current implementation only ECDSA Sign is supported via MbedTLS ALT files.
+
+Note - The session for se05x is opened and closed for every ECDSA sign. For the product deployment, make sure to change the logic as required.
 
 
 **Using Mbedtls Alt files in Zephyr OS**

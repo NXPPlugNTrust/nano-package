@@ -7,7 +7,7 @@ Overview
 ===================================
 
 Plug-and-Trust nano package can be used to add the EdgeLock SE05x and A5000
-secure elements and authenticators support in Zephyr OS.
+secure elements and authenticators support in Zephyr OS. (Tested with release tag - zephyr-v3.0.0)
 
 Refer :file:`doc/plug-and-trust-nano-package-api-doc.pdf`
 for Plug and Trust Crypto APIs.

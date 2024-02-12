@@ -43,6 +43,7 @@ if(CONFIG_PLUGANDTRUST)
       ../../mbedtls/include
       ../../mbedtls/library
     )
+    add_definitions(-DMBEDTLS_ECDSA_SIGN_ALT)
   endif()
 
   zephyr_library()
