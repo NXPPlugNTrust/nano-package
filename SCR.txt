@@ -6,8 +6,9 @@ Version: 1.2.2
 Outgoing License: Apache-2.0
 License File: LICENSE.txt
 Description and comments: Plug&Trust Nano Package
-Release Location: https://github.com/NXPPlugNTrust/nano-package.git Branch: master
+Release Location: https://github.com/NXPPlugNTrust/nano-package.git Branch: feature/zephyr-integration
 Origin: NXP (Apache-2.0)
              Mbedtls ALT files (Apache-2.0) Version: 2.26.0 - https://github.com/Mbed-TLS/mbedtls
+             TinyCrypt files (BSD 3-clause "New" or "Revised" License) version - https://github.com/intel/tinycrypt
 
 --------------------------------------------------------------------------------------------------
