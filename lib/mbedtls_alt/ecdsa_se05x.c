@@ -13,8 +13,8 @@
  *****************************************************************************/
 
 #include "common.h"
-#include <kernel.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <stdio.h>
 #include <sm_port.h>
 

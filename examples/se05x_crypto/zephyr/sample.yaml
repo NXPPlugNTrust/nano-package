@@ -1,0 +1,13 @@
+sample:
+  description: se05x crypto example
+  name: se05x_crypto
+common:
+    harness: console
+    harness_config:
+      type: one_line
+      regex:
+        - "ex_nist256_sign_policy, PASSED"
+tests:
+  nxp-plugandtrust.examples.se05x_crypto:
+    platform_allow: frdm_k64f
+    tags: se05x

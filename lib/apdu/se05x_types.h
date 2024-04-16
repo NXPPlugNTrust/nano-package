@@ -1,7 +1,7 @@
 /** @file se05x_types.h
  *  @brief .
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -19,7 +19,7 @@
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 2
-#define VERSION_DEV 2
+#define VERSION_DEV 3
 
 /**
 * APDU buffer size.

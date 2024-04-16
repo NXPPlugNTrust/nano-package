@@ -7,6 +7,11 @@ ChangeLog
 ---------
 
 
+**Release v1.2.3**
+
+- Zephyr integration branch (feature/zephyr-integration) merged to master.
+- Zephyr integration updated to zephyr release - v3.5.0.
+
 **Release v1.2.2**
 
 - MbedTLS alt ecdsa bug fix - Updated function used to extract r and s using mbedtls APIs

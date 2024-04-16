@@ -6,19 +6,20 @@
  */
 
 /* ********************** Include files ********************** */
-#include <stdio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
 
 /* ********************** Extern functions ********************** */
 extern int ex_se05x_crypto();
 
-void main(void)
+int main(void)
 {
-    printf("Se05x crypto Example !\n");
+    printk("Se05x Crypto Example ! %s\n", CONFIG_BOARD);
     if (ex_se05x_crypto() != 0) {
-        printf("SE05x crypto Example Failed !\n");
+        printk("SE05x crypto Example Failed !\n");
     }
     else {
-        printf("SE05x crypto Example Success ! \n");
+        printk("SE05x crypto Example Success ! \n");
     }
-    return;
+    return 0;
 }
