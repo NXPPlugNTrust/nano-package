@@ -16,6 +16,14 @@ config PLUGANDTRUST_SCP03
 	help
 	  This option enables secure channel for SE05x.
 
+config PLUGANDTRUST_I2C_PORT_NAME
+	string "I2C port used to connect SE05x"
+	default "I2C_0"
+	help
+	  I2C port used to connect SE05x.
+	  This is a label for the I2C port to be used,
+	  so a label in the device tree needs to be added in order for this config to work
+
 config PLUGANDTRUST_MBEDTLS_ALT
 	bool "Use ALT implementation for mbedTLS of SE05x"
 	help
