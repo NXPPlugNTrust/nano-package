@@ -1,0 +1,19 @@
+manifest:
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: zephyr-v3.5.0
+      import:
+        name-allowlist:
+          - cmsis
+          - hal_nxp
+          - tinycrypt
+          - segger
+
+  self:
+    path: modules/crypto/nxp-plugandtrust/

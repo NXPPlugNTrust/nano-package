@@ -1,0 +1,15 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+ /
+
+{
+	aliases {
+		se05x-i2c = &arduino_i2c;
+	};
+};
+
+&arduino_i2c {
+	status = "okay";
+};

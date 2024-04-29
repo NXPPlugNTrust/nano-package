@@ -14,7 +14,7 @@
 #include "sm_port.h"
 
 /* ********************** Defines ********************** */
-#define SE05X_I2C_DEV i2c0
+#define I2C_DEV_NODE    DT_ALIAS(se05x_i2c)
 #define SE05X_I2C_DEV_ADDR 0x48
 
 /* ********************** Global variables ********************** */
@@ -29,7 +29,7 @@ i2c_error_t axI2CInit(void **conn_ctx, const char *pDevName)
 {
     uint32_t i2c_cfg = I2C_SPEED_SET(I2C_SPEED_STANDARD) | I2C_MODE_CONTROLLER;
 
-    i2c_dev = DEVICE_DT_GET(DT_NODELABEL(SE05X_I2C_DEV));
+    i2c_dev = DEVICE_DT_GET(I2C_DEV_NODE);
     if (!i2c_dev) {
         SMLOG_E("Error in i2c device_get_binding \n");
         return I2C_FAILED;
