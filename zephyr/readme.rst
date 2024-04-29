@@ -12,26 +12,23 @@ secure elements and authenticators support in Zephyr OS. (Tested with release ta
 Refer :file:`doc/plug-and-trust-nano-package-api-doc.pdf`
 for Plug and Trust Crypto APIs.
 
+
 Zephyr Integration / Build
 ===================================
 
-Clone Plug-and-Trust nano package in Zephyr crypto modules -- :file:`<ZEPHYR_PROJECT>/modules/crypto`.
+Refer official Zephyr Getting Started Guide to Set up the Zephyr development environment.
 
-Update west.yml file with NXP github remote and Plug-and-Trust module path  (updated the revision to latest),
+Clone the nano package and Zephyr (required modules) as below
 ::
 
-	remotes:
-    - name: upstream
-      url-base: https://github.com/zephyrproject-rtos
-    - name: nxp-git
-      url-base: https://github.com/NXPPlugNTrust
+	west init -m https://github.com/NXPPlugNTrust/nano-package.git --mf zephyr\west.yml workspace
+	cd workspace
+	west update
 
-    ...
 
-	name: nano-package
-	path: modules/crypto/nxp-plugandtrust
-	revision: c15d0316334000724f0c94ee7943696edf3d6917
-	remote: nxp-git
+.. note ::
+
+	The west.yml file will clone the Zephyr v3.5.0.
 
 
 Build Options
@@ -45,11 +42,8 @@ Use the below options in prj.conf file of the example.
 	CONFIG_PLUGANDTRUST_SCP03=y/n =============> Enable / Disable Platform SCP03 support.
 	CONFIG_PLUGANDTRUST_LOG_LEVEL_DBG=y/n =====> Enable / Disable Plug and Trust logs.
 
-Set I2C port used by SE05x in 'lib/platform/zephyr/sm_i2c.c'
 
-::
-
-	#define SE05X_I2C_DEV i2c0
+Use the board overlay files to set the i2c port to alias - `se05x-i2c`. Refer frdm_k64f.overlay file for reference.
 
 
 Examples
@@ -58,13 +52,8 @@ Examples
 Build Plug and Trust examples on Zephyr OS as
 ::
 
-	cd <ZEPHYR_PROJECT>/zephyr
-	west build -b <BOARD> ../modules/crypto/nxp-plugandtrust/examples/<EXAMPLE_NAME>/zephyr/ --pristine
-
-
-.. note ::
-
-	Currently examples are tested with frdm_k64f board.
+	cd workspace/
+	west build -b <BOARD> modules/crypto/nxp-plugandtrust/examples/<EXAMPLE_NAME>/zephyr/ --pristine
 
 
 Test Runner (Twister)

@@ -6,6 +6,10 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.2.4**
+
+- Examples for Zephyr updated with board overlay files.
+- Added manifest file for nano package integration in Zephyr OS (zephyr/west.yml)
 
 **Release v1.2.3**
 
