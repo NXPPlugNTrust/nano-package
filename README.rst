@@ -104,11 +104,11 @@ Examples
 
 Refer `simw-nanopkg/examples/<example>/readme.rst`.
 
-**Examples on k64**
+**Examples on FRDM-K64F**
 
 Refer `simw-nanopkg/se05x_sign/k64f/readme.rst`.
 
-Refer `simw-nanopkg/se05x_crypto/k64/readme.rst`.
+Refer `simw-nanopkg/se05x_crypto/k64f/readme.rst`.
 
 **Examples on Zephyr OS**
 

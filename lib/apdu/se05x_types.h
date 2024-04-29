@@ -19,7 +19,7 @@
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 2
-#define VERSION_DEV 3
+#define VERSION_DEV 4
 
 /**
 * APDU buffer size.
