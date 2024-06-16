@@ -1,0 +1,6 @@
+/Debug/
+/Release/
+.settings
+MCXN947_se05x_mandate_scp03 LinkServer Debug.launch
+MCXN947_se05x_mandate_scp03 LinkServer Release.launch
+script.jlink

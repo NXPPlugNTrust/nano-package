@@ -1,0 +1,6 @@
+/Debug/
+/Release/
+.settings
+MCXA153_se05x_crypto LinkServer Debug.launch
+MCXA153_se05x_crypto LinkServer Release.launch
+script.jlink

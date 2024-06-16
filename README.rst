@@ -172,6 +172,29 @@ Refer [simw-nanopkg/examples/se05x_mandate_scp03/k64f/readme.rst](https://github
 Refer [simw-nanopkg/examples/se05x_resume_scp03/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/k64f/readme.rst)
 
 Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/k64f/readme.rst)
+
+**Examples on FRDM-MCXN**
+
+Refer [simw-nanopkg/examples/se05x_sign/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxn947/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_crypto/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxn947/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_GetInfo/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxn947/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_mandate_scp03/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/mcxn947/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_resume_scp03/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/mcxn947/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/mcxn947/readme.rst)
+
+**Examples on FRDM-MCXA**
+
+Refer [simw-nanopkg/examples/se05x_sign/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxa153/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_crypto/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxa153/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_GetInfo/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxa153/readme.rst)
+
 **Examples on Zephyr OS**
 
 Refer [simw-nanopkg/examples/se05x_sign/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst)

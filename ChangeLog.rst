@@ -6,6 +6,13 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.3.0**
+
+- EC Key Authentication support added.
+- PlatformSCP03 + EC Key Authentication support added.
+- New platforms - mcxn947 and mcxa153 support.
+- IMPORTANT: cmake option `-DPLUGANDTRUST_SCP03` is removed. -DPLUGANDTRUST_SE05X_AUTH:STRING=<OPTION> is added to chose between multiple authentication.
+
 **Release v1.2.4**
 
 - Examples for Zephyr updated with board overlay files.

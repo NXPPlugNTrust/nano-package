@@ -1,0 +1,6 @@
+/Debug/
+/Release/
+.settings
+MCXA153_se05x_getInfo LinkServer Debug.launch
+MCXA153_se05x_getInfo LinkServer Release.launch
+script.jlink
