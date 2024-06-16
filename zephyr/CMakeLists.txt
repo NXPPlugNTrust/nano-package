@@ -11,6 +11,8 @@ if(CONFIG_PLUGANDTRUST)
     ../lib/apdu/smCom.c
     ../lib/apdu/se05x_tlv.c
     ../lib/apdu/scp03/se05x_scp03.c
+    ../lib/apdu/eckey/se05x_ec_key_auth.c
+    ../lib/apdu/scp03/se05x_auth_utils.c
     ../lib/apdu/scp03/tc/se05x_scp03_crypto_tc.c
     ../lib/t1oi2c/phNxpEse_Api.c
     ../lib/t1oi2c/phNxpEsePal_i2c.c
@@ -54,6 +56,14 @@ if(CONFIG_PLUGANDTRUST)
 
   if(CONFIG_PLUGANDTRUST_SCP03)
     add_definitions(-DWITH_PLATFORM_SCP03)
+  endif()
+
+  if(CONFIG_PLUGANDTRUST_ECKEY)
+    add_definitions(-DWITH_ECKEY_SESSION)
+  endif()
+
+  if(CONFIG_PLUGANDTRUST_ECKEY_SCP03)
+    add_definitions(-DWITH_ECKEY_SCP03_SESSION)
   endif()
 
 endif()
