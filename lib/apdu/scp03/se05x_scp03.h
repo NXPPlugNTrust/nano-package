@@ -13,6 +13,57 @@
 
 /* ********************** Function Prototypes ********************** */
 
+/** Se05x_API_SCP03_Encrypt
+ *
+ * SCP03 Encryption of commands.
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
+    const tlvHeader_t *inhdr,
+    uint8_t *cmdBuf,
+    size_t cmdBufLen,
+    uint8_t hasle,
+    uint8_t *encCmdBuf,
+    size_t *encCmdBufLen);
+
+/** Se05x_API_SCP03_Decrypt
+ *
+ * SCP03 Decryption of commands.
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_SCP03_Decrypt(pSe05xSession_t session_ctx,
+    size_t cmdBufLen,
+    uint8_t *encBuf,
+    size_t encBufLen,
+    uint8_t *decCmdBuf,
+    size_t *decCmdBufLen);
+
+/** Se05x_API_ECKeyAuth_Encrypt
+ *
+ * EcKey Auth Encryption of commands.
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_ECKeyAuth_Encrypt(pSe05xSession_t session_ctx,
+    const tlvHeader_t *inhdr,
+    uint8_t *cmdBuf,
+    size_t cmdBufLen,
+    uint8_t hasle,
+    tlvHeader_t *outhdr,
+    uint8_t *encCmdBuf,
+    size_t *encCmdBufLen);
+
+/** Se05x_API_ECKeyAuth_Decrypt
+ *
+ * EcKey Auth Decryption of commands.
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_ECKeyAuth_Decrypt(
+    pSe05xSession_t session_ctx, uint8_t *cmdBuf, size_t cmdBufLen, uint8_t *decCmdBuf, size_t *decCmdBufLen);
+
 /** Se05x_API_SCP03_GetSessionKeys
  *
  * Get SCP03 session keys.
@@ -52,7 +103,7 @@ smStatus_t Se05x_API_SCP03_GetMcvCounter(
 
 /** Se05x_API_SCP03_SetSessionKeys
  *
- * Set SCP03 session keys.
+ * Set SCP03 session keys (Used during session resume).
  *
  * @param[in]  session_ctx  The session context
  * @param[in]  encKey       Enc key buffer
@@ -91,68 +142,75 @@ smStatus_t Se05x_API_SCP03_SetMcvCounter(pSe05xSession_t pSessionCtx,
     const size_t mcvLen);
 
 /*! \cond PRIVATE */
-/** Se05x_API_SCP03_CalculateMacRspApdu
- *
- * Calculate MAC for response APDU using RMAC keys.
- *
- * @return     The sm status.
- */
-smStatus_t Se05x_API_SCP03_CalculateMacRspApdu(
-    pSe05xSession_t session_ctx, uint8_t *inData, size_t inDataLen, uint8_t *outSignature, size_t *outSignatureLen);
 
-/** Se05x_API_SCP03_CalculateMacCmdApdu
+/** Se05x_API_Auth_CalculateMacCmdApdu
  *
  * Calculate MAC for command APDU using MAC keys.
  *
  * @return     The sm status.
  */
-smStatus_t Se05x_API_SCP03_CalculateMacCmdApdu(
-    pSe05xSession_t session_ctx, uint8_t *inData, size_t inDataLen, uint8_t *outSignature, size_t *outSignatureLen);
+smStatus_t Se05x_API_Auth_CalculateMacCmdApdu(uint8_t *sessionMacKey,
+    uint8_t *mcv,
+    uint8_t *inData,
+    size_t inDataLen,
+    uint8_t *outSignature,
+    size_t *outSignatureLen);
 
-/** Se05x_API_SCP03_PadCommandAPDU
+/** Se05x_API_Auth_CalculateMacRspApdu
+ *
+ * Calculate MAC for response APDU using RMAC keys.
+ *
+ * @return     The sm status.
+ */
+smStatus_t Se05x_API_Auth_CalculateMacRspApdu(uint8_t *sessionRmacKey,
+    uint8_t *mcv,
+    uint8_t *inData,
+    size_t inDataLen,
+    uint8_t *outSignature,
+    size_t *outSignatureLen);
+
+/** Se05x_API_Auth_PadCommandAPDU
  *
  * Pad command APDU.
  *
  * @return     The sm status.
  */
-smStatus_t Se05x_API_SCP03_PadCommandAPDU(pSe05xSession_t session_ctx, uint8_t *cmdBuf, size_t *pCmdBufLen);
+smStatus_t Se05x_API_Auth_PadCommandAPDU(uint8_t *cmdBuf, size_t *pCmdBufLen);
 
-/** Se05x_API_SCP03_CalculateCommandICV
+/** Se05x_API_Auth_CalculateCommandICV
  *
  * Calculate command ICV.
  *
  * @return     The sm status.
  */
-smStatus_t Se05x_API_SCP03_CalculateCommandICV(pSe05xSession_t session_ctx, uint8_t *pIcv);
+smStatus_t Se05x_API_Auth_CalculateCommandICV(uint8_t *sessionEncKey, uint8_t *cCounter, uint8_t *pIcv);
 
-/** Se05x_API_SCP03_GetResponseICV
+/** Se05x_API_Auth_GetResponseICV
  *
  * Get Response ICV.
  *
  * @return     The sm status.
  */
-smStatus_t Se05x_API_SCP03_GetResponseICV(pSe05xSession_t session_ctx, uint8_t *pIcv, bool hasCmd);
+smStatus_t Se05x_API_Auth_GetResponseICV(bool hasCmd, uint8_t *cCounter, uint8_t *sessionEncKey, uint8_t *pIcv);
 
-/** Se05x_API_SCP03_RestoreSwRAPDU
+/** Se05x_API_Auth_RestoreSwRAPDU
  *
  * Restore Sw Response APDU.
  *
  * @return     The sm status.
  */
-smStatus_t Se05x_API_SCP03_RestoreSwRAPDU(pSe05xSession_t session_ctx,
-    uint8_t *rspBuf,
-    size_t *pRspBufLen,
-    uint8_t *plaintextResponse,
-    size_t plaintextRespLen,
-    uint8_t *sw);
+smStatus_t Se05x_API_Auth_RestoreSwRAPDU(
+    uint8_t *rspBuf, size_t *pRspBufLen, uint8_t *plaintextResponse, size_t plaintextRespLen, uint8_t *sw);
 
-/** Se05x_API_SCP03_IncCommandCounter
+/** Se05x_API_Auth_IncCommandCounter
  *
- * Increment scp03 commnd counter.
+ * Increment commnd counter.
+ * @param[in,out]  se05x_cCounter       Counter
  *
  * @return     void.
  */
-void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx);
+void Se05x_API_Auth_IncCommandCounter(uint8_t *se05x_cCounter);
+
 /*! \endcond */
 
 /*! \cond PRIVATE */
@@ -164,19 +222,19 @@ void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx);
         0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88 \
     }
 
-#define SCP_GP_IU_KEY_DIV_DATA_LEN 10   //!< SCP GP Init Update key Div length
-#define SCP_GP_IU_KEY_INFO_LEN 3        //!< SCP GP Init Update key info length
-#define SCP_GP_CARD_CHALLENGE_LEN 8     //!< SCP GP Card Challenge length
-#define SCP_GP_HOST_CHALLENGE_LEN 8     //!< SCP GP Host Challenge length
+#define SCP_GP_IU_KEY_DIV_DATA_LEN 10 //!< SCP GP Init Update key Div length
+#define SCP_GP_IU_KEY_INFO_LEN 3 //!< SCP GP Init Update key info length
+#define SCP_GP_CARD_CHALLENGE_LEN 8 //!< SCP GP Card Challenge length
+#define SCP_GP_HOST_CHALLENGE_LEN 8 //!< SCP GP Host Challenge length
 #define SCP_GP_IU_CARD_CRYPTOGRAM_LEN 8 //!< SCP GP Card Cryptogram length
-#define SCP_GP_IU_SEQ_COUNTER_LEN 3     //!< SCP GP Init Update Sequence Counter length
-#define SCP_GP_SW_LEN 2                 //!< SCP Status Word length
-#define CRYPTO_KEY_CHECK_LEN (3)        //!< SCP key check length
+#define SCP_GP_IU_SEQ_COUNTER_LEN 3 //!< SCP GP Init Update Sequence Counter length
+#define SCP_GP_SW_LEN 2 //!< SCP Status Word length
+#define CRYPTO_KEY_CHECK_LEN (3) //!< SCP key check length
 
 #define ASN_ECC_NIST_256_HEADER_LEN 26
 #define KEY_PARAMETER_REFERENCE_TAG 0xF0
 #define KEY_PARAMETER_REFERENCE_VALUE_LEN 0x01 // Fixed for Nist256key
-#define KEY_PARAMETER_REFERENCE_VALUE 0x03     // key parameter value need to check in the spec it is 00
+#define KEY_PARAMETER_REFERENCE_VALUE 0x03 // key parameter value need to check in the spec it is 00
 #define GPCS_KEY_TYPE_ECC_NIST256 0xB0
 #define GPCS_KEY_TYPE_AES 0x88
 #define GPCS_KEY_LEN_AES 16
@@ -186,36 +244,36 @@ void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx);
 
 #define SCP_MCV_LEN 16 // MAC Chaining Length
 
-#define CLA_ISO7816 (0x00)         //!< ISO7816-4 defined CLA byte
-#define CLA_GP_7816 (0x80)         //!< GP 7816-4 defined CLA byte
+#define CLA_ISO7816 (0x00) //!< ISO7816-4 defined CLA byte
+#define CLA_GP_7816 (0x80) //!< GP 7816-4 defined CLA byte
 #define CLA_GP_SECURITY_BIT (0x04) //!< GP CLA Security bit
 
-#define INS_GP_INITIALIZE_UPDATE (0x50)     //!< Global platform defined instruction
+#define INS_GP_INITIALIZE_UPDATE (0x50) //!< Global platform defined instruction
 #define INS_GP_EXTERNAL_AUTHENTICATE (0x82) //!< Global platform defined instruction
-#define INS_GP_SELECT (0xA4)                //!< Global platform defined instruction
-#define INS_GP_PUT_KEY (0xD8)               //!< Global platform defined instruction
+#define INS_GP_SELECT (0xA4) //!< Global platform defined instruction
+#define INS_GP_PUT_KEY (0xD8) //!< Global platform defined instruction
 #define INS_GP_INTERNAL_AUTHENTICATE (0x88) //!< Global platform defined instruction
-#define INS_GP_GET_DATA (0xCA)              //!< Global platform defined instruction
-#define P1_GP_GET_DATA (0xBF)               //!< Global platform defined instruction
-#define P2_GP_GET_DATA (0x21)               //!< Global platform defined instruction
+#define INS_GP_GET_DATA (0xCA) //!< Global platform defined instruction
+#define P1_GP_GET_DATA (0xBF) //!< Global platform defined instruction
+#define P2_GP_GET_DATA (0x21) //!< Global platform defined instruction
 
 /* Sizes used in SCP */
 #define AES_KEY_LEN_nBYTE (16) //!< AES key length
 
 #define SCP_KEY_SIZE (16)
-#define SCP_CMAC_SIZE (16)       // length of the CMAC calculated (and used as MAC chaining value)
-#define SCP_IV_SIZE (16)         // length of the Inital Vector
+#define SCP_CMAC_SIZE (16) // length of the CMAC calculated (and used as MAC chaining value)
+#define SCP_IV_SIZE (16) // length of the Inital Vector
 #define SCP_COMMAND_MAC_SIZE (8) // length of the MAC appended in the APDU payload (8 'MSB's)
 
-#define DATA_CARD_CRYPTOGRAM (0x00)        //!< Data card cryptogram
-#define DATA_HOST_CRYPTOGRAM (0x01)        //!< Data host cryptogram
-#define DATA_DERIVATION_SENC (0x04)        //!< Data Derivation to generate Sess ENC Key
-#define DATA_DERIVATION_SMAC (0x06)        //!< Data Derivation to generate Sess MAC Key
-#define DATA_DERIVATION_SRMAC (0x07)       //!< Data Derivation to generate Sess RMAC Key
+#define DATA_CARD_CRYPTOGRAM (0x00) //!< Data card cryptogram
+#define DATA_HOST_CRYPTOGRAM (0x01) //!< Data host cryptogram
+#define DATA_DERIVATION_SENC (0x04) //!< Data Derivation to generate Sess ENC Key
+#define DATA_DERIVATION_SMAC (0x06) //!< Data Derivation to generate Sess MAC Key
+#define DATA_DERIVATION_SRMAC (0x07) //!< Data Derivation to generate Sess RMAC Key
 #define DATA_DERIVATION_INITIAL_MCV (0x08) //!< Data Derivation to generate Initial MCV
-#define DATA_DERIVATION_L_64BIT (0x0040)   //!< Data Derivation length
-#define DATA_DERIVATION_L_128BIT (0x0080)  //!< Data Derivation length
-#define DATA_DERIVATION_KDF_CTR (0x01)     //!< Data Derivation counter
+#define DATA_DERIVATION_L_64BIT (0x0040) //!< Data Derivation length
+#define DATA_DERIVATION_L_128BIT (0x0080) //!< Data Derivation length
+#define DATA_DERIVATION_KDF_CTR (0x01) //!< Data Derivation counter
 
 #define DD_LABEL_LEN 12 //!< Data Derivation length
 
@@ -232,18 +290,18 @@ void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx);
 #define CMAC_SIZE (8) //!< CMAC Compare size
 
 #define SCP_OK (SW_OK)
-#define SCP_UNDEFINED_CHANNEL_ID (0x7041)            //!< Undefined SCP channel identifier
-#define SCP_FAIL (0x7042)                            //!< Undefined SCP channel identifier
+#define SCP_UNDEFINED_CHANNEL_ID (0x7041) //!< Undefined SCP channel identifier
+#define SCP_FAIL (0x7042) //!< Undefined SCP channel identifier
 #define SCP_CARD_CRYPTOGRAM_FAILS_TO_VERIFY (0x7043) //!< Undefined SCP channel identifier
-#define SCP_PARAMETER_ERROR (0x7044)                 //!< Undefined SCP channel identifier
+#define SCP_PARAMETER_ERROR (0x7044) //!< Undefined SCP channel identifier
 
-#define NO_C_MAC_NO_C_ENC_NO_R_MAC_NO_R_ENC 0                   //!< No security requested
-#define C_MAC_NO_C_ENC_R_MAC_NO_R_ENC (C_MAC | R_MAC)           //!< One apply MAC'ing (Not implemented)
+#define NO_C_MAC_NO_C_ENC_NO_R_MAC_NO_R_ENC 0 //!< No security requested
+#define C_MAC_NO_C_ENC_R_MAC_NO_R_ENC (C_MAC | R_MAC) //!< One apply MAC'ing (Not implemented)
 #define C_MAC_C_ENC_R_MAC_R_ENC (C_MAC | C_ENC | R_MAC | R_ENC) //!< Apply full security
 #define SECURITY_LEVEL C_MAC_C_ENC_R_MAC_R_ENC
 
 #define APPLET_SCP_INIT_UPDATE_LEN 0x0D //!< Applet SCP Initialize Update Length
-#define APPLET_SCP_EXT_AUTH_LEN 0x15    //!< Applet SCP External Authenticate Length
+#define APPLET_SCP_EXT_AUTH_LEN 0x15 //!< Applet SCP External Authenticate Length
 
 #define CONTEXT_LENGTH (SCP_GP_HOST_CHALLENGE_LEN + SCP_GP_CARD_CHALLENGE_LEN)
 #define DAA_BUFFER_LEN (CONTEXT_LENGTH + DD_LABEL_LEN + 16)

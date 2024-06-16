@@ -32,17 +32,16 @@ To build example run ::
 	cd simw-nanopkg/examples/se05x_rotate_scp03_keys/linux
 	mkdir build
 	cd build
-	cmake ../ -DPLUGANDTRUST_SCP03=ON
+	cmake ../ -DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03
 	make
 	./ex_se05x_rotate_scp03_keys
 
 
 **Build options**
 
-Platform SCP03 ::
+Authentication ::
 
-	-DPLUGANDTRUST_SCP03=ON : Build with Platform SCP03 enabled
-	-DPLUGANDTRUST_SCP03=OFF : Build with Platform SCP03 disabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03 : Build with Platform SCP03 enabled
 
 Debug Logs ::
 

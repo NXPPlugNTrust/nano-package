@@ -11,8 +11,8 @@ Refer file - 'simw-nanopkg/examples/se05x_crypto/src/ex_se05x_crypto.c'
 
 .. note ::
 
-	When building the example with 'Platform SCP' enabled, make sure to
-	assign valid scp03 keys to session context.
+	When building the example with 'Platform SCP' / `ECkey` enabled, make sure to
+	assign valid scp03 / EC keys to session context.
 
 **Linux Prerequisite**
 
@@ -33,10 +33,12 @@ To build example run ::
 
 **Build options**
 
-Platform SCP03 ::
+Authentication ::
 
-	-DPLUGANDTRUST_SCP03=ON -- Build with Platform SCP03 enabled
-	-DPLUGANDTRUST_SCP03=OFF -- Build with Platform SCP03 disabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=None : Build with no authentication
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03 : Build with Platform SCP03 enabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey : Build with ECKey Authentication enabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey_PlatSCP03 : Build with EcKey and Platform SCP03 combined
 
 Debug Logs ::
 

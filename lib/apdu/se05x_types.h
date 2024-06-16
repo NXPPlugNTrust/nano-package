@@ -18,18 +18,17 @@
 
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 2
-#define VERSION_DEV 4
+#define VERSION_MINOR 3
+#define VERSION_DEV 0
 
 /**
 * APDU buffer size.
-* Increasing the buffer size will require changes in T10I2C layer.
-* The stack is tested only with Buffer size of 170 Bytes.
+* The stack is tested with Buffer size of 255 Bytes.
 */
 #if defined(CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE) && CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE > 0
 #define MAX_APDU_BUFFER CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE
 #else
-#define MAX_APDU_BUFFER 170
+#define MAX_APDU_BUFFER 255
 #endif
 
 /** NXP reserved object id */
@@ -110,6 +109,8 @@ typedef struct
     void *conn_context;
     /** Set skip_applet_select = 1, to skip the se05x applet selection.*/
     uint8_t skip_applet_select;
+    /** Applet Version*/
+    uint32_t applet_version;
     /** Apdu buffer used for Tx/Rx */
     uint8_t apdu_buffer[MAX_APDU_BUFFER];
     /** PlatformSCP03 ENC key. Set to NULL in case of plain session */
@@ -124,10 +125,32 @@ typedef struct
     uint8_t *pScp03_dek_key;
     /** PlatformSCP03 DEK key length. Set to 0 in case of plain session */
     size_t scp03_dek_key_len;
-    /** PlatformSCP03 session status */
-    uint8_t scp03_session;
+    /** EC Auth key */
+    uint8_t *pEc_auth_key;
+    /** EC Auth key length */
+    size_t ec_auth_key_len;
     /** Set 1 to resume session */
     uint8_t session_resume;
+    /** PlatformSCP03 session status */
+    uint8_t scp03_session;
+    /** Eckey session status*/
+    uint8_t ecKey_session;
+
+    /** PlatformSCP03 dynamic keys */
+    uint8_t scp03_session_enc_Key[16];
+    uint8_t scp03_session_mac_Key[16];
+    uint8_t scp03_session_rmac_Key[16];
+    uint8_t scp03_counter[16];
+    uint8_t scp03_mcv[16];
+
+    /** ECKeys dynamic keys */
+    uint8_t eckey_session_enc_Key[16];
+    uint8_t eckey_session_mac_Key[16];
+    uint8_t eckey_session_rmac_Key[16];
+    uint8_t eckey_counter[16];
+    uint8_t eckey_mcv[16];
+    uint8_t eckey_applet_session_value[8];
+
 } Se05xSession_t;
 
 typedef Se05xSession_t *pSe05xSession_t;

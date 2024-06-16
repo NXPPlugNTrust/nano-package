@@ -1,9 +1,11 @@
 /** @file se05x_scp03.c
  *  @brief Se05x SCP03 implementation.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
+
+#if defined(WITH_PLATFORM_SCP03) || defined(WITH_ECKEY_SCP03_SESSION)
 
 /* ********************** Include files ********************** */
 #include "sm_port.h"
@@ -14,25 +16,15 @@
 #include "se05x_scp03.h"
 #include <limits.h>
 
-/* ********************** Global variables ********************** */
-
-uint8_t se05x_sessionEncKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_sessionMacKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_sessionRmacKey[AES_KEY_LEN_nBYTE] = {
-    0,
-};
-uint8_t se05x_cCounter[16] = {
-    0,
-};
-uint8_t se05x_mcv[SCP_CMAC_SIZE] = {
-    0,
-};
-
 /* ********************** Functions ********************** */
+
+extern int Se05x_API_Auth_setDerivationData(uint8_t ddA[],
+    uint16_t *pDdALen,
+    uint8_t ddConstant,
+    uint16_t ddL,
+    uint8_t iCounter,
+    const uint8_t *context,
+    uint16_t contextLen);
 
 smStatus_t Se05x_API_SCP03_GetSessionKeys(pSe05xSession_t session_ctx,
     uint8_t *encKey,
@@ -55,9 +47,9 @@ smStatus_t Se05x_API_SCP03_GetSessionKeys(pSe05xSession_t session_ctx,
     ENSURE_OR_RETURN_ON_ERROR(*macKey_len >= AES_KEY_LEN_nBYTE, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(*rMacKey_len >= AES_KEY_LEN_nBYTE, SM_NOT_OK);
 
-    memcpy(encKey, se05x_sessionEncKey, AES_KEY_LEN_nBYTE);
-    memcpy(macKey, se05x_sessionMacKey, AES_KEY_LEN_nBYTE);
-    memcpy(rMacKey, se05x_sessionRmacKey, AES_KEY_LEN_nBYTE);
+    memcpy(encKey, session_ctx->scp03_session_enc_Key, AES_KEY_LEN_nBYTE);
+    memcpy(macKey, session_ctx->scp03_session_mac_Key, AES_KEY_LEN_nBYTE);
+    memcpy(rMacKey, session_ctx->scp03_session_rmac_Key, AES_KEY_LEN_nBYTE);
 
     return SM_OK;
 }
@@ -72,11 +64,11 @@ smStatus_t Se05x_API_SCP03_GetMcvCounter(
     ENSURE_OR_RETURN_ON_ERROR(pMcv != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(pMcvLen != NULL, SM_NOT_OK);
 
-    ENSURE_OR_RETURN_ON_ERROR(*pCounterLen >= sizeof(se05x_cCounter), SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(*pMcvLen >= sizeof(se05x_mcv), SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(*pCounterLen >= sizeof(pSessionCtx->scp03_counter), SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(*pMcvLen >= sizeof(pSessionCtx->scp03_mcv), SM_NOT_OK);
 
-    memcpy(pCounter, se05x_cCounter, sizeof(se05x_cCounter));
-    memcpy(pMcv, se05x_mcv, sizeof(se05x_mcv));
+    memcpy(pCounter, pSessionCtx->scp03_counter, sizeof(pSessionCtx->scp03_counter));
+    memcpy(pMcv, pSessionCtx->scp03_mcv, sizeof(pSessionCtx->scp03_mcv));
 
     return SM_OK;
 }
@@ -98,9 +90,9 @@ smStatus_t Se05x_API_SCP03_SetSessionKeys(pSe05xSession_t session_ctx,
     ENSURE_OR_RETURN_ON_ERROR(macKey_len == AES_KEY_LEN_nBYTE, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(rMacKey_len == AES_KEY_LEN_nBYTE, SM_NOT_OK);
 
-    memcpy(se05x_sessionEncKey, encKey, AES_KEY_LEN_nBYTE);
-    memcpy(se05x_sessionMacKey, macKey, AES_KEY_LEN_nBYTE);
-    memcpy(se05x_sessionRmacKey, rMacKey, AES_KEY_LEN_nBYTE);
+    memcpy(session_ctx->scp03_session_enc_Key, encKey, AES_KEY_LEN_nBYTE);
+    memcpy(session_ctx->scp03_session_mac_Key, macKey, AES_KEY_LEN_nBYTE);
+    memcpy(session_ctx->scp03_session_rmac_Key, rMacKey, AES_KEY_LEN_nBYTE);
 
     return SM_OK;
 }
@@ -115,14 +107,16 @@ smStatus_t Se05x_API_SCP03_SetMcvCounter(pSe05xSession_t pSessionCtx,
     ENSURE_OR_RETURN_ON_ERROR(pCounter != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(pMcv != NULL, SM_NOT_OK);
 
-    ENSURE_OR_RETURN_ON_ERROR(counterLen == sizeof(se05x_cCounter), SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(mcvLen == sizeof(se05x_mcv), SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(counterLen == sizeof(pSessionCtx->scp03_counter), SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(mcvLen == sizeof(pSessionCtx->scp03_mcv), SM_NOT_OK);
 
-    memcpy(se05x_cCounter, pCounter, sizeof(se05x_cCounter));
-    memcpy(se05x_mcv, pMcv, sizeof(se05x_mcv));
+    memcpy(pSessionCtx->scp03_counter, pCounter, sizeof(pSessionCtx->scp03_counter));
+    memcpy(pSessionCtx->scp03_mcv, pMcv, sizeof(pSessionCtx->scp03_mcv));
 
     return SM_OK;
 }
+
+/* ********************** Internal Functions ********************** */
 
 static int nxScp03_GP_InitializeUpdate(pSe05xSession_t session_ctx,
     uint8_t *hostChallenge,
@@ -223,31 +217,6 @@ static int nxScp03_Generate_SessionKey(
     return hcrypto_cmac_oneshot(key, keylen, inData, inDataLen, outSignature, outSignatureLen);
 }
 
-static int nxScp03_setDerivationData(uint8_t ddA[],
-    uint16_t *pDdALen,
-    uint8_t ddConstant,
-    uint16_t ddL,
-    uint8_t iCounter,
-    const uint8_t *context,
-    uint16_t contextLen)
-{
-    ENSURE_OR_RETURN_ON_ERROR(ddA != NULL, 1);
-    ENSURE_OR_RETURN_ON_ERROR(pDdALen != NULL, 1);
-    ENSURE_OR_RETURN_ON_ERROR(context != NULL, 1);
-
-    // SCPO3 spec p9&10
-    memset(ddA, 0, DD_LABEL_LEN - 1);
-    ddA[DD_LABEL_LEN - 1] = ddConstant;
-    ddA[DD_LABEL_LEN]     = 0x00; // Separation Indicator
-    ddA[DD_LABEL_LEN + 1] = (uint8_t)(ddL >> 8);
-    ddA[DD_LABEL_LEN + 2] = (uint8_t)ddL;
-    ddA[DD_LABEL_LEN + 3] = iCounter;
-    memcpy(&ddA[DD_LABEL_LEN + 4], context, contextLen);
-    *pDdALen = DD_LABEL_LEN + 4 + contextLen;
-
-    return 0;
-}
-
 static int nxScp03_HostLocal_CalculateSessionKeys(
     pSe05xSession_t session_ctx, uint8_t *hostChallenge, uint8_t *cardChallenge)
 {
@@ -273,47 +242,59 @@ static int nxScp03_HostLocal_CalculateSessionKeys(
 
     // Set the Derviation data
     SMLOG_D("Set the Derviation data to generate Session ENC key \n");
-    ret = nxScp03_setDerivationData(
+    ret = Se05x_API_Auth_setDerivationData(
         ddA, &ddALen, DATA_DERIVATION_SENC, DATA_DERIVATION_L_128BIT, DATA_DERIVATION_KDF_CTR, context, contextLen);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, 1);
 
     // Calculate the Session-ENC key
-    ret = nxScp03_Generate_SessionKey(
-        session_ctx->pScp03_enc_key, session_ctx->scp03_enc_key_len, ddA, ddALen, se05x_sessionEncKey, &signatureLen);
+    ret = nxScp03_Generate_SessionKey(session_ctx->pScp03_enc_key,
+        session_ctx->scp03_enc_key_len,
+        ddA,
+        ddALen,
+        session_ctx->scp03_session_enc_Key,
+        &signatureLen);
     if (ret != 0) {
         SMLOG_D("Error in nxScp03_Generate_SessionKey");
         return 1;
     }
-    SMLOG_MAU8_D(" Output:se05x_sessionEncKey ==>", se05x_sessionEncKey, AES_KEY_LEN_nBYTE);
+    SMLOG_MAU8_D(" Output:scp03_session_enc_Key ==>", session_ctx->scp03_session_enc_Key, AES_KEY_LEN_nBYTE);
 
     // Set the Derviation data
     SMLOG_D("Set the Derviation data to generate Session MAC key \n");
-    ret = nxScp03_setDerivationData(
+    ret = Se05x_API_Auth_setDerivationData(
         ddA, &ddALen, DATA_DERIVATION_SMAC, DATA_DERIVATION_L_128BIT, DATA_DERIVATION_KDF_CTR, context, contextLen);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, 1);
     // Calculate the Session-MAC key
-    ret = nxScp03_Generate_SessionKey(
-        session_ctx->pScp03_mac_key, session_ctx->scp03_mac_key_len, ddA, ddALen, se05x_sessionMacKey, &signatureLen);
+    ret = nxScp03_Generate_SessionKey(session_ctx->pScp03_mac_key,
+        session_ctx->scp03_mac_key_len,
+        ddA,
+        ddALen,
+        session_ctx->scp03_session_mac_Key,
+        &signatureLen);
     if (ret != 0) {
         SMLOG_D("Error in nxScp03_Generate_SessionKey");
         return 1;
     }
-    SMLOG_MAU8_D(" Output:se05x_sessionMacKey ==>", se05x_sessionMacKey, AES_KEY_LEN_nBYTE);
+    SMLOG_MAU8_D(" Output:scp03_session_mac_Key ==>", session_ctx->scp03_session_mac_Key, AES_KEY_LEN_nBYTE);
 
     /* Generation and Creation of Session RMAC SSS Key Object */
     // Set the Derviation data
     SMLOG_D("Set the Derviation data to generate Session RMAC key \n");
-    ret = nxScp03_setDerivationData(
+    ret = Se05x_API_Auth_setDerivationData(
         ddA, &ddALen, DATA_DERIVATION_SRMAC, DATA_DERIVATION_L_128BIT, DATA_DERIVATION_KDF_CTR, context, contextLen);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, 1);
     // Calculate the Session-RMAC key
-    ret = nxScp03_Generate_SessionKey(
-        session_ctx->pScp03_mac_key, session_ctx->scp03_mac_key_len, ddA, ddALen, se05x_sessionRmacKey, &signatureLen);
+    ret = nxScp03_Generate_SessionKey(session_ctx->pScp03_mac_key,
+        session_ctx->scp03_mac_key_len,
+        ddA,
+        ddALen,
+        session_ctx->scp03_session_rmac_Key,
+        &signatureLen);
     if (ret != 0) {
         SMLOG_D("Error in nxScp03_Generate_SessionKey");
         return 1;
     }
-    SMLOG_MAU8_D("Output:se05x_sessionRmacKey ==>", se05x_sessionRmacKey, AES_KEY_LEN_nBYTE);
+    SMLOG_MAU8_D("Output:scp03_session_rmac_Key ==>", session_ctx->scp03_session_rmac_Key, AES_KEY_LEN_nBYTE);
 
     return 0;
 }
@@ -349,7 +330,7 @@ static int nxScp03_HostLocal_VerifyCardCryptogram(pSe05xSession_t session_ctx,
     memcpy(&context[SCP_GP_HOST_CHALLENGE_LEN], cardChallenge, SCP_GP_CARD_CHALLENGE_LEN);
     contextLen = SCP_GP_HOST_CHALLENGE_LEN + SCP_GP_CARD_CHALLENGE_LEN;
 
-    ret = nxScp03_setDerivationData(
+    ret = Se05x_API_Auth_setDerivationData(
         ddA, &ddALen, DATA_CARD_CRYPTOGRAM, DATA_DERIVATION_L_64BIT, DATA_DERIVATION_KDF_CTR, context, contextLen);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, 1);
 
@@ -399,7 +380,7 @@ static int nxScp03_HostLocal_CalculateHostCryptogram(pSe05xSession_t session_ctx
     memcpy(&context[SCP_GP_HOST_CHALLENGE_LEN], cardChallenge, SCP_GP_CARD_CHALLENGE_LEN);
     contextLen = SCP_GP_HOST_CHALLENGE_LEN + SCP_GP_CARD_CHALLENGE_LEN;
 
-    ret = nxScp03_setDerivationData(
+    ret = Se05x_API_Auth_setDerivationData(
         ddA, &ddALen, DATA_HOST_CRYPTOGRAM, DATA_DERIVATION_L_64BIT, DATA_DERIVATION_KDF_CTR, context, contextLen);
     ENSURE_OR_RETURN_ON_ERROR(ret == 0, 1);
 
@@ -554,8 +535,12 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
         return SM_NOT_OK;
     }
 
-    ret = nxScp03_HostLocal_VerifyCardCryptogram(
-        session_ctx, se05x_sessionMacKey, AES_KEY_LEN_nBYTE, hostChallenge, cardChallenge, cardCryptoGram);
+    ret = nxScp03_HostLocal_VerifyCardCryptogram(session_ctx,
+        session_ctx->scp03_session_mac_Key,
+        AES_KEY_LEN_nBYTE,
+        hostChallenge,
+        cardChallenge,
+        cardCryptoGram);
     if (ret != 0) {
         SMLOG_E("Error in nxScp03_HostLocal_VerifyCardCryptogram");
         //Most likely, SCP03 keys are not correct"
@@ -566,8 +551,12 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
 
     SMLOG_D("CardCryptogram verified successfully...Calculate HostCryptogram \n");
 
-    ret = nxScp03_HostLocal_CalculateHostCryptogram(
-        session_ctx, se05x_sessionMacKey, AES_KEY_LEN_nBYTE, hostChallenge, cardChallenge, hostCryptogram);
+    ret = nxScp03_HostLocal_CalculateHostCryptogram(session_ctx,
+        session_ctx->scp03_session_mac_Key,
+        AES_KEY_LEN_nBYTE,
+        hostChallenge,
+        cardChallenge,
+        hostCryptogram);
     if (ret != 0) {
         SMLOG_E("Error in nxScp03_HostLocal_CalculateHostCryptogram");
         return SM_NOT_OK;
@@ -575,15 +564,15 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
 
     SMLOG_MAU8_D("hostCryptogram ==>", hostCryptogram, SCP_GP_IU_CARD_CRYPTOGRAM_LEN);
 
-    ret =
-        nxScp03_GP_ExternalAuthenticate(session_ctx, se05x_sessionMacKey, AES_KEY_LEN_nBYTE, se05x_mcv, hostCryptogram);
+    ret = nxScp03_GP_ExternalAuthenticate(
+        session_ctx, session_ctx->scp03_session_mac_Key, AES_KEY_LEN_nBYTE, session_ctx->scp03_mcv, hostCryptogram);
     if (ret != 0) {
         SMLOG_E("GP_ExternalAuthenticate failed \n"); // with Status %04X", status);
         return SM_NOT_OK;
     }
     else {
         // At this stage we have authenticated successfully.
-        memcpy(se05x_cCounter, commandCounter, AES_KEY_LEN_nBYTE);
+        memcpy(session_ctx->scp03_counter, commandCounter, AES_KEY_LEN_nBYTE);
         SMLOG_D("Authentication Successful!!! \n");
     }
 
@@ -593,257 +582,42 @@ smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx)
 
 /**************** Data transmit functions *****************/
 
-smStatus_t Se05x_API_SCP03_PadCommandAPDU(pSe05xSession_t session_ctx, uint8_t *cmdBuf, size_t *pCmdBufLen)
-{
-    uint16_t zeroBytesToPad = 0;
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(cmdBuf != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(pCmdBufLen != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= (*pCmdBufLen)), SM_NOT_OK);
-
-    // pad the payload and adjust the length of the APDU
-    cmdBuf[(*pCmdBufLen)] = SCP_DATA_PAD_BYTE;
-    *pCmdBufLen += 1;
-    zeroBytesToPad = (SCP_KEY_SIZE - ((*pCmdBufLen) % SCP_KEY_SIZE)) % SCP_KEY_SIZE;
-    while (zeroBytesToPad > 0) {
-        cmdBuf[(*pCmdBufLen)] = 0x00;
-        ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= (*pCmdBufLen)), SM_NOT_OK);
-        *pCmdBufLen += 1;
-        zeroBytesToPad--;
-    }
-
-    return SM_OK;
-}
-
-smStatus_t Se05x_API_SCP03_CalculateCommandICV(pSe05xSession_t session_ctx, uint8_t *pIcv)
-{
-    int ret                      = 0;
-    smStatus_t retStatus         = SM_NOT_OK;
-    uint8_t ivZero[SCP_KEY_SIZE] = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(pIcv != NULL, SM_NOT_OK);
-
-    ret = hcrypto_aes_cbc_encrypt(
-        se05x_sessionEncKey, AES_KEY_LEN_nBYTE, ivZero, SCP_KEY_SIZE, se05x_cCounter, pIcv, SCP_KEY_SIZE);
-
-    retStatus = (ret == 0) ? (SM_OK) : (SM_NOT_OK);
-    return retStatus;
-}
-
-void Se05x_API_SCP03_IncCommandCounter(pSe05xSession_t session_ctx)
-{
-    int i = 15;
-
-    (void)session_ctx;
-
-    while (i > 0) {
-        if (se05x_cCounter[i] < 255) {
-            se05x_cCounter[i] += 1;
-            break;
-        }
-        else {
-            se05x_cCounter[i] = 0;
-            i--;
-        }
-    }
-    return;
-}
-
-static void nxpSCP03_Dec_CommandCounter(uint8_t *pCtrblock)
-{
-    int i = 15;
-    while (i > 0) {
-        if (pCtrblock[i] == 0) {
-            pCtrblock[i] = 0xFF;
-            i--;
-        }
-        else {
-            pCtrblock[i]--;
-            break;
-        }
-    }
-
-    return;
-}
-
-smStatus_t Se05x_API_SCP03_GetResponseICV(pSe05xSession_t session_ctx, uint8_t *pIcv, bool hasCmd)
-{
-    uint8_t ivZero[SCP_IV_SIZE] = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    size_t dataLen                          = 0;
-    uint8_t paddedCounterBlock[SCP_IV_SIZE] = {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    int ret              = 0;
-    smStatus_t retStatus = SM_NOT_OK;
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(pIcv != NULL, SM_NOT_OK);
-
-    memcpy(paddedCounterBlock, se05x_cCounter, SCP_KEY_SIZE);
-    if ((0 /*pdySCP03SessCtx->authType == kSSS_AuthType_SCP03*/) && (!hasCmd)) {
-        nxpSCP03_Dec_CommandCounter(paddedCounterBlock);
-    }
-    paddedCounterBlock[0] = SCP_DATA_PAD_BYTE; // MSB padded with 0x80 Section 6.2.7 of SCP03 spec
-    dataLen               = SCP_KEY_SIZE;
-
-    ret = hcrypto_aes_cbc_encrypt(
-        se05x_sessionEncKey, AES_KEY_LEN_nBYTE, ivZero, SCP_KEY_SIZE, paddedCounterBlock, pIcv, dataLen);
-
-    retStatus = (ret == 0) ? (SM_OK) : (SM_NOT_OK);
-    return retStatus;
-}
-
-smStatus_t Se05x_API_SCP03_RestoreSwRAPDU(pSe05xSession_t session_ctx,
-    uint8_t *rspBuf,
-    size_t *pRspBufLen,
-    uint8_t *plaintextResponse,
-    size_t plaintextRespLen,
-    uint8_t *sw)
-{
-    size_t i            = plaintextRespLen;
-    int removePaddingOk = 0;
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(rspBuf != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(pRspBufLen != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(plaintextResponse != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(sw != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR((plaintextRespLen >= SCP_KEY_SIZE), SM_NOT_OK);
-
-    while ((i > 1) && (i > (plaintextRespLen - SCP_KEY_SIZE))) {
-        if (plaintextResponse[i - 1] == 0x00) {
-            i--;
-        }
-        else if (plaintextResponse[i - 1] == SCP_DATA_PAD_BYTE) {
-            // We have found padding delimitor
-            memcpy(&plaintextResponse[i - 1], sw, SCP_GP_SW_LEN);
-
-            if (*pRspBufLen < plaintextRespLen) {
-                // response buffer is small
-                return SM_NOT_OK;
-            }
-            ENSURE_OR_RETURN_ON_ERROR(((UINT_MAX - 1) >= i), SM_NOT_OK);
-            memcpy(rspBuf, plaintextResponse, i + 1);
-            *pRspBufLen = (i + 1);
-
-            removePaddingOk = 1;
-            break;
-        }
-        else {
-            // We've found a non-padding character while removing padding
-            // Most likely the cipher text was not properly decoded.
-            SMLOG_D("RAPDU Decoding failed No Padding found");
-            break;
-        }
-    }
-
-    if (removePaddingOk == 0) {
-        return SM_NOT_OK;
-    }
-
-    return SM_OK;
-}
-
-smStatus_t Se05x_API_SCP03_CalculateMacRspApdu(
-    pSe05xSession_t session_ctx, uint8_t *inData, size_t inDataLen, uint8_t *outSignature, size_t *outSignatureLen)
-{
-    int ret        = 0;
-    void *cmac_ctx = NULL;
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-
-    cmac_ctx = hcrypto_cmac_setup(se05x_sessionRmacKey, AES_KEY_LEN_nBYTE);
-    ENSURE_OR_RETURN_ON_ERROR(cmac_ctx != NULL, SM_NOT_OK);
-
-    ret = hcrypto_cmac_init(cmac_ctx);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_update(cmac_ctx, se05x_mcv, SCP_KEY_SIZE);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(inDataLen >= 10, SM_NOT_OK);
-    ret = hcrypto_cmac_update(cmac_ctx, inData, inDataLen - 8 - 2);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_update(cmac_ctx, (inData + (inDataLen - 2)), 2);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_final(cmac_ctx, outSignature, outSignatureLen);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-
-    return SM_OK;
-}
-
-smStatus_t Se05x_API_SCP03_CalculateMacCmdApdu(
-    pSe05xSession_t session_ctx, uint8_t *inData, size_t inDataLen, uint8_t *outSignature, size_t *outSignatureLen)
-{
-    int ret        = 0;
-    void *cmac_ctx = NULL;
-
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(session_ctx->scp03_session == 1, SM_NOT_OK);
-
-    cmac_ctx = hcrypto_cmac_setup(se05x_sessionMacKey, AES_KEY_LEN_nBYTE);
-    ENSURE_OR_RETURN_ON_ERROR(cmac_ctx != NULL, SM_NOT_OK);
-
-    ret = hcrypto_cmac_init(cmac_ctx);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_update(cmac_ctx, se05x_mcv, SCP_KEY_SIZE);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_update(cmac_ctx, inData, inDataLen);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-    ret = hcrypto_cmac_final(cmac_ctx, outSignature, outSignatureLen);
-    ENSURE_OR_RETURN_ON_ERROR(ret == 0, SM_NOT_OK);
-
-    memcpy(se05x_mcv, outSignature, SCP_MCV_LEN);
-    return SM_OK;
-}
-
-smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
-    const tlvHeader_t *hdr,
+smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
+    const tlvHeader_t *inhdr,
     uint8_t *cmdBuf,
     size_t cmdBufLen,
-    uint8_t *rspBuf,
-    size_t *pRspBufLen,
-    uint8_t hasle)
+    uint8_t hasle,
+    uint8_t *encCmdBuf,
+    size_t *encCmdBufLen)
 {
     smStatus_t apduStatus = SM_NOT_OK;
     uint8_t iv[16]        = {0};
     int ret               = 0;
-    size_t tempRspBufLen  = 0;
-    int i                 = 0;
+    size_t i              = 0;
     uint8_t macData[16]   = {
         0,
     };
-    size_t macDataLen  = 16;
-    size_t se05xCmdLC  = 0;
-    size_t se05xCmdLCW = 0;
-    uint8_t sw[SCP_GP_SW_LEN];
-    size_t compareoffset                 = 0;
-    size_t actualRespLen                 = 0;
+    size_t macDataLen                    = 16;
+    size_t se05xCmdLC                    = 0;
+    size_t se05xCmdLCW                   = 0;
     uint8_t se05x_mcv_tmp[SCP_CMAC_SIZE] = {
         0,
     };
 
-    ENSURE_OR_RETURN_ON_ERROR(hdr != NULL, SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(inhdr != NULL, SM_NOT_OK);
     ENSURE_OR_RETURN_ON_ERROR(cmdBuf != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(rspBuf != NULL, SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR(pRspBufLen != NULL, SM_NOT_OK);
+    ENSURE_OR_RETURN_ON_ERROR(encCmdBuf != NULL, SM_NOT_OK);
 
-    tempRspBufLen = *pRspBufLen;
-    memcpy(se05x_mcv_tmp, se05x_mcv, SCP_CMAC_SIZE);
+    memcpy(se05x_mcv_tmp, session_ctx->scp03_mcv, SCP_CMAC_SIZE);
 
     if (cmdBufLen != 0) {
+        ENSURE_OR_RETURN_ON_ERROR((Se05x_API_Auth_PadCommandAPDU(cmdBuf, &cmdBufLen) == SM_OK), SM_NOT_OK);
         ENSURE_OR_RETURN_ON_ERROR(
-            (Se05x_API_SCP03_PadCommandAPDU(session_ctx, cmdBuf, &cmdBufLen) == SM_OK), SM_NOT_OK);
-        ENSURE_OR_RETURN_ON_ERROR((Se05x_API_SCP03_CalculateCommandICV(session_ctx, iv) == SM_OK), SM_NOT_OK);
-
+            (Se05x_API_Auth_CalculateCommandICV(
+                 &(session_ctx->scp03_session_enc_Key[0]), &(session_ctx->scp03_counter[0]), iv) == SM_OK),
+            SM_NOT_OK);
         ret = hcrypto_aes_cbc_encrypt(
-            se05x_sessionEncKey, AES_KEY_LEN_nBYTE, iv, SCP_KEY_SIZE, cmdBuf, cmdBuf, cmdBufLen);
+            session_ctx->scp03_session_enc_Key, AES_KEY_LEN_nBYTE, iv, SCP_KEY_SIZE, cmdBuf, cmdBuf, cmdBufLen);
         ENSURE_OR_RETURN_ON_ERROR((ret == 0), SM_NOT_OK);
     }
 
@@ -852,21 +626,21 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
 
     if (se05xCmdLCW > 0) {
         if (se05xCmdLCW == 1) {
-            ENSURE_OR_RETURN_ON_ERROR( cmdBufLen < (MAX_APDU_BUFFER - sizeof(*hdr) - 1), SM_NOT_OK);
+            ENSURE_OR_RETURN_ON_ERROR(cmdBufLen < (MAX_APDU_BUFFER - sizeof(*inhdr) - 1), SM_NOT_OK);
             if (cmdBufLen > 0) {
-                memmove(cmdBuf + sizeof(*hdr) + 1, cmdBuf, cmdBufLen);
+                memmove(cmdBuf + sizeof(*inhdr) + 1, cmdBuf, cmdBufLen);
             }
-            memcpy(cmdBuf, hdr, sizeof(*hdr));
-            i += sizeof(*hdr);
+            memcpy(cmdBuf, inhdr, sizeof(*inhdr));
+            i += sizeof(*inhdr);
             cmdBuf[i++] = (uint8_t)se05xCmdLC;
         }
         else {
-            ENSURE_OR_RETURN_ON_ERROR((cmdBufLen < (MAX_APDU_BUFFER - sizeof(*hdr) - 3)), SM_NOT_OK);
+            ENSURE_OR_RETURN_ON_ERROR((cmdBufLen < (MAX_APDU_BUFFER - sizeof(*inhdr) - 3)), SM_NOT_OK);
             if (cmdBufLen > 0) {
-                memmove(cmdBuf + sizeof(*hdr) + 3, cmdBuf, cmdBufLen);
+                memmove(cmdBuf + sizeof(*inhdr) + 3, cmdBuf, cmdBufLen);
             }
-            memcpy(cmdBuf, hdr, sizeof(*hdr));
-            i += sizeof(*hdr);
+            memcpy(cmdBuf, inhdr, sizeof(*inhdr));
+            i += sizeof(*inhdr);
             cmdBuf[i++] = 0x00;
             cmdBuf[i++] = 0xFFu & (se05xCmdLC >> 8);
             cmdBuf[i++] = 0xFFu & (se05xCmdLC);
@@ -879,12 +653,13 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
         i += cmdBufLen;
     }
 
-    ret = Se05x_API_SCP03_CalculateMacCmdApdu(session_ctx, cmdBuf, i, macData, &macDataLen);
+    ret = Se05x_API_Auth_CalculateMacCmdApdu(
+        &(session_ctx->scp03_session_mac_Key[0]), &session_ctx->scp03_mcv[0], cmdBuf, i, macData, &macDataLen);
     ENSURE_OR_RETURN_ON_ERROR((ret == SM_OK), SM_NOT_OK);
 
     if (i + SCP_GP_IU_CARD_CRYPTOGRAM_LEN > MAX_APDU_BUFFER) {
-        /* Restore se05x_mcv*/
-        memcpy(se05x_mcv, se05x_mcv_tmp, SCP_CMAC_SIZE);
+        /* Restore session_ctx->scp03_mcv*/
+        memcpy(session_ctx->scp03_mcv, se05x_mcv_tmp, SCP_CMAC_SIZE);
         return SM_NOT_OK;
     }
 
@@ -893,67 +668,110 @@ smStatus_t Se05x_API_SCP03_TransmitData(pSe05xSession_t session_ctx,
 
     if (hasle) {
         if (i + 2 > MAX_APDU_BUFFER) {
-            /* Restore se05x_mcv*/
-            memcpy(se05x_mcv, se05x_mcv_tmp, SCP_CMAC_SIZE);
+            /* Restore session_ctx->scp03_mcv*/
+            memcpy(session_ctx->scp03_mcv, se05x_mcv_tmp, SCP_CMAC_SIZE);
             return SM_NOT_OK;
         }
         cmdBuf[i++] = 0x00;
         cmdBuf[i++] = 0x00;
     }
 
-    apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, i, rspBuf, &tempRspBufLen);
-    ENSURE_OR_RETURN_ON_ERROR((apduStatus == SM_OK), apduStatus);
-    ENSURE_OR_RETURN_ON_ERROR((tempRspBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
+    *encCmdBufLen = i;
+    memcpy(encCmdBuf, cmdBuf, *encCmdBufLen);
+    SMLOG_MAU8_D("SCP03: Encrypted Data ==>", encCmdBuf, *encCmdBufLen);
+    apduStatus = SM_OK;
+    return apduStatus;
+}
 
-    apduStatus = rspBuf[tempRspBufLen - 2] << 8 | rspBuf[tempRspBufLen - 1];
+smStatus_t Se05x_API_SCP03_Decrypt(pSe05xSession_t session_ctx,
+    size_t cmdBufLen,
+    uint8_t *encBuf,
+    size_t encBufLen,
+    uint8_t *decCmdBuf,
+    size_t *decCmdBufLen)
+{
+    smStatus_t apduStatus = SM_NOT_OK;
+    uint8_t iv[16]        = {0};
+    int ret               = 0;
+    uint8_t macData[16]   = {
+        0,
+    };
+    size_t macDataLen = 16;
+    uint8_t sw[SCP_GP_SW_LEN];
+    size_t compareoffset = 0;
+    size_t actualRespLen = 0;
+    bool hascmd          = TRUE;
+
+    apduStatus = encBuf[encBufLen - 2] << 8 | encBuf[encBufLen - 1];
     if (apduStatus == SM_OK) {
-        memcpy(sw, &(rspBuf[tempRspBufLen - SCP_GP_SW_LEN]), SCP_GP_SW_LEN);
-
-        ret = Se05x_API_SCP03_CalculateMacRspApdu(session_ctx, rspBuf, tempRspBufLen, macData, &macDataLen);
+        memcpy(sw, &(encBuf[encBufLen - SCP_GP_SW_LEN]), SCP_GP_SW_LEN);
+        ret = Se05x_API_Auth_CalculateMacRspApdu(&(session_ctx->scp03_session_rmac_Key[0]),
+            &session_ctx->scp03_mcv[0],
+            encBuf,
+            encBufLen,
+            macData,
+            &macDataLen);
         ENSURE_OR_RETURN_ON_ERROR((ret == SM_OK), SM_NOT_OK);
-
-        ENSURE_OR_RETURN_ON_ERROR((tempRspBufLen >= SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN), SM_NOT_OK);
-        compareoffset = tempRspBufLen - SCP_COMMAND_MAC_SIZE - SCP_GP_SW_LEN;
-        if (memcmp(macData, &rspBuf[compareoffset], SCP_COMMAND_MAC_SIZE) != 0) {
-            SMLOG_E(" Response MAC did not verify \n");
+        ENSURE_OR_RETURN_ON_ERROR((encBufLen >= SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN), SM_NOT_OK);
+        compareoffset = encBufLen - SCP_COMMAND_MAC_SIZE - SCP_GP_SW_LEN;
+        ENSURE_OR_RETURN_ON_ERROR((compareoffset < MAX_APDU_BUFFER), SM_NOT_OK);
+        if (memcmp(macData, &encBuf[compareoffset], SCP_COMMAND_MAC_SIZE) != 0) {
+            SMLOG_E("SCP03: Response MAC did not verify \n");
             return SM_NOT_OK;
         }
-
-        SMLOG_D("RMAC verified successfully...Decrypt Response Data \n");
-
+        SMLOG_D("SCP03: RMAC verified successfully...Decrypt Response Data \n");
         // Decrypt Response Data Field in case Reponse Mac verified OK
-        if (tempRspBufLen > (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)) { // There is data payload in response
+        if (encBufLen > (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)) {
             // Calculate ICV to decrypt the response
 
-            ENSURE_OR_RETURN_ON_ERROR(
-                (Se05x_API_SCP03_GetResponseICV(session_ctx, iv, cmdBufLen == 0 ? FALSE : TRUE) == SM_OK), SM_NOT_OK);
+            if ((session_ctx->applet_version >= 0x04030000) ||
+                (session_ctx->scp03_session && session_ctx->ecKey_session)) {
+                hascmd = TRUE;
+            }
+            else {
+                hascmd = (cmdBufLen == 0) ? FALSE : TRUE;
+            }
 
-            ret = hcrypto_aes_cbc_decrypt(se05x_sessionEncKey,
+            ENSURE_OR_RETURN_ON_ERROR(
+                (Se05x_API_Auth_GetResponseICV(
+                     hascmd, &(session_ctx->scp03_counter[0]), &(session_ctx->scp03_session_enc_Key[0]), iv) == SM_OK),
+                SM_NOT_OK);
+
+            ret = hcrypto_aes_cbc_decrypt(session_ctx->scp03_session_enc_Key,
                 AES_KEY_LEN_nBYTE,
                 iv,
                 SCP_KEY_SIZE,
-                rspBuf,
-                rspBuf,
-                ((tempRspBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)));
+                encBuf,
+                encBuf,
+                ((encBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)));
             ENSURE_OR_RETURN_ON_ERROR((ret == 0), SM_NOT_OK);
-
-            actualRespLen = (tempRspBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN);
+            actualRespLen = (encBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN);
 
             ENSURE_OR_RETURN_ON_ERROR(
-                (Se05x_API_SCP03_RestoreSwRAPDU(session_ctx, rspBuf, pRspBufLen, rspBuf, actualRespLen, sw) == SM_OK),
-                SM_NOT_OK);
+                (Se05x_API_Auth_RestoreSwRAPDU(encBuf, decCmdBufLen, encBuf, actualRespLen, sw) == SM_OK), SM_NOT_OK);
 
-            SMLOG_MAU8_D("Decrypted Data ==>", rspBuf, *pRspBufLen);
+            memcpy(decCmdBuf, encBuf, *decCmdBufLen);
+            SMLOG_MAU8_D("SCP03: Decrypted Data ==>", encBuf, *decCmdBufLen);
         }
-        else if (tempRspBufLen == (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)) {
+        else if (encBufLen == (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN)) {
             // There's no data payload in response
-            memcpy(rspBuf, sw, SCP_GP_SW_LEN);
-            *pRspBufLen = SCP_GP_SW_LEN;
-            SMLOG_MAU8_D("Decrypted Data ==>", rspBuf, *pRspBufLen);
+            memcpy(encBuf, sw, SCP_GP_SW_LEN);
+            *decCmdBufLen = SCP_GP_SW_LEN;
+            memcpy(decCmdBuf, encBuf, *decCmdBufLen);
+            SMLOG_MAU8_D("SCP03: Decrypted Data ==>", encBuf, *decCmdBufLen);
         }
     }
 
-    Se05x_API_SCP03_IncCommandCounter(session_ctx);
+    if ((session_ctx->applet_version >= 0x04030000) || (session_ctx->scp03_session && session_ctx->ecKey_session)) {
+        Se05x_API_Auth_IncCommandCounter(session_ctx->scp03_counter);
+    }
+    else {
+        if ((cmdBufLen > 0)) {
+            Se05x_API_Auth_IncCommandCounter(session_ctx->scp03_counter);
+        }
+    }
 
     return apduStatus;
 }
+
+#endif //#if defined(WITH_PLATFORM_SCP03) || defined(WITH_ECKEY_SCP03_SESSION)

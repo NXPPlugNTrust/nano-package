@@ -20,7 +20,7 @@ To build example run::
 	cd simw-nanopkg/examples/se05x_resume_scp03/src
 	mkdir build
 	cd build
-	cmake ../ -DPLUGANDTRUST_SCP03
+	cmake ../ -DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03
 	make
 	./ex_establish_scp03
 	./ex_resume_scp03

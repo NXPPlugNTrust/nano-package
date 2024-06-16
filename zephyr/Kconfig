@@ -10,11 +10,24 @@ config PLUGANDTRUST
 	select TINYCRYPT_AES_CBC
 	select TINYCRYPT_AES_CMAC
 	select TINYCRYPT_CTR_PRNG
+	select TINYCRYPT_ECC_DSA
+	select TINYCRYPT_SHA256
+	select TINYCRYPT_ECC_DH
 
 config PLUGANDTRUST_SCP03
 	bool "Enable secure channel for SE05x"
 	help
 	  This option enables secure channel for SE05x.
+
+config PLUGANDTRUST_ECKEY
+	bool "Enable EC Key Authentication for SE05x"
+	help
+	  This option enables EC Key Authentication for SE05x.
+
+config PLUGANDTRUST_ECKEY_SCP03
+	bool "Enable eckey + scp03 for SE05x"
+	help
+	  This option enables eckey + scp03 for SE05x.
 
 config PLUGANDTRUST_MBEDTLS_ALT
 	bool "Use ALT implementation for mbedTLS of SE05x"
@@ -23,7 +36,7 @@ config PLUGANDTRUST_MBEDTLS_ALT
 
 config PLUGANDTRUST_APDU_BUFFER_SIZE
 	int "Max APDU buffer size"
-	default 170
+	default 255
 	help
 	  Max APDU buffer size.
 

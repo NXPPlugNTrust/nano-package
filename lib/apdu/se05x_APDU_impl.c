@@ -1,7 +1,7 @@
 /** @file se05x_APDU_impl.c
  *  @brief Se05x APDU function implementation.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -10,6 +10,7 @@
 #include "sm_port.h"
 #include "se05x_types.h"
 #include "phNxpEse_Api.h"
+#include <limits.h>
 
 /* ********************** Defines ********************** */
 #define kSE05x_CLA 0x80
@@ -22,9 +23,14 @@
 /* clang-format on */
 
 /* ********************** Function Prototypes ********************** */
-#ifdef WITH_PLATFORM_SCP03
+#if defined(WITH_PLATFORM_SCP03) || defined(WITH_ECKEY_SCP03_SESSION)
 smStatus_t Se05x_API_SCP03_CreateSession(pSe05xSession_t session_ctx);
-#endif //#ifdef WITH_PLATFORM_SCP03
+#endif //#if defined(WITH_ECKEY_SESSION) || defined(WITH_ECKEY_SCP03_SESSION)
+
+#if defined(WITH_ECKEY_SESSION) || defined(WITH_ECKEY_SCP03_SESSION)
+smStatus_t Se05x_API_ECKey_CreateSession(pSe05xSession_t session_ctx);
+smStatus_t Se05x_API_ECKey_CloseSession(pSe05xSession_t session_ctx);
+#endif //#if defined(WITH_ECKEY_SESSION) || defined(WITH_ECKEY_SCP03_SESSION)
 
 /* ********************** Functions ********************** */
 
@@ -41,7 +47,7 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
     size_t tx_len              = 0;
     smStatus_t ret             = SM_NOT_OK;
     unsigned char appletName[] = APPLET_NAME;
-#ifdef WITH_PLATFORM_SCP03
+#if defined(WITH_PLATFORM_SCP03)
     unsigned char ssdName[] = SSD_NAME;
 #endif
     unsigned char *appSsdName = NULL;
@@ -65,7 +71,7 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
     ENSURE_OR_GO_CLEANUP(SM_OK == ret);
 
     if (session_ctx->skip_applet_select == 1) {
-#ifndef WITH_PLATFORM_SCP03
+#if !defined(WITH_PLATFORM_SCP03)
         return ret;
 #else
         appSsdName    = &ssdName[0];
@@ -98,7 +104,8 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
             SMLOG_E("Se05x_API_SessionOpen failed");
             goto cleanup;
         }
-
+        session_ctx->applet_version = (session_ctx->apdu_buffer[0] << 24) | (session_ctx->apdu_buffer[1] << 16) |
+                                      (session_ctx->apdu_buffer[2] << 8) | session_ctx->apdu_buffer[3];
         if (ret == SM_OK && buff_len >= 2) {
             ret = session_ctx->apdu_buffer[buff_len - 2];
             ret <<= 8;
@@ -107,24 +114,93 @@ smStatus_t Se05x_API_SessionOpen(pSe05xSession_t session_ctx)
         ENSURE_OR_GO_CLEANUP(SM_OK == ret);
     }
 
-#ifdef WITH_PLATFORM_SCP03
+#if defined(WITH_PLATFORM_SCP03)
+
     if (session_ctx->session_resume) {
         SMLOG_I("Resuming Secure Channel to SE05x !\n");
     }
     else {
         SMLOG_I("Establish Secure Channel to SE05x !\n");
         ret = Se05x_API_SCP03_CreateSession(session_ctx);
+        if (ret == SM_OK) {
+            SMLOG_I("Created scp03 Session\n");
+        }
     }
-#endif //#ifdef WITH_PLATFORM_SCP03
+
+#elif defined(WITH_ECKEY_SESSION)
+
+    ret = Se05x_API_ECKey_CreateSession(session_ctx);
+    if (ret == SM_OK) {
+        SMLOG_I("Created ECKey Session\n");
+    }
+
+#elif defined(WITH_ECKEY_SCP03_SESSION)
+
+    if (session_ctx->session_resume) {
+        SMLOG_I("Resuming Secure Channel to SE05x !\n");
+    }
+    else {
+        SMLOG_I("Establish Secure Channel to SE05x !\n");
+        ret = Se05x_API_SCP03_CreateSession(session_ctx);
+        if (ret == SM_OK) {
+            SMLOG_I("Created scp03 Session\n");
+        }
+        else {
+            goto cleanup;
+        }
+    }
+
+    ret = Se05x_API_ECKey_CreateSession(session_ctx);
+    if (ret == SM_OK) {
+        SMLOG_I("Created ECKey Session\n");
+    }
+
+#endif
 
 cleanup:
+    if (ret != SM_OK) {
+        if(session_ctx != NULL)
+        {
+            memset(session_ctx, 0, sizeof(Se05xSession_t));
+        }
+    }
     return ret;
 }
 
 smStatus_t Se05x_API_SessionClose(pSe05xSession_t session_ctx)
 {
+    smStatus_t retStatus = SM_NOT_OK;
+#if defined(WITH_ECKEY_SESSION) || defined(WITH_ECKEY_SCP03_SESSION)
+    tlvHeader_t hdr = {{kSE05x_CLA, kSE05x_INS_MGMT, kSE05x_P1_DEFAULT, kSE05x_P2_SESSION_CLOSE}};
+#endif
+
+    ENSURE_OR_GO_CLEANUP(session_ctx != NULL);
+
     SMLOG_D("APDU - Se05x_API_SessionClose [] \n");
-    return smComT1oI2C_Close(session_ctx->conn_context, 0);
+
+#if defined(WITH_ECKEY_SESSION) || defined(WITH_ECKEY_SCP03_SESSION)
+    if (session_ctx->ecKey_session == 1) {
+        retStatus = DoAPDUTx(session_ctx, &hdr, session_ctx->apdu_buffer, 0, 0);
+        ENSURE_OR_GO_CLEANUP(retStatus == SM_OK);
+    }
+
+    Se05x_API_ECKey_CloseSession(session_ctx);
+#endif
+
+#if defined(WITH_PLATFORM_SCP03) || defined(WITH_ECKEY_SCP03_SESSION)
+    //Se05x_API_SCP03_CloseSession(session_ctx);
+#endif
+
+    retStatus = smComT1oI2C_Close(session_ctx->conn_context, 0);
+    ENSURE_OR_GO_CLEANUP(retStatus == SM_OK);
+
+    if(session_ctx != NULL)
+    {
+        memset(session_ctx, 0, sizeof(Se05xSession_t));
+    }
+
+cleanup:
+    return retStatus;
 }
 
 smStatus_t Se05x_API_WriteECKey(pSe05xSession_t session_ctx,
@@ -509,6 +585,9 @@ smStatus_t Se05x_API_ECDHGenerateSharedSecret(pSe05xSession_t session_ctx,
         if (0 != tlvRet) {
             goto cleanup;
         }
+        if (ULONG_MAX - 2 < rspIndex) {
+            goto cleanup;
+        }
         if ((rspIndex + 2) == rspbufLen) {
             retStatus = (pRspbuf[rspIndex] << 8) | (pRspbuf[rspIndex + 1]);
         }
@@ -568,6 +647,9 @@ smStatus_t Se05x_API_CipherOneShot(pSe05xSession_t session_ctx,
         size_t rspIndex = 0;
         tlvRet          = tlvGet_u8buf(pRspbuf, &rspIndex, rspbufLen, kSE05x_TAG_1, outputData, poutputDataLen); /*  */
         if (0 != tlvRet) {
+            goto cleanup;
+        }
+        if (ULONG_MAX - 2 < rspIndex) {
             goto cleanup;
         }
         if ((rspIndex + 2) == rspbufLen) {
@@ -650,6 +732,46 @@ smStatus_t Se05x_API_DeleteSecureObject(pSe05xSession_t session_ctx, uint32_t ob
         goto cleanup;
     }
     retStatus = DoAPDUTx(session_ctx, &hdr, session_ctx->apdu_buffer, cmdbufLen, 0);
+
+cleanup:
+    return retStatus;
+}
+
+smStatus_t Se05x_API_CreateSession(
+    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen)
+{
+    smStatus_t retStatus = SM_NOT_OK;
+    tlvHeader_t hdr      = {{0x80 /*kSE05x_CLA*/, kSE05x_INS_MGMT, kSE05x_P1_DEFAULT, kSE05x_P2_SESSION_CREATE}};
+    size_t cmdbufLen     = 0;
+    uint8_t *pCmdbuf     = NULL;
+    int tlvRet           = 0;
+    uint8_t *pRspbuf     = NULL;
+    size_t rspbufLen     = 0;
+
+    ENSURE_OR_GO_CLEANUP(session_ctx != NULL);
+
+    pCmdbuf   = &session_ctx->apdu_buffer[0];
+    pRspbuf   = &session_ctx->apdu_buffer[0];
+    rspbufLen = sizeof(session_ctx->apdu_buffer);
+
+    SMLOG_D("APDU - Se05x_API_CreateSession [] \n");
+
+    tlvRet = TLVSET_U32("auth", &pCmdbuf, &cmdbufLen, kSE05x_TAG_1, authObjectID);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+    retStatus = DoAPDUTxRx(session_ctx, &hdr, &session_ctx->apdu_buffer[0], cmdbufLen, pRspbuf, &rspbufLen, 0);
+    if (retStatus == SM_OK) {
+        retStatus       = SM_NOT_OK;
+        size_t rspIndex = 0;
+        tlvRet          = tlvGet_u8buf(pRspbuf, &rspIndex, rspbufLen, kSE05x_TAG_1, sessionId, psessionIdLen); /*  */
+        if (0 != tlvRet) {
+            goto cleanup;
+        }
+        if ((rspIndex + 2) == rspbufLen) {
+            retStatus = (pRspbuf[rspIndex] << 8) | (pRspbuf[rspIndex + 1]);
+        }
+    }
 
 cleanup:
     return retStatus;

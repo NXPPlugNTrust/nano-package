@@ -83,12 +83,11 @@ smStatus_t smComT1oI2C_TransceiveRaw(void *conn_ctx, uint8_t *pTx, size_t txLen,
     phNxpEse_data pRspTrans = {0};
     ESESTATUS status;
 
-    ENSURE_OR_RETURN_ON_ERROR((UINT8_MAX >= txLen), SM_NOT_OK);
-    ENSURE_OR_RETURN_ON_ERROR((UINT8_MAX >= (*pRxLen)), SM_NOT_OK);
-
+    ENSURE_OR_RETURN_ON_ERROR((txLen <= UINT32_MAX), SM_NOT_OK);
     pCmdTrans.len    = txLen;
     pCmdTrans.p_data = pTx;
 
+    ENSURE_OR_RETURN_ON_ERROR((*pRxLen <= UINT32_MAX), SM_NOT_OK);
     pRspTrans.len    = *pRxLen;
     pRspTrans.p_data = pRx;
 

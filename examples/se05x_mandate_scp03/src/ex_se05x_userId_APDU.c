@@ -1,7 +1,7 @@
 /** @file ex_se05x_userId_APDU.c
  *  @brief APDU functions required to set up user-id session
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021-2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -155,46 +155,6 @@ cleanup:
     return retStatus;
 }
 
-smStatus_t Se05x_API_CreateSession(
-    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen)
-{
-    smStatus_t retStatus = SM_NOT_OK;
-    tlvHeader_t hdr      = {{0x80 /*kSE05x_CLA*/, kSE05x_INS_MGMT, kSE05x_P1_DEFAULT, kSE05x_P2_SESSION_CREATE}};
-    size_t cmdbufLen     = 0;
-    uint8_t *pCmdbuf     = NULL;
-    int tlvRet           = 0;
-    uint8_t *pRspbuf     = NULL;
-    size_t rspbufLen     = 0;
-
-    ENSURE_OR_GO_CLEANUP(session_ctx != NULL);
-
-    pCmdbuf   = &session_ctx->apdu_buffer[0];
-    pRspbuf   = &session_ctx->apdu_buffer[0];
-    rspbufLen = sizeof(session_ctx->apdu_buffer);
-
-    SMLOG_D("APDU - Se05x_API_CreateSession [] \n");
-
-    tlvRet = TLVSET_U32("auth", &pCmdbuf, &cmdbufLen, kSE05x_TAG_1, authObjectID);
-    if (0 != tlvRet) {
-        goto cleanup;
-    }
-    retStatus = DoAPDUTxRx(session_ctx, &hdr, &session_ctx->apdu_buffer[0], cmdbufLen, pRspbuf, &rspbufLen, 0);
-    if (retStatus == SM_OK) {
-        retStatus       = SM_NOT_OK;
-        size_t rspIndex = 0;
-        tlvRet          = tlvGet_u8buf(pRspbuf, &rspIndex, rspbufLen, kSE05x_TAG_1, sessionId, psessionIdLen); /*  */
-        if (0 != tlvRet) {
-            goto cleanup;
-        }
-        if ((rspIndex + 2) == rspbufLen) {
-            retStatus = (pRspbuf[rspIndex] << 8) | (pRspbuf[rspIndex + 1]);
-        }
-    }
-
-cleanup:
-    return retStatus;
-}
-
 smStatus_t Se05x_API_VerifySessionUserID(pSe05xSession_t session_ctx, const uint8_t *userId, size_t userIdLen)
 {
     smStatus_t retStatus = SM_NOT_OK;
@@ -237,7 +197,7 @@ smStatus_t Se05x_API_VerifySessionUserID(pSe05xSession_t session_ctx, const uint
     if (retStatus != SM_OK) {
         goto cleanup;
     }
-#else
+#elif WITH_PlatformSCPRequest_NOT_REQUIRED
     cmdbufLen = sizeof(cmdbuf);
     retStatus = ex_se05x_scp03_encrypt_data(session_ctx, &hdr1, tmpBuf, tmpBufLen, &cmdbuf[0], &cmdbufLen, 0);
     if (retStatus != SM_OK) {
@@ -254,6 +214,8 @@ smStatus_t Se05x_API_VerifySessionUserID(pSe05xSession_t session_ctx, const uint
     if (retStatus != SM_OK) {
         goto cleanup;
     }
+#else
+#error "Build with either 'WITH_PlatformSCPRequest_REQUIRED' or 'WITH_PlatformSCPRequest_NOT_REQUIRED'. "
 #endif
 
     se05x_applet_session = 1;
@@ -303,7 +265,7 @@ smStatus_t Se05x_API_SetPlatformSCPRequest(pSe05xSession_t session_ctx, SE05x_Pl
     if (retStatus != SM_OK) {
         goto cleanup;
     }
-#else
+#elif WITH_PlatformSCPRequest_NOT_REQUIRED
     cmdbufLen = sizeof(cmdbuf);
     retStatus = ex_se05x_scp03_encrypt_data(session_ctx, &hdr1, tmpBuf, tmpBufLen, &cmdbuf[0], &cmdbufLen, 0);
     if (retStatus != SM_OK) {
@@ -320,6 +282,8 @@ smStatus_t Se05x_API_SetPlatformSCPRequest(pSe05xSession_t session_ctx, SE05x_Pl
     if (retStatus != SM_OK) {
         goto cleanup;
     }
+#else
+#error "Build with either 'WITH_PlatformSCPRequest_REQUIRED' or 'WITH_PlatformSCPRequest_NOT_REQUIRED'. "
 #endif
 
 cleanup:
@@ -360,7 +324,7 @@ smStatus_t Se05x_API_CloseAppletSession(pSe05xSession_t session_ctx)
 
 #ifdef WITH_PlatformSCPRequest_REQUIRED
     // Cannot send close command as platformSCP03 session is not open.
-#else
+#elif WITH_PlatformSCPRequest_NOT_REQUIRED
     cmdbufLen = sizeof(cmdbuf);
     retStatus = ex_se05x_scp03_encrypt_data(session_ctx, &hdr1, tmpBuf, tmpBufLen, &cmdbuf[0], &cmdbufLen, 0);
     if (retStatus != SM_OK) {
@@ -377,6 +341,8 @@ smStatus_t Se05x_API_CloseAppletSession(pSe05xSession_t session_ctx)
     if (retStatus != SM_OK) {
         goto cleanup;
     }
+#else
+#error "Build with either 'WITH_PlatformSCPRequest_REQUIRED' or 'WITH_PlatformSCPRequest_NOT_REQUIRED'. "
 #endif
 
     memset(&se05x_applet_session_value[0], 0, sizeof(se05x_applet_session_value));
@@ -434,8 +400,10 @@ smStatus_t ex_se05x_scp03_encrypt_data(pSe05xSession_t session_ctx,
     }
 
     if (inBufLen != 0) {
-        ENSURE_OR_RETURN_ON_ERROR((Se05x_API_SCP03_PadCommandAPDU(session_ctx, inBuf, &inBufLen) == SM_OK), SM_NOT_OK);
-        ENSURE_OR_RETURN_ON_ERROR((Se05x_API_SCP03_CalculateCommandICV(session_ctx, iv) == SM_OK), SM_NOT_OK);
+        ENSURE_OR_RETURN_ON_ERROR((Se05x_API_Auth_PadCommandAPDU(inBuf, &inBufLen) == SM_OK), SM_NOT_OK);
+        ENSURE_OR_RETURN_ON_ERROR(
+            (Se05x_API_Auth_CalculateCommandICV(se05x_sessionEncKey, session_ctx->scp03_counter, iv) == SM_OK),
+            SM_NOT_OK);
 
         ret = hcrypto_aes_cbc_encrypt(se05x_sessionEncKey, AES_KEY_LEN_nBYTE, iv, SCP_KEY_SIZE, inBuf, inBuf, inBufLen);
         ENSURE_OR_RETURN_ON_ERROR((ret == 0), SM_NOT_OK);
@@ -466,7 +434,8 @@ smStatus_t ex_se05x_scp03_encrypt_data(pSe05xSession_t session_ctx,
     memcpy(&outBuf[i], inBuf, inBufLen);
     i += inBufLen;
 
-    ret = Se05x_API_SCP03_CalculateMacCmdApdu(session_ctx, outBuf, i, macData, &macDataLen);
+    ret = Se05x_API_Auth_CalculateMacCmdApdu(
+        se05x_sessionMacKey, session_ctx->scp03_mcv, outBuf, i, macData, &macDataLen);
     ENSURE_OR_RETURN_ON_ERROR((ret == SM_OK), SM_NOT_OK);
 
     ENSURE_OR_RETURN_ON_ERROR(i + SCP_GP_IU_CARD_CRYPTOGRAM_LEN < (*poutBufLen), SM_NOT_OK);
@@ -529,7 +498,8 @@ smStatus_t ex_se05x_scp03_decrypt_data(
     if (apduStatus == SM_OK) {
         memcpy(sw, &(inBuf[inBufLen - SCP_GP_SW_LEN]), SCP_GP_SW_LEN);
 
-        ret = Se05x_API_SCP03_CalculateMacRspApdu(session_ctx, inBuf, inBufLen, macData, &macDataLen);
+        ret = Se05x_API_Auth_CalculateMacRspApdu(
+            se05x_sessionRmacKey, session_ctx->scp03_mcv, inBuf, inBufLen, macData, &macDataLen);
         ENSURE_OR_RETURN_ON_ERROR((ret == SM_OK), SM_NOT_OK);
 
         ENSURE_OR_RETURN_ON_ERROR((inBufLen >= SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN), SM_NOT_OK);
@@ -546,7 +516,9 @@ smStatus_t ex_se05x_scp03_decrypt_data(
             // Calculate ICV to decrypt the response
 
             /* Check - cmdBufLen == 0 ? FALSE : TRUE); */
-            ENSURE_OR_RETURN_ON_ERROR((Se05x_API_SCP03_GetResponseICV(session_ctx, iv, TRUE) == SM_OK), SM_NOT_OK);
+            ENSURE_OR_RETURN_ON_ERROR(
+                (Se05x_API_Auth_GetResponseICV(TRUE, session_ctx->scp03_counter, se05x_sessionEncKey, iv) == SM_OK),
+                SM_NOT_OK);
 
             ENSURE_OR_RETURN_ON_ERROR(((inBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN) <= *pOutBufLen), SM_NOT_OK);
             ret = hcrypto_aes_cbc_decrypt(se05x_sessionEncKey,
@@ -561,8 +533,7 @@ smStatus_t ex_se05x_scp03_decrypt_data(
             actualRespLen = (inBufLen) - (SCP_COMMAND_MAC_SIZE + SCP_GP_SW_LEN);
 
             ENSURE_OR_RETURN_ON_ERROR(
-                (Se05x_API_SCP03_RestoreSwRAPDU(session_ctx, outBuf, pOutBufLen, outBuf, actualRespLen, sw) == SM_OK),
-                SM_NOT_OK);
+                (Se05x_API_Auth_RestoreSwRAPDU(outBuf, pOutBufLen, outBuf, actualRespLen, sw) == SM_OK), SM_NOT_OK);
 
             SMLOG_MAU8_D("Decrypted Data ==>", outBuf, *pOutBufLen);
         }
@@ -575,7 +546,7 @@ smStatus_t ex_se05x_scp03_decrypt_data(
         }
     }
 
-    Se05x_API_SCP03_IncCommandCounter(session_ctx);
+    Se05x_API_Auth_IncCommandCounter(session_ctx->scp03_counter);
 
     return apduStatus;
 }

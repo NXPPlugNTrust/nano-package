@@ -1,7 +1,7 @@
 /** @file ex_se05x_mandate_scp03.c
  *  @brief Mandate SCP03 example
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021-2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,8 +18,6 @@ smStatus_t Se05x_API_WriteUserID(pSe05xSession_t session_ctx,
     const uint8_t *userId,
     size_t userIdLen,
     const SE05x_AttestationType_t attestation_type);
-smStatus_t Se05x_API_CreateSession(
-    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *session_ctxIdLen);
 smStatus_t Se05x_API_VerifySessionUserID(pSe05xSession_t session_ctx, const uint8_t *userId, size_t userIdLen);
 smStatus_t Se05x_API_SetPlatformSCPRequest(pSe05xSession_t session_ctx, SE05x_PlatformSCPRequest_t platformSCPRequest);
 smStatus_t Se05x_API_CloseAppletSession(pSe05xSession_t session_ctx);

@@ -56,7 +56,9 @@ typedef enum sFrameTypes
     CIP_REQ        = 0x04, /*!< Get CIP request */
     CIP_RES        = 0x24, /*!< Get CIP response */
 #endif
-    INVALID_REQ_RES /*!< Invalid request */
+    DEEP_PWR_DOWN_REQ = 0x1F, /*deep power down*/
+    DEEP_PWR_DOWN_RES = 0x3F, /*deep power down*/
+    INVALID_REQ_RES           /*!< Invalid request */
 } sFrameTypes_t;
 
 /*!
@@ -118,14 +120,14 @@ typedef enum phNxpEseProto7816_TransceiveStates
     SEND_S_ATR,      /*!< 7816-3 protocol transceive state: S-frame ATR command to be sent */
     SEND_S_CHIP_RST, /*!< 7816-3 protocol transceive state: S-frame chip reset command to be sent */
 #elif defined(T1oI2C_GP1_0)
-    SEND_S_SWR,            /*!< 7816-3 protocol transceive state: S-frame Software reset command to be sent */
-    SEND_S_RELEASE,        /*!< 7816-3 protocol transceive state: S-frame RELEASE command to be sent */
-    SEND_S_CIP,            /*!< 7816-3 protocol transceive state: S-frame CIP command to be sent */
-    SEND_S_COLD_RST,       /*!< 7816-3 protocol transceive state: S-frame cold reset command to be sent */
+    SEND_S_SWR,      /*!< 7816-3 protocol transceive state: S-frame Software reset command to be sent */
+    SEND_S_RELEASE,  /*!< 7816-3 protocol transceive state: S-frame RELEASE command to be sent */
+    SEND_S_CIP,      /*!< 7816-3 protocol transceive state: S-frame CIP command to be sent */
+    SEND_S_COLD_RST, /*!< 7816-3 protocol transceive state: S-frame cold reset command to be sent */
 #endif
-    SEND_S_WTX_REQ, /*!< 7816-3 protocol transceive state: S-frame WTX command to be sent */
-    SEND_S_WTX_RSP, /*!< 7816-3 protocol transceive state: S-frame WTX response to be sent */
-
+    SEND_S_WTX_REQ,     /*!< 7816-3 protocol transceive state: S-frame WTX command to be sent */
+    SEND_S_WTX_RSP,     /*!< 7816-3 protocol transceive state: S-frame WTX response to be sent */
+    SEND_DEEP_PWR_DOWN, /*!< Deep power down */
 } phNxpEseProto7816_TransceiveStates_t;
 
 /*!
@@ -137,14 +139,14 @@ typedef enum phNxpEseProto7816_TransceiveStates
  */
 typedef struct iFrameInfo
 {
-    bool_t isChained;   /*!< I-frame: Indicates if more frames to follow in the same data packet or not */
-    uint8_t *p_data;    /*!< I-frame: Actual data (Information field (INF)) */
-    uint8_t seqNo;      /*!< I-frame: Sequence number of the I-frame */
-    uint8_t maxDataLen; /*!< I-frame: Maximum data length to be allowed in a single I-frame */
-    uint8_t dataOffset; /*!< I-frame: Offset to the actual data(INF) for the current frame of the packet */
-    uint8_t
-        totalDataLen;    /*!< I-frame: Total data left in the packet, used to set the chained flag/calculating offset */
-    uint8_t sendDataLen; /*!< I-frame: the length of the I-frame actual data */
+    bool_t isChained;    /*!< I-frame: Indicates if more frames to follow in the same data packet or not */
+    uint8_t *p_data;     /*!< I-frame: Actual data (Information field (INF)) */
+    uint8_t seqNo;       /*!< I-frame: Sequence number of the I-frame */
+    uint32_t maxDataLen; /*!< I-frame: Maximum data length to be allowed in a single I-frame */
+    uint32_t dataOffset; /*!< I-frame: Offset to the actual data(INF) for the current frame of the packet */
+    uint32_t
+        totalDataLen; /*!< I-frame: Total data left in the packet, used to set the chained flag/calculating offset */
+    uint32_t sendDataLen; /*!< I-frame: the length of the I-frame actual data */
 } iFrameInfo_t;
 
 /*!
@@ -259,25 +261,6 @@ typedef struct phNxpEseProto7816InitParam
 } phNxpEseProto7816InitParam_t;
 
 /*!
- * \brief 7816-3 protocol PCB bit level structure
- *
- * This structure holds the bit level information of PCB byte
- * as per 7816-3 protocol
- *
- */
-typedef struct phNxpEseProto7816_PCB_bits
-{
-    uint8_t lsb : 1;  /*!< PCB: lsb */
-    uint8_t bit2 : 1; /*!< PCB: bit2 */
-    uint8_t bit3 : 1; /*!< PCB: bit3 */
-    uint8_t bit4 : 1; /*!< PCB: bit4 */
-    uint8_t bit5 : 1; /*!< PCB: bit5 */
-    uint8_t bit6 : 1; /*!< PCB: bit6 */
-    uint8_t bit7 : 1; /*!< PCB: bit7 */
-    uint8_t msb : 1;  /*!< PCB: msb */
-} phNxpEseProto7816_PCB_bits_t;
-
-/*!
  * \brief 7816_3 protocol stack instance
  */
 //phNxpEseProto7816_t phNxpEseProto7816_3_Var;
@@ -371,6 +354,10 @@ typedef struct phNxpEseProto7816_PCB_bits
  */
 #define PH_PROTO_7816_S_GET_ATR 0x07
 /*!
+ * \brief 7816-3 S-block deep power down
+ */
+#define PH_PROTO_7816_S_DEEP_PWR_DOWN 0x1F
+/*!
  * \brief 7816-3 S-block software reset mask
  */
 #define PH_PROTO_7816_S_SWR 0x0F
@@ -443,5 +430,8 @@ bool_t phNxpEseProto7816_GetCip(void *conn_ctx, phNxpEse_data *pRsp);
 bool_t phNxpEseProto7816_ColdReset(void *conn_ctx);
 #endif
 uint8_t getMaxSupportedSendIFrameSize(void);
+bool_t phNxpEseProto7816_WTXRsp(void *conn_ctx);
+bool_t phNxpEseProto7816_SendRSync(void *conn_ctx);
+bool_t phNxpEseProto7816_Deep_Pwr_Down(void *conn_ctx);
 /** @} */
 #endif /* _PHNXPESEPROTO7816_3_H_ */

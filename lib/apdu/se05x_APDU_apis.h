@@ -820,4 +820,67 @@ smStatus_t Se05x_API_WriteSymmKey(pSe05xSession_t session_ctx,
  */
 smStatus_t Se05x_API_DeleteSecureObject(pSe05xSession_t session_ctx, uint32_t objectID);
 
+/** Se05x_API_CreateSession
+ *
+ * Creates a session on SE05X .
+ *
+ * Depending on the authentication object being referenced, a specific method of
+ * authentication applies. The response needs to adhere to this authentication
+ * method.
+ *
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +---------+-------------------+------------------------------+
+ * | Field   | Value             | Description                  |
+ * +=========+===================+==============================+
+ * | CLA     | 0x80              |                              |
+ * +---------+-------------------+------------------------------+
+ * | INS     | INS_MGMT          | See :cpp:type:`SE05x_INS_t`  |
+ * +---------+-------------------+------------------------------+
+ * | P1      | P1_DEFAULT        | See :cpp:type:`SE05x_P1_t`   |
+ * +---------+-------------------+------------------------------+
+ * | P2      | P2_SESSION_CREATE | See :cpp:type:`SE05x_P2_t`   |
+ * +---------+-------------------+------------------------------+
+ * | Lc      | #(Payload)        | Payload length.              |
+ * +---------+-------------------+------------------------------+
+ * | Payload | TLV[TAG_1]        | 4-byte authentication object |
+ * |         |                   | identifier.                  |
+ * +---------+-------------------+------------------------------+
+ * | Le      | 0x0A              | Expecting TLV with 8-byte    |
+ * |         |                   | session ID.                  |
+ * +---------+-------------------+------------------------------+
+ * @endrst
+ *
+ * # R-APDU Body
+ *
+ * @rst
+ * +------------+----------------------------+
+ * | Value      | Description                |
+ * +============+============================+
+ * | TLV[TAG_1] | 8-byte session identifier. |
+ * +------------+----------------------------+
+ * @endrst
+ *
+ * # R-APDU Trailer
+ *
+ * SW_NO_ERROR:
+ *   * The command is handled successfully.
+ *
+ * SW_CONDITIONS_NOT_SATISFIED:
+ *   * The authenticator does not exist
+ *   * The provided input data are incorrect.
+ *   * The session is invalid.
+ *
+ * @param[in] session_ctx Session Context [0:kSE05x_pSession]
+ * @param[in] authObjectID auth [1:kSE05x_TAG_1]
+ * @param[out] sessionId  [0:kSE05x_TAG_1]
+ * @param[in,out] psessionIdLen Length for sessionId
+ *
+ *
+ */
+smStatus_t Se05x_API_CreateSession(
+    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen);
+
 #endif //#ifndef SE05X_APDU_APIS_H_INC

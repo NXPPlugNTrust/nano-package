@@ -28,7 +28,9 @@ Nano Package -
 	- AES Encrypt / Decrypt (ECB,CBC,CTR)
 	- Binary Objects
 	- Encrypted I2C communication using PlatformSCP channel baed on Global Platform SCP03 channel
-	- Platforms - Linux, frdm-k64 bare metal, Zephyr OS
+	- EC Key Authentication
+	- EC Key Authentication in combination with PlatformSCP03
+	- Platforms - Linux, frdm-k64 bare metal, mcxn947/mcxa153 bare metal, Zephyr OS
 
 
 **Folder structure**
@@ -39,7 +41,7 @@ Nano Package -
 	lib  ------ se05x library files
 	 |
 	 |__
-		apdu -------- Contains se05x apdu apis with scp03 support
+		apdu -------- Contains se05x apdu apis with scp03 / eckey auth support
 		platform ---- Platform specific files. Modify / add the files here to support other platform
 		t1oi2c ------ T1OI2C files
 		mbedtls_alt - Mbedtls ALT files to access SE05x
@@ -54,6 +56,7 @@ Using nano package, host can establish encrypted I2C communication via PlatformS
 	Plug and Trust Nano package has these host crypto apis implemented using
 		- openssl (version 1.1.1). (simw-nanopkg/lib/apdu/scp03/openssl)
 		- tinyCrypt (simw-nanopkg/lib/apdu/scp03/tc)
+		- mbedtls (simw-nanopkg/lib/apdu/scp03/mbedtls)
 
 To use a different host crypto, re-implement the host crypto apis -
 `simw-nanopkg/lib/apdu/scp03/se05x_scp03_crypto.h`
@@ -63,7 +66,7 @@ When building the example with 'Platform SCP' enabled, make sure to assign valid
 
 .. note::
 
-	Product Deployment => Make sure to store the SCP03 keys securly.
+	Product Deployment => Make sure to store the SCP03 keys securely.
 
 The Default Platform SCP keys for ease of use configurations are present in
 	- SE050 Configuration: https://www.nxp.com/docs/en/application-note/AN12436.pdf
@@ -83,13 +86,55 @@ The Default Platform SCP keys for ease of use configurations are present in
 	}
 
 
+
+EC-Key Auth
+-----------
+
+Using nano package, host can establish Eckey authentication with applet.
+This requires some host crypto operations.
+
+	Plug and Trust Nano package has these host crypto apis implemented using
+		- openssl (version 1.1.1). (simw-nanopkg/lib/apdu/scp03/openssl)
+		- tinyCrypt (simw-nanopkg/lib/apdu/scp03/tc)
+		- mbedtls (simw-nanopkg/lib/apdu/scp03/mbedtls)
+
+To use a different host crypto, re-implement the host crypto apis -
+`simw-nanopkg/lib/apdu/scp03/se05x_scp03_crypto.h`
+
+When building the example with 'EC Key Authentication' enabled, make sure to assign valid eckey keys to session context.
+
+.. note::
+
+	Product Deployment => Make sure to store the EC keys securly.
+
+.. code-block:: c
+
+	void ex_set_ec_auth_keys(pSe05xSession_t session_ctx)
+	{
+	    session_ctx->pEc_auth_key    = &ec_auth_key[0];
+	    session_ctx->ec_auth_key_len = sizeof(ec_auth_key);
+	    return;
+	}
+
+
 Build option
 ------------
 
+plain Session ::
+
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=None : Plain Session
+
 Platform SCP03 ::
 
-	-DPLUGANDTRUST_SCP03=ON : Build with Platform SCP03 enabled
-	-DPLUGANDTRUST_SCP03=OFF : Build with Platform SCP03 disabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03 : Build with Platform SCP03 enabled
+
+EcKey Authentication ::
+
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey : Build with ECKey Authentication enabled
+
+EcKey and Platform SCP03 combined ::
+
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey_PlatSCP03 : Build with EcKey and Platform SCP03 combined
 
 Debug Logs ::
 
@@ -102,19 +147,48 @@ Examples
 
 **Examples on linux**
 
-Refer `simw-nanopkg/examples/<example>/readme.rst`.
+Refer [simw-nanopkg/examples/se05x_sign/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_crypto/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_GetInfo/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_mandate_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_resume_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/readme.rst)
 
 **Examples on FRDM-K64F**
 
-Refer `simw-nanopkg/se05x_sign/k64f/readme.rst`.
+Refer [`simw-nanopkg/examples/se05x_sign/k64f/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/k64f/readme.rst)
 
-Refer `simw-nanopkg/se05x_crypto/k64f/readme.rst`.
+Refer [`simw-nanopkg/examples/se05x_crypto/k64f/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/k64f/readme.rst)
 
+Refer [simw-nanopkg/examples/se05x_GetInfo/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/k64f/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_mandate_scp03/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/k64f/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_resume_scp03/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/k64f/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/k64f/readme.rst)
 **Examples on Zephyr OS**
+
+Refer [simw-nanopkg/examples/se05x_sign/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_crypto/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_GetInfo/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_mandate_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_mbedtls_alt_test/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mbedtls_alt_test/readme.rst)
+
+Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/readme.rst)
 
 Integration of nano package in Zephyr OS (Tested with release tag - zephyr-v3.5.0).
 
-Refer `simw-nanopkg/zephyr/readme.rst`.
+Refer [`simw-nanopkg/zephyr/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/zephyr/readme.rst)
 
 
 .. note::
@@ -128,7 +202,7 @@ Porting
 
 Platform specific files are maintained in **simw-nanopkg/lib/platform** folder.
 
-Modify / add the files here to support other platforms. By default port files are available for Linux, Zephyr and K64 MCU.
+Modify / add the files here to support other platforms. By default port files are available for Linux, Zephyr, MCXN947, MCXA153 and K64 MCU.
 
 
 Mbedtls Alt files
@@ -171,13 +245,3 @@ for the private key has been used to contain:
            10:00
 
 Refer `zephyr/samples/net/cloud/google_iot_mqtt/README.rst` to build GCP cloud example.
-
-
-Memory Details
----------------
-
-Following are the memory details of se05x sign example (plain session) when build in release mode for K64.
-
-Text - 43136
-Data - 2520
-Bss - 41672

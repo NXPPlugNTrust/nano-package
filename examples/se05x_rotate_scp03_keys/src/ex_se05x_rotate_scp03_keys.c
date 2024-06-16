@@ -1,7 +1,7 @@
 /** @file ex_se05x_rotate_scp03_keys.c
  *  @brief se05x example to rotate platformSCP03 keys.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021-2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -16,6 +16,10 @@
 #elif EX_SE05X_USE_TC
 #include <tinycrypt/aes.h>
 #include <tinycrypt/constants.h>
+#elif EX_SE05X_USE_MBEDTLS
+#include <mbedtls/ctr_drbg.h>
+#include <mbedtls/cmac.h>
+#include <mbedtls/aes.h>
 #else
 #error "No host crypto defined. Cannot build this example"
 #endif
@@ -113,6 +117,8 @@ static int ex_aes_ecb_encrypt(uint8_t *key, size_t keylen, const uint8_t *srcDat
 {
 #if EX_SE05X_USE_OPENSSL
     AES_KEY AESKey;
+#elif EX_SE05X_USE_MBEDTLS
+    mbedtls_aes_context aes_ctx;
 #elif EX_SE05X_USE_TC
     struct tc_aes_key_sched_struct aes_ecb_sched;
 #else
@@ -129,6 +135,14 @@ static int ex_aes_ecb_encrypt(uint8_t *key, size_t keylen, const uint8_t *srcDat
         return 1;
     }
     AES_ecb_encrypt(srcData, destData, &AESKey, AES_ENCRYPT);
+#elif EX_SE05X_USE_MBEDTLS
+    mbedtls_aes_init(&aes_ctx);
+	if (mbedtls_aes_setkey_enc(&aes_ctx, key, (unsigned int)(keylen * 8))  != 0) {
+		return 1;
+	}
+	if (mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, srcData, destData)  != 0) {
+		return 1;
+	}
 #elif EX_SE05X_USE_TC
     if (TC_CRYPTO_SUCCESS != tc_aes128_set_encrypt_key(&aes_ecb_sched, key)) {
         return 1;

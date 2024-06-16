@@ -40,6 +40,8 @@ Use the below options in prj.conf file of the example.
 
 	CONFIG_PLUGANDTRUST=y/n   =================> Enable / Disable Plug and Trust lib support.
 	CONFIG_PLUGANDTRUST_SCP03=y/n =============> Enable / Disable Platform SCP03 support.
+	CONFIG_PLUGANDTRUST_ECKEY=y/n =============> Enable / Disable ECKey Auth support.
+	CONFIG_PLUGANDTRUST_ECKEY_SCP03=y/n =======> Enable / Disable ECKey + Platform SCP03 support.
 	CONFIG_PLUGANDTRUST_LOG_LEVEL_DBG=y/n =====> Enable / Disable Plug and Trust logs.
 
 

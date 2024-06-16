@@ -28,30 +28,25 @@
  * \brief ESE Poll timeout (min 1 miliseconds)
  */
 #define ESE_POLL_DELAY_MS (1)
+
 /*!
  * \brief ESE Poll timeout.
- * As Max WTX timeout is 1sec, select ESE_NAD_POLLING_MAX count in such a way that WTX request frm SE is not skiped
+ * As Max WTX timeout is 1sec, select ESE_NAD_POLLING_MAX count in such a way that WTX request frm SE is not skiped.
  * select target value is 2 sec.
  *
  * Note: Here ESE_NAD_POLLING_MAX is depend on platform, If i2c driver does not have backoff delay implemented,
- * then set ESE_NAD_POLLING_MAX value to >=300
+ * then set ESE_NAD_POLLING_MAX value to higher value.
  *
  */
-#if AX_EMBEDDED //back off delay is implemented for AX_EMBEDDED devices
-/*TODO:semslite need more than 20 polling count right now max is set to 60 as 46 was the max sof counter observed
-   SIMW-2927*/
-#if defined(LPC_55x) || defined(IMX_RT)
-#define ESE_NAD_POLLING_MAX (2 * 250)
-#else
+#if defined(QN9090DK6)
 #define ESE_NAD_POLLING_MAX (2 * 30)
-#endif
 #else
-#define ESE_NAD_POLLING_MAX (2 * 250)
+#define ESE_NAD_POLLING_MAX (30) // With backoff delay implementation, this will have the read duration of ~20 seconds.
 #endif
 /*!
  * \brief Max retry count for Write
  */
-#define MAX_RETRY_COUNT   8
+#define MAX_RETRY_COUNT 8
 
 /*!
  * \brief ESE wakeup delay in case of write error retry
@@ -72,9 +67,8 @@
 // #define I2C_MASTER_SLAVE_ADDR_7BIT (0x90U >> 1)  //slve bit address is 20U but driver do right shift so set to 40U
 #define SMCOM_I2C_ADDRESS (0x90)
 
-
 // Enable t=1oi2c retry
-//#define T1OI2C_RETRY_ON_I2C_FAILED
+#define T1OI2C_RETRY_ON_I2C_FAILED
 
 /*!
  * \ingroup eSe_PAL_I2C

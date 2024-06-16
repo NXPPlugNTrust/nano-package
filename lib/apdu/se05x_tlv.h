@@ -18,6 +18,7 @@ typedef enum
     SM_OK                                  = 0x9000,
     SM_ERR_CONDITIONS_OF_USE_NOT_SATISFIED = 0x6985,
     SM_ERR_ACCESS_DENIED_BASED_ON_POLICY   = 0x6986,
+    SM_ERR_APDU_THROUGHPUT                 = 0x66A6,
 } smStatus_t;
 
 /* ********************** Function Prototypes ********************** */

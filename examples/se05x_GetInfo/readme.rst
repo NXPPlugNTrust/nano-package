@@ -28,9 +28,12 @@ To build example run ::
 
 **Build options**
 
-Platform SCP03 ::
+Authentication ::
 
-	-DPLUGANDTRUST_SCP03=OFF -- Build with Platform SCP03 disabled
+    -DPLUGANDTRUST_SE05X_AUTH:STRING=None : Build with no authentication
+    -DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03 : Build with Platform SCP03 enabled
+    -DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey : Build with ECKey Authentication enabled
+    -DPLUGANDTRUST_SE05X_AUTH:STRING=ECKey_PlatSCP03 : Build with EcKey and Platform SCP03 combined
 
 Debug Logs ::
 

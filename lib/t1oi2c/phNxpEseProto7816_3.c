@@ -255,6 +255,14 @@ static bool_t phNxpEseProto7816_SendSFrame(void *conn_ctx, sFrameInfo_t sFrameDa
         pcb_byte |= PH_PROTO_7816_S_GET_ATR;
         break;
 #endif
+    case DEEP_PWR_DOWN_REQ:
+        frame_len                                    = (PH_PROTO_7816_HEADER_LEN + PH_PROTO_7816_CRC_LEN);
+        p_framebuff[PH_PROPTO_7816_LEN_UPPER_OFFSET] = 0;
+        p_framebuff[PH_PROPTO_7816_INF_BYTE_OFFSET]  = 0x00;
+
+        pcb_byte |= PH_PROTO_7816_S_BLOCK_REQ; /* PCB */
+        pcb_byte |= PH_PROTO_7816_S_DEEP_PWR_DOWN;
+        break;
     case WTX_RSP:
         frame_len = (PH_PROTO_7816_HEADER_LEN + 1 + PH_PROTO_7816_CRC_LEN);
 #if defined(T1oI2C_UM11225)
@@ -406,9 +414,9 @@ static bool_t phNxpEseProto7816_sendRframe(void *conn_ctx, rFrameTypes_t rFrameT
  ******************************************************************************/
 static bool_t phNxpEseProto7816_SendIframe(void *conn_ctx, iFrameInfo_t iFrameData)
 {
-    bool_t status                    = FALSE;
-    uint32_t frame_len               = 0;
-    uint8_t *p_framebuff             = iFrameData.p_data;
+    bool_t status      = FALSE;
+    uint32_t frame_len = 0;
+    uint8_t p_framebuff[MAX_APDU_BUFFER];
     uint8_t pcb_byte                 = 0;
     uint16_t calc_crc                = 0;
     iFrameInfo_t *pNextTx_IframeInfo = &phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.IframeInfo;
@@ -417,23 +425,9 @@ static bool_t phNxpEseProto7816_SendIframe(void *conn_ctx, iFrameInfo_t iFrameDa
         T_SMLOG_E("%s Line: [%d] I frame Len is 0, INVALID ", __FUNCTION__, __LINE__);
         return FALSE;
     }
-
-    if (iFrameData.dataOffset != 0) {
-        T_SMLOG_I("%s Line: [%d] - dataOffset cannot be greater than zero, as max appdu buffer size is 128 ",
-            __FUNCTION__,
-            __LINE__);
-        return FALSE;
-    }
-
-    if ((iFrameData.sendDataLen + PH_PROPTO_7816_INF_BYTE_OFFSET) > MAX_APDU_BUFFER) {
-        T_SMLOG_I("%s Line: [%d] - APDU buffer is not long enough. ", __FUNCTION__, __LINE__);
-        return FALSE;
-    }
-
-    memmove(p_framebuff + PH_PROPTO_7816_INF_BYTE_OFFSET, p_framebuff, iFrameData.sendDataLen);
-
     /* This update is helpful in-case a R-NACK is transmitted from the MW */
     phNxpEseProto7816_3_Var.lastSentNonErrorframeType = IFRAME;
+    ENSURE_OR_GO_EXIT(iFrameData.sendDataLen <= (UINT_MAX - (PH_PROTO_7816_HEADER_LEN + PH_PROTO_7816_CRC_LEN)))
     frame_len = (iFrameData.sendDataLen + PH_PROTO_7816_HEADER_LEN + PH_PROTO_7816_CRC_LEN);
 
     /* frame the packet */
@@ -460,14 +454,19 @@ static bool_t phNxpEseProto7816_SendIframe(void *conn_ctx, iFrameInfo_t iFrameDa
     p_framebuff[PH_PROPTO_7816_LEN_LOWER_OFFSET] = (((uint16_t)iFrameData.sendDataLen) & 0xff);
 #endif
     /* store I frame */
+    ENSURE_OR_GO_EXIT(iFrameData.sendDataLen <= (MAX_APDU_BUFFER - PH_PROPTO_7816_INF_BYTE_OFFSET))
+    ENSURE_OR_GO_EXIT(frame_len - 1 < MAX_APDU_BUFFER)
 
-    //phNxpEse_memcpy(&(p_framebuff[PH_PROPTO_7816_INF_BYTE_OFFSET]), iFrameData.p_data + iFrameData.dataOffset, iFrameData.sendDataLen);
+    phNxpEse_memcpy(&(p_framebuff[PH_PROPTO_7816_INF_BYTE_OFFSET]),
+        iFrameData.p_data + iFrameData.dataOffset,
+        iFrameData.sendDataLen);
     calc_crc = phNxpEseProto7816_ComputeCRC(p_framebuff, 0, (frame_len - 2));
 
     p_framebuff[frame_len - 2] = (calc_crc >> 8) & 0xff;
     p_framebuff[frame_len - 1] = calc_crc & 0xff;
     status                     = phNxpEseProto7816_SendRawFrame(conn_ctx, frame_len, p_framebuff);
 
+exit:
     return status;
 }
 
@@ -490,7 +489,7 @@ static bool_t phNxpEseProto7816_SetFirstIframeContxt(void)
 
     pNextTx_IframeInfo->dataOffset                                = 0;
     phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.FrameType         = IFRAME;
-    pNextTx_IframeInfo->seqNo                                     = (uint8_t) (pLastTx_IframeInfo->seqNo ^ 1);
+    pNextTx_IframeInfo->seqNo                                     = (uint8_t)(pLastTx_IframeInfo->seqNo ^ 1);
     phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = SEND_IFRAME;
     pRx_EseCntx->responseBytesRcvd                                = 0;
     if (pNextTx_IframeInfo->totalDataLen > pNextTx_IframeInfo->maxDataLen) {
@@ -526,9 +525,8 @@ static bool_t phNxpEseProto7816_SetNextIframeContxt(void)
     phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.FrameType         = IFRAME;
     phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = SEND_IFRAME;
 
-    pNextTx_IframeInfo->seqNo      = (uint8_t) (pLastTx_IframeInfo->seqNo ^ 1);
-    if((UINT8_MAX - pLastTx_IframeInfo->dataOffset) < pLastTx_IframeInfo->maxDataLen)
-    {
+    pNextTx_IframeInfo->seqNo = (uint8_t)(pLastTx_IframeInfo->seqNo ^ 1);
+    if ((UINT_MAX - pLastTx_IframeInfo->dataOffset) < pLastTx_IframeInfo->maxDataLen) {
         return FALSE;
     }
     pNextTx_IframeInfo->dataOffset = pLastTx_IframeInfo->dataOffset + pLastTx_IframeInfo->maxDataLen;
@@ -669,12 +667,6 @@ static void phNxpEseProto7816_DecodeSFrameData(uint8_t *p_data)
     /* current GP implementation support max payload of 0x00FE, so considering lower offset */
     frameOffset = PH_PROPTO_7816_LEN_LOWER_OFFSET;
 #endif
-
-    if((UINT8_MAX - frameOffset) < p_data[frameOffset]) {
-        T_SMLOG_E("Error in phNxpEseProto7816_DecodeSFrameData");
-        return;
-    }
-
     maxSframeLen = p_data[frameOffset] + frameOffset; /* to be in sync with offset which starts from index 0 */
     while (maxSframeLen > frameOffset) {
         frameOffset += 1; /* To get the Type (TLV) */
@@ -707,7 +699,6 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
 {
     bool_t status = TRUE;
     uint8_t pcb;
-    phNxpEseProto7816_PCB_bits_t pcb_bits;
     iFrameInfo_t *pRx_lastRcvdIframeInfo = &phNxpEseProto7816_3_Var.phNxpEseRx_Cntx.lastRcvdIframeInfo;
     rFrameInfo_t *pNextTx_RframeInfo     = &phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.RframeInfo;
     sFrameInfo_t *pNextTx_SframeInfo     = &phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.SframeInfo;
@@ -723,25 +714,22 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
     ENSURE_OR_GO_EXIT(data_len >= PH_PROTO_7816_HEADER_LEN);
 
     pcb = p_data[PH_PROPTO_7816_PCB_OFFSET];
-    phNxpEse_memset(&pcb_bits, 0x00, sizeof(phNxpEseProto7816_PCB_bits_t));
-    phNxpEse_memcpy(&pcb_bits, &pcb, sizeof(uint8_t));
     if (data_len < PH_PROTO_7816_INF_FILED) {
         return FALSE;
     }
 
-    if (0x00 == pcb_bits.msb) /* I-FRAME decoded should come here */
+    if (!(pcb & 0x80)) /* I-FRAME decoded should come here */
     {
         T_SMLOG_D("%s I-Frame Received ", __FUNCTION__);
         phNxpEseProto7816_3_Var.wtx_counter                       = 0;
         phNxpEseProto7816_3_Var.phNxpEseRx_Cntx.lastRcvdFrameType = IFRAME;
-        if (pRx_lastRcvdIframeInfo->seqNo != pcb_bits.bit7) //   != pcb_bits->bit7)
-        {
-            T_SMLOG_D("%s I-Frame lastRcvdIframeInfo.seqNo:0x%x ", __FUNCTION__, pcb_bits.bit7);
+        if (pRx_lastRcvdIframeInfo->seqNo != ((pcb & 0x40) >> 6)) {
+            T_SMLOG_D("%s I-Frame lastRcvdIframeInfo.seqNo:0x%x ", __FUNCTION__, ((pcb & 0x40) >> 6));
             phNxpEseProto7816_ResetRecovery();
             pRx_lastRcvdIframeInfo->seqNo = 0x00;
-            pRx_lastRcvdIframeInfo->seqNo |= pcb_bits.bit7;
+            pRx_lastRcvdIframeInfo->seqNo |= ((pcb & 0x40) >> 6);
 
-            if (pcb_bits.bit6) {
+            if (pcb & 0x20) {
                 pRx_lastRcvdIframeInfo->isChained                     = TRUE;
                 phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.FrameType = RFRAME;
                 pNextTx_RframeInfo->errCode                           = NO_ERROR;
@@ -777,15 +765,15 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             }
         }
     }
-    else if ((0x01 == pcb_bits.msb) && (0x00 == pcb_bits.bit7)) /* R-FRAME decoded should come here */
+    else if ((pcb & 0x80) && (!(0x40 & pcb))) /* R-FRAME decoded should come here */
     {
         T_SMLOG_D("%s R-Frame Received", __FUNCTION__);
         phNxpEseProto7816_3_Var.wtx_counter                       = 0;
         phNxpEseProto7816_3_Var.phNxpEseRx_Cntx.lastRcvdFrameType = RFRAME;
         pRx_lastRcvdRframeInfo->seqNo                             = 0; // = 0;
-        pRx_lastRcvdRframeInfo->seqNo |= pcb_bits.bit5;
+        pRx_lastRcvdRframeInfo->seqNo |= ((pcb & 0x10) >> 4);
 
-        if ((pcb_bits.lsb == 0x00) && (pcb_bits.bit2 == 0x00)) {
+        if ((!(pcb & 0x01)) && (!(pcb & 0x02))) {
             pRx_lastRcvdRframeInfo->errCode = NO_ERROR;
             phNxpEseProto7816_ResetRecovery();
             if (pRx_lastRcvdRframeInfo->seqNo != pLastTx_IframeInfo->seqNo) {
@@ -794,11 +782,11 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             }
 
         } /* Error handling 1 : Parity error */
-        else if (((pcb_bits.lsb == 0x01) && (pcb_bits.bit2 == 0x00)) ||
+        else if (((pcb & 0x01) && (!(pcb & 0x02))) ||
                  /* Error handling 2: Other indicated error */
-                 ((pcb_bits.lsb == 0x00) && (pcb_bits.bit2 == 0x01))) {
+                 ((!(pcb & 0x01)) && (pcb & 0x02))) {
             sm_sleep(DELAY_ERROR_RECOVERY / 1000);
-            if ((pcb_bits.lsb == 0x00) && (pcb_bits.bit2 == 0x01)) {
+            if ((!(pcb & 0x01)) && (pcb & 0x02)) {
                 pRx_lastRcvdRframeInfo->errCode = OTHER_ERROR;
             }
             else {
@@ -851,7 +839,7 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             //resend previously send I frame
         }
         /* Error handling 3 */
-        else if ((pcb_bits.lsb == 0x01) && (pcb_bits.bit2 == 0x01)) {
+        else if ((pcb & 0x01) && (pcb & 0x02)) {
             sm_sleep(DELAY_ERROR_RECOVERY / 1000);
             if (phNxpEseProto7816_3_Var.recoveryCounter < PH_PROTO_7816_FRAME_RETRY_COUNT) {
                 pRx_lastRcvdRframeInfo->errCode             = SOF_MISSED_ERROR;
@@ -864,7 +852,7 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             }
         }
     }
-    else if ((0x01 == pcb_bits.msb) && (0x01 == pcb_bits.bit7)) /* S-FRAME decoded should come here */
+    else if ((0x80 & pcb) && (0x40 & pcb)) /* S-FRAME decoded should come here */
     {
         T_SMLOG_D("%s S-Frame Received ", __FUNCTION__);
         int32_t frameType                                         = (int32_t)(pcb & 0x3F); /*discard upper 2 bits */
@@ -1041,6 +1029,14 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = IDLE_STATE;
             break;
 #endif
+        case DEEP_PWR_DOWN_RES:
+            pRx_lastRcvdSframeInfo->sFrameType = DEEP_PWR_DOWN_RES;
+            if (p_data[PH_PROPTO_7816_FRAME_LENGTH_OFFSET] > 0) {
+                phNxpEseProto7816_DecodeSFrameData(p_data);
+            }
+            phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.FrameType         = UNKNOWN;
+            phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = IDLE_STATE;
+            break;
         default:
             T_SMLOG_E("%s Wrong S-Frame Received ", __FUNCTION__);
             break;
@@ -1206,6 +1202,10 @@ static bool_t TransceiveProcess(void *conn_ctx)
             sFrameInfo.sFrameType = WTX_RSP;
             status                = phNxpEseProto7816_SendSFrame(conn_ctx, sFrameInfo);
             break;
+        case SEND_DEEP_PWR_DOWN:
+            sFrameInfo.sFrameType = DEEP_PWR_DOWN_REQ;
+            status                = phNxpEseProto7816_SendSFrame(conn_ctx, sFrameInfo);
+            break;
 #if defined(T1oI2C_UM11225)
         case SEND_S_CHIP_RST:
             sFrameInfo.sFrameType = CHIP_RESET_REQ;
@@ -1296,7 +1296,7 @@ bool_t phNxpEseProto7816_Transceive(void *conn_ctx, phNxpEse_data *pCmd, phNxpEs
         /* ESE hard reset to be done */
         T_SMLOG_E("%s Transceive failed, hard reset to proceed ", __FUNCTION__);
     }
-    if (pRx_EseCntx->responseBytesRcvd > UINT8_MAX) {
+    if (pRx_EseCntx->responseBytesRcvd > UINT32_MAX) {
         return FALSE;
     }
     pRsp->len                                              = pRx_EseCntx->responseBytesRcvd;
@@ -1427,6 +1427,7 @@ bool_t phNxpEseProto7816_Open(void *conn_ctx, phNxpEseProto7816InitParam_t initP
         /*After power ON , initialization state takes 5ms after which slave enters active
         state where slave can exchange data with the master */
         sm_sleep(WAKE_UP_DELAY_MS);
+        phNxpEse_waitForWTX(conn_ctx);
         phNxpEse_clearReadBuffer(conn_ctx);
 #if defined(T1oI2C_UM11225)
         /* Interface Reset respond with ATR*/
@@ -1645,6 +1646,42 @@ bool_t phNxpEseProto7816_SetIfscSize(uint16_t IFSC_Size)
     return TRUE;
 }
 
+/******************************************************************************
+ * Function         phNxpEseProto7816_WTXRsp
+ *
+ * Description      This function is used to send WTX response
+ *
+ * param[in]        void* conn_ctx
+ *
+ * Returns          On success return TRUE or else FALSE.
+ *
+ ******************************************************************************/
+bool_t phNxpEseProto7816_WTXRsp(void *conn_ctx)
+{
+    sFrameInfo_t sFrameInfo;
+    sFrameInfo.sFrameType = WTX_RSP;
+    T_SMLOG_D(" %s - Sending WTX Response", __FUNCTION__);
+    return phNxpEseProto7816_SendSFrame(conn_ctx, sFrameInfo);
+}
+
+/******************************************************************************
+ * Function         phNxpEseProto7816_SendRSync
+ *
+ * Description      This function is used to send Rsync
+ *
+ * param[in]        void* conn_ctx
+ *
+ * Returns          On success return TRUE or else FALSE.
+ *
+ ******************************************************************************/
+bool_t phNxpEseProto7816_SendRSync(void *conn_ctx)
+{
+    sFrameInfo_t sFrameInfo;
+    sFrameInfo.sFrameType = RESYNCH_REQ;
+    T_SMLOG_D(" %s - Sending Rsync", __FUNCTION__);
+    return phNxpEseProto7816_SendSFrame(conn_ctx, sFrameInfo);
+}
+
 #if defined(T1oI2C_UM11225)
 /******************************************************************************
  * Function         phNxpEseProto7816_GetAtr
@@ -1719,4 +1756,30 @@ exit:
     return status;
 }
 #endif
+
+/******************************************************************************
+ * Function         phNxpEseProto7816_Deep_Pwr_Down
+ *
+ * Description      This function is used to send deep power down command
+ *
+ * param[in]        void
+ *
+ * Returns          On success return TRUE or else FALSE.
+ *
+ ******************************************************************************/
+bool_t phNxpEseProto7816_Deep_Pwr_Down(void *conn_ctx)
+{
+    bool_t status                    = FALSE;
+    sFrameInfo_t *pNextTx_SframeInfo = &phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.SframeInfo;
+
+    phNxpEseProto7816_3_Var.phNxpEseProto7816_CurrentState = PH_NXP_ESE_PROTO_7816_TRANSCEIVE;
+    /* send the end of session s-frame */
+    phNxpEseProto7816_3_Var.phNxpEseNextTx_Cntx.FrameType         = SFRAME;
+    pNextTx_SframeInfo->sFrameType                                = DEEP_PWR_DOWN_REQ;
+    phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = SEND_DEEP_PWR_DOWN;
+    status                                                        = TransceiveProcess(conn_ctx);
+    phNxpEseProto7816_3_Var.phNxpEseProto7816_CurrentState        = PH_NXP_ESE_PROTO_7816_IDLE;
+    return status;
+}
+
 /** @} */

@@ -13,9 +13,9 @@ SetPlatformSCPRequest APDU can be sent in session authenticated with 'RESERVED_I
 
 The example can be used to either 'Mandate PlatformSCP' or remove the 'Mandate PlatformSCP' state.
 
-When example is built with -DPLUGANDTRUST_SCP03=OFF, ex_se05x_mandate_scp03_set is built. (Set Mandate PlatformSCP).
+When example is built with -DPLUGANDTRUST_SE05X_AUTH:STRING=None, ex_se05x_mandate_scp03_set is built. (Set Mandate PlatformSCP).
 
-When example is built with -DPLUGANDTRUST_SCP03=ON, ex_se05x_mandate_scp03_remove is built. (Removes Mandate PlatformSCP).
+When example is built with -DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03, ex_se05x_mandate_scp03_remove is built. (Removes Mandate PlatformSCP).
 
 Refer file - 'simw-nanopkg/examples/se05x_mandate_scp03/src/ex_se05x_mandate_scp03.c'.
 
@@ -38,24 +38,24 @@ To build example run ::
 	cd simw-nanopkg/examples/se05x_mandate_scp03/linux
 	mkdir build
 	cd build
-	cmake ../ -DPLUGANDTRUST_SCP03=OFF
+	cmake ../ -DPLUGANDTRUST_SE05X_AUTH:STRING=None
 	make
 	./ex_se05x_mandate_scp03_set
 
 	cd simw-nanopkg/examples/se05x_mandate_scp03/linux
 	mkdir build
 	cd build
-	cmake ../ -DPLUGANDTRUST_SCP03=ON
+	cmake ../ -DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03
 	make
 	./ex_se05x_mandate_scp03_remove
 
 
 **Build options**
 
-Platform SCP03 ::
+Authentication ::
 
-	-DPLUGANDTRUST_SCP03=ON : Build with Platform SCP03 enabled
-	-DPLUGANDTRUST_SCP03=OFF : Build with Platform SCP03 disabled
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=None : Build with no authentication
+	-DPLUGANDTRUST_SE05X_AUTH:STRING=PlatfSCP03 : Build with Platform SCP03 enabled
 
 Debug Logs ::
 
