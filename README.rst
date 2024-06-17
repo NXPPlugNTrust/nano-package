@@ -147,71 +147,95 @@ Examples
 
 **Examples on linux**
 
-Refer [simw-nanopkg/examples/se05x_sign/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst)
+`se05x_sign Linux`_.
 
-Refer [simw-nanopkg/examples/se05x_crypto/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/readme.rst)
+.. _se05x_sign Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_GetInfo/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/readme.rst)
+`se05x_crypto Linux`_.
 
-Refer [simw-nanopkg/examples/se05x_mandate_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/readme.rst)
+.. _se05x_crypto Linux: https://github.com/NXPPlugNTrust/nano-packag/blob/master/examples/se05x_crypto/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_resume_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/readme.rst)
+`se05x_GetInfo Linux`_.
 
-Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/readme.rst)
+.. _se05x_GetInfo Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/readme.rst
+
+`se05x_mandate_scp03 Linux`_.
+
+.. _se05x_mandate_scp03 Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/readme.rst
+
+`se05x_resume_scp03 Linux`_.
+
+.. _se05x_resume_scp03 Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/readme.rst
+
 
 **Examples on FRDM-K64F**
 
-Refer [`simw-nanopkg/examples/se05x_sign/k64f/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/k64f/readme.rst)
+`se05x_sign k64f`_.
 
-Refer [`simw-nanopkg/examples/se05x_crypto/k64f/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/k64f/readme.rst)
+.. _se05x_sign k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/k64f/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_GetInfo/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/k64f/readme.rst)
+`se05x_crypto k64f`_.
 
-Refer [simw-nanopkg/examples/se05x_mandate_scp03/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/k64f/readme.rst)
+.. _se05x_crypto k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/k64f/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_resume_scp03/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/k64f/readme.rst)
+`se05x_GetInfo k64f`_.
 
-Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/k64f/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/k64f/readme.rst)
+.. _se05x_GetInfo k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/k64f/readme.rst
+
+`se05x_mandate_scp03 k64f`_.
+
+.. _se05x_mandate_scp03 k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/k64f/readme.rst
+
+`se05x_rotate_scp03_keys k64f`_.
+
+.. _se05x_rotate_scp03_keys k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/k64f/readme.rst
+
 
 **Examples on FRDM-MCXN**
 
-Refer [simw-nanopkg/examples/se05x_sign/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxn947/readme.rst)
+`se05x_sign mcxn`_.
 
-Refer [simw-nanopkg/examples/se05x_crypto/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxn947/readme.rst)
+.. _se05x_sign mcxn: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxn947/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_GetInfo/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxn947/readme.rst)
+`se05x_crypto mcxn`_.
 
-Refer [simw-nanopkg/examples/se05x_mandate_scp03/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/mcxn947/readme.rst)
+.. _se05x_crypto mcxn: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxn947/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_resume_scp03/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/mcxn947/readme.rst)
+`se05x_GetInfo mcxn`_.
 
-Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/mcxn947/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/mcxn947/readme.rst)
+.. _se05x_GetInfo mcxn: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxn947/readme.rst
+
+`se05x_mandate_scp03 mcxn`_.
+
+.. _se05x_mandate_scp03 mcxn: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/mcxn947/readme.rst
+
+`se05x_rotate_scp03_keys mcxn`_.
+
+.. _se05x_rotate_scp03_keys mcxn: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/mcxn947/readme.rst
+
 
 **Examples on FRDM-MCXA**
 
-Refer [simw-nanopkg/examples/se05x_sign/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxa153/readme.rst)
+`se05x_sign mcxa`_.
 
-Refer [simw-nanopkg/examples/se05x_crypto/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxa153/readme.rst)
+.. _se05x_sign mcxa: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/mcxa153/readme.rst
 
-Refer [simw-nanopkg/examples/se05x_GetInfo/mcxa153/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxa153/readme.rst)
+`se05x_crypto mcxa`_.
+
+.. _se05x_crypto mcxa: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/mcxa153/readme.rst
+
+`se05x_GetInfo mcxa`_.
+
+.. _se05x_GetInfo mcxa: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/mcxa153/readme.rst
+
 
 **Examples on Zephyr OS**
 
-Refer [simw-nanopkg/examples/se05x_sign/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_sign/readme.rst)
-
-Refer [simw-nanopkg/examples/se05x_crypto/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_crypto/readme.rst)
-
-Refer [simw-nanopkg/examples/se05x_GetInfo/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_GetInfo/readme.rst)
-
-Refer [simw-nanopkg/examples/se05x_mandate_scp03/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mandate_scp03/readme.rst)
-
-Refer [simw-nanopkg/examples/se05x_mbedtls_alt_test/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_mbedtls_alt_test/readme.rst)
-
-Refer [simw-nanopkg/examples/se05x_rotate_scp03_keys/readme.rst](https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/readme.rst)
-
 Integration of nano package in Zephyr OS (Tested with release tag - zephyr-v3.5.0).
 
-Refer [`simw-nanopkg/zephyr/readme.rst`](https://github.com/NXPPlugNTrust/nano-package/blob/master/zephyr/readme.rst)
+Refer `Zephyr Readme`_.
+
+.. _Zephyr Readme: https://github.com/NXPPlugNTrust/nano-package/blob/master/zephyr/readme.rst
 
 
 .. note::
