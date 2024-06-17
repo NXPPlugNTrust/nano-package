@@ -1,3 +1,4 @@
+# Copyright 2021-2024 NXP
 # SPDX-License-Identifier: Apache-2.0
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)

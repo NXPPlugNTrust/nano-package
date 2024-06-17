@@ -1,7 +1,7 @@
 /** @file se05x_scp03.h
  *  @brief Se05x SCP03 utils.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 

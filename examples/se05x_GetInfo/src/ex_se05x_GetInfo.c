@@ -1,7 +1,7 @@
 /** @file ex_se05x_GetInfo.c
  *  @brief se05x get info example
  *
- * Copyright 2023 NXP
+ * Copyright 2023,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 

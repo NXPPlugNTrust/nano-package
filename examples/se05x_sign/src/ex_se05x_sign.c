@@ -1,7 +1,7 @@
 /** @file ex_se05x_sign.c
  *  @brief se05x sign example
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 

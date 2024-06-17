@@ -1,7 +1,7 @@
 /** @file se05x_APDU_apis.h
  *  @brief Se05x apdu functions.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 

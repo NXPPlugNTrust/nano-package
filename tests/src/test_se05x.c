@@ -1,7 +1,7 @@
 /** @file test_se05x.c
  *  @brief Unit tests.
  *
- * Copyright 2021,2022 NXP
+ * Copyright 2021,2022,2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
