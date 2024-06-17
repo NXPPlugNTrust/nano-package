@@ -359,17 +359,22 @@
 		<link>
 			<name>middleware/mbedtls/.github/issue_template.md</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/middleware/mbedtls/.github/issue_template.md</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/mbedtls/.github/issue_template.md</locationURI>
 		</link>
 		<link>
 			<name>middleware/mbedtls/.github/pull_request_template.md</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/middleware/mbedtls/.github/pull_request_template.md</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/mbedtls/.github/pull_request_template.md</locationURI>
 		</link>
 		<link>
 			<name>middleware/mbedtls/include/.gitignore</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/middleware/mbedtls/include/.gitignore</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/mbedtls/include/.gitignore</locationURI>
+		</link>
+		<link>
+			<name>middleware/mbedtls/include/CMakeLists.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/frdmk64f-sdk/middleware/mbedtls/include/CMakeLists.txt</locationURI>
 		</link>
 		<link>
 			<name>middleware/mbedtls/include/mbedtls</name>
