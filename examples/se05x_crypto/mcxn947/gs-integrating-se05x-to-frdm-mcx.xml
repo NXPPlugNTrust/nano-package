@@ -1,0 +1,33 @@
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="general_sw" format="projectfile" versionSchema="1.0.0" name="Integrating SE05X to FRDM MCX" uuid="8c9b31a0-cf6e-44a0-97cc-807ccbfeceae">
+    <display_title>
+        Integrating EdgeLock® SE05X to FRDM-MCX development boards
+    </display_title>
+    <overview>
+        <![CDATA[This demo project provides a detailed information on how to
+integrate the EdgeLock® SE05X series
+into the FRDM development boards of MCX family. Additionally, the project contains
+several demo applications to showcase how to enable security on the MCX family. ]]>
+    </overview>
+    <toolchains>
+        <toolchain name="mcux"></toolchain>
+    </toolchains>
+    <families>
+        <family name="mcx"></family>
+    </families>
+    <nxp_compatible_hw>
+        <hw id="FRDM-MCXA153"></hw>
+        <hw id="FRDM-MCXN947"></hw>
+    </nxp_compatible_hw>
+    <nxp_ebh_hw>
+        <ebh id="nxp_om_se050ard_e"></ebh>
+    </nxp_ebh_hw>
+    <peripherals>
+        <peripheral name="i2c"></peripheral>
+    </peripherals>
+    <categories>
+        <category name="industrial"></category>
+        <category name="sec_provi"></category>
+        <category name="security"></category>
+        <category name="cc_devices"></category>
+    </categories>
+</data:item>
