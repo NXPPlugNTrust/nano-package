@@ -67,8 +67,8 @@ void phPalEse_i2c_close(void *pDevHandle)
 *******************************************************************************/
 ESESTATUS phPalEse_i2c_open_and_configure(pphPalEse_Config_t pConfig)
 {
-    void *conn_ctx = NULL;
-    int retryCnt = 0;
+    void *conn_ctx       = NULL;
+    int retryCnt         = 0;
     unsigned int i2c_ret = 0;
 
     T_SMLOG_D("%s Opening port", __FUNCTION__);
@@ -113,8 +113,8 @@ retry:
 int phPalEse_i2c_read(void *pDevHandle, uint8_t *pBuffer, int nNbBytesToRead)
 {
     unsigned int ret = 0;
-    int retryCount = 0;
-    int numRead = 0;
+    int retryCount   = 0;
+    int numRead      = 0;
     T_SMLOG_D("%s Read Requested %d bytes ", __FUNCTION__, nNbBytesToRead);
     //sm_sleep(ESE_POLL_DELAY_MS);
     while (numRead != nNbBytesToRead) {

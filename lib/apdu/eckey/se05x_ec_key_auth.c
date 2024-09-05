@@ -23,11 +23,11 @@
 #define G_APPLET_NAME { 0xa0, 0x00, 0x00, 0x03, 0x96, 0x54, 0x53, 0x00, 0x00, 0x00, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00 }
 /* clang-format on */
 
-#define OBJID_ECKEY_AUTH 0x7DA00003u
+/** A device unique key pair which contains the SE05x Key Agreement key pair in ECKey session context. */
+#define RESERVED_ID_ECKEY_SESSION 0x7FFF0201
 
-/** A device unique NIST P-256 key pair which contains SK.SE.ECKA
- * and PK.SE.ECKA in ECKey session context. */
-#define SE05X_AppletResID_KP_ECKEY_USER 0x7FFF0201
+/** Provisioned Authentication object ID - The user calls CreateSession with this authentication object ID */
+#define ECKEY_AUTH_OBJECT_ID 0x7DA00003u
 
 /* ********************** Global variables ********************** */
 
@@ -58,7 +58,7 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
     size_t cmdbufLen                    = 0;
     uint8_t *pCmdbuf                    = NULL;
     uint8_t cmdbuf_tmp[MAX_APDU_BUFFER] = {0};
-    uint8_t i                           = 0;
+    uint16_t i                          = 0;
     size_t rspbufLen                    = sizeof(g_rspbuf) / sizeof(g_rspbuf[0]);
 
     const tlvHeader_t hdr = {
@@ -71,7 +71,7 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
                               1 /* TLV Keytype */ + 1 + 1 + 1 /* TLV KeyLEN */;
     const uint8_t tagEpkSeEcka[] = {0x7F, 0x49};
     const uint8_t tagSigSeEcka[] = {0x5F, 0x37};
-    uint8_t sig_host5F37[100]    = {0};
+    uint8_t sig_host5F37[150]    = {0};
     size_t sig_host5F37Len       = sizeof(sig_host5F37);
     uint8_t md_host5F37[32];
     size_t md_host5F37Len = sizeof(md_host5F37);
@@ -158,7 +158,7 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
     ENSURE_OR_GO_CLEANUP(cmdbufLen < (size_t)(MAX_APDU_BUFFER - i));
     memcpy(&g_cmdBuf[i], cmdbuf_tmp, cmdbufLen);
 
-    ENSURE_OR_GO_CLEANUP(cmdbufLen <= (size_t)(UINT8_MAX - i));
+    ENSURE_OR_GO_CLEANUP(cmdbufLen <= (size_t)(UINT16_MAX - i));
     i = i + cmdbufLen;
 
     status = DoAPDUTxRx(session_ctx, &hdr_last, g_cmdBuf, i, g_rspbuf, &rspbufLen, 0);
@@ -358,7 +358,7 @@ smStatus_t Se05x_API_ECKey_CreateSession(pSe05xSession_t session_ctx)
     uint8_t hostPubkey[128] = {
         0,
     };
-    uint8_t shsSecret[32] = {
+    uint8_t shsSecret[64] = {
         0,
     };
     size_t shsSecretLen = sizeof(shsSecret);
@@ -370,45 +370,72 @@ smStatus_t Se05x_API_ECKey_CreateSession(pSe05xSession_t session_ctx)
     void *EckaKey              = NULL;
     uint8_t eckey_masterSk[32] = {0};
     size_t eckey_masterSk_len  = sizeof(eckey_masterSk);
+    uint16_t key_len           = 0;
+    const void *header         = NULL;
+    size_t header_size         = 0;
 
     /* clang-format off */
     const uint8_t commandCounter[16] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
     const uint8_t nist256_header[] = { 0x30, 0x59, 0x30, 0x13, 0x06, 0x07, 0x2A, 0x86,
                                        0x48, 0xCE, 0x3D, 0x02, 0x01, 0x06, 0x08, 0x2A,
                                        0x86, 0x48, 0xCE, 0x3D, 0x03, 0x01, 0x07, 0x03,
                                        0x42, 0x00 };
+
+    const uint8_t nist384_header[] = { 0x30, 0x76, 0x30, 0x10, 0x06, 0x07, 0x2A, 0x86,
+                                       0x48, 0xCE, 0x3D, 0x02, 0x01, 0x06, 0x05, 0x2B,
+                                       0x81, 0x04, 0x00, 0x22, 0x03, 0x62, 0x00 };
     /* clang-format on */
 
     ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, SM_NOT_OK);
 
     sessionIdLen = sizeof(session_ctx->eckey_applet_session_value);
 
-    status = Se05x_API_CheckObjectExists(session_ctx, OBJID_ECKEY_AUTH, &exists);
+    status = Se05x_API_CheckObjectExists(session_ctx, ECKEY_AUTH_OBJECT_ID, &exists);
     ENSURE_OR_GO_EXIT(status == SM_OK);
 
     if (exists == kSE05x_Result_FAILURE) {
-        SMLOG_E("SE ECDSA Public Key is not Provisioned!!! \n");
+        SMLOG_E("ECKEY_AUTH_OBJECT_ID is not Provisioned!!!. (Key can be provisioned using the example se05x_eckey_session_provision) \n");
         status = SM_NOT_OK;
         goto exit;
     }
 
-    memcpy(SePubkey, nist256_header, sizeof(nist256_header));
-
-    SePubkeyLen = SePubkeyLen - sizeof(nist256_header);
-    status      = Se05x_API_ReadObject(
-        session_ctx, SE05X_AppletResID_KP_ECKEY_USER, 0, 0, SePubkey + sizeof(nist256_header), &SePubkeyLen);
+    status = Se05x_API_ReadSize(session_ctx, RESERVED_ID_ECKEY_SESSION, &key_len);
     ENSURE_OR_GO_EXIT(status == SM_OK);
 
-    ENSURE_OR_GO_EXIT((SIZE_MAX - (sizeof(nist256_header))) > SePubkeyLen);
-    SePubkeyLen = SePubkeyLen + sizeof(nist256_header);
+    if (key_len == 32) {
+        //SMLOG_I("RESERVED_ID_ECKEY_SESSION is NISTP-256 \n");
+        header      = &nist256_header[0];
+        header_size = ASN_ECC_NIST_256_HEADER_LEN;
+    }
+    else if (key_len == 48) {
+        //SMLOG_I("RESERVED_ID_ECKEY_SESSION is NISTP-384 \n");
+        header      = &nist384_header[0];
+        header_size = ASN_ECC_NIST_384_HEADER_LEN;
+    }
+    else {
+        SMLOG_E("Unsupported header for key length.\n");
+        status = SM_NOT_OK;
+        goto exit;
+    }
+
+    memcpy(SePubkey, header, header_size);
+
+    SePubkeyLen = SePubkeyLen - header_size;
+    status = Se05x_API_ReadObject(
+        session_ctx, RESERVED_ID_ECKEY_SESSION, 0, 0, SePubkey + header_size, &SePubkeyLen);
+    ENSURE_OR_GO_EXIT(status == SM_OK);
+
+    ENSURE_OR_GO_EXIT((SIZE_MAX - (header_size)) > SePubkeyLen);
+    SePubkeyLen = SePubkeyLen + header_size;
 
     status = Se05x_API_CreateSession(
-        session_ctx, OBJID_ECKEY_AUTH, &session_ctx->eckey_applet_session_value[0], &sessionIdLen);
+        session_ctx, ECKEY_AUTH_OBJECT_ID, &session_ctx->eckey_applet_session_value[0], &sessionIdLen);
     ENSURE_OR_GO_EXIT(status == SM_OK);
 
     /*Generate ephemeral key Using Host*/
-    EckaKey = hcrypto_gen_eckey();
+    EckaKey = hcrypto_gen_eckey(key_len);
     if (EckaKey == NULL) {
         status = SM_NOT_OK;
         goto exit;
@@ -420,26 +447,27 @@ smStatus_t Se05x_API_ECKey_CreateSession(pSe05xSession_t session_ctx)
         goto exit;
     }
 
-    hostEckaPub[offset++] = GPCS_KEY_TYPE_ECC_NIST256; // Tag EC public key
+    hostEckaPub[offset++] = GPCS_KEY_TYPE_ECC_PUB_KEY; // Tag EC public key
 
-    ENSURE_OR_GO_EXIT(hostEckaPubLen > ASN_ECC_NIST_256_HEADER_LEN);
-    ENSURE_OR_GO_EXIT((hostEckaPubLen - ASN_ECC_NIST_256_HEADER_LEN) < UINT8_MAX);
-    hostEckaPub[offset++] = hostEckaPubLen - ASN_ECC_NIST_256_HEADER_LEN; // public key len
-    if (hostEckaPubLen < ASN_ECC_NIST_256_HEADER_LEN) {
+    ENSURE_OR_GO_EXIT(hostEckaPubLen > header_size);
+    ENSURE_OR_GO_EXIT((hostEckaPubLen - header_size) < UINT8_MAX);
+    hostEckaPub[offset++] = hostEckaPubLen - header_size; // public key len
+    if (hostEckaPubLen < header_size) {
         status = SM_NOT_OK;
         goto exit;
     }
 
     memcpy(
-        hostEckaPub + offset, hostPubkey + ASN_ECC_NIST_256_HEADER_LEN, hostEckaPubLen - ASN_ECC_NIST_256_HEADER_LEN);
-    ENSURE_OR_GO_EXIT(((UINT_MAX - offset) > (hostEckaPubLen - ASN_ECC_NIST_256_HEADER_LEN)));
-    offset += hostEckaPubLen - ASN_ECC_NIST_256_HEADER_LEN;
+        hostEckaPub + offset, hostPubkey + header_size, hostEckaPubLen - header_size);
+    ENSURE_OR_GO_EXIT(((UINT_MAX - offset) > (hostEckaPubLen - header_size)));
+    offset += hostEckaPubLen - header_size;
 
     ENSURE_OR_GO_EXIT(offset + 3 <= hostEckaPubLen);
-    hostEckaPub[offset++] = KEY_PARAMETER_REFERENCE_TAG;
-    hostEckaPub[offset++] = KEY_PARAMETER_REFERENCE_VALUE_LEN;
-    hostEckaPub[offset++] = KEY_PARAMETER_REFERENCE_VALUE;
-    hostEckaPubLen        = offset;
+    hostEckaPub[offset++] = KEY_PARAMETER_CURVE_IDENTIFIER_TAG;
+    hostEckaPub[offset++] = KEY_PARAMETER_CURVE_IDENTIFIER_VALUE_LEN;
+    hostEckaPub[offset++] =
+        (key_len == 32) ? KEY_PARAMETER_CURVE_IDENTIFIER_VALUE_NIST256 : KEY_PARAMETER_CURVE_IDENTIFIER_VALUE_NIST384;
+    hostEckaPubLen     = offset;
 
     status =
         nxECKey_InternalAuthenticate(session_ctx, hostEckaPub, hostEckaPubLen, drSE, &drSELen, receipt, &receiptLen);
@@ -477,7 +505,7 @@ smStatus_t Se05x_API_ECKeyAuth_Encrypt(pSe05xSession_t session_ctx,
     const tlvHeader_t *inhdr,
     uint8_t *cmdBuf,
     size_t cmdBufLen,
-    uint8_t hasle,
+    uint8_t length_extended,
     tlvHeader_t *outhdr,
     uint8_t *encCmdBuf,
     size_t *encCmdBufLen)
@@ -533,7 +561,7 @@ smStatus_t Se05x_API_ECKeyAuth_Encrypt(pSe05xSession_t session_ctx,
     g_cmdBuf[i++] = kSE05x_TAG_1;
 
     se05xCmdLC      = cmdBufLen + 8 /*MAC*/;
-    se05xCmdLCW     = (se05xCmdLC == 0) ? 0 : (((se05xCmdLC < 0xFF) && !(hasle)) ? 1 : 3);
+    se05xCmdLCW     = (se05xCmdLC == 0) ? 0 : (((se05xCmdLC < 0xFF) && !(length_extended)) ? 1 : 3);
     wsSe05x_tag1Len = 4 /*hrd*/ + se05xCmdLCW + se05xCmdLC;
     wsSe05x_tag1W   = ((wsSe05x_tag1Len <= 0x7F) ? 1 : (wsSe05x_tag1Len <= 0xFF) ? 2 : 3);
 
@@ -547,7 +575,7 @@ smStatus_t Se05x_API_ECKeyAuth_Encrypt(pSe05xSession_t session_ctx,
     else {
         g_cmdBuf[i++] = (uint8_t)(0x80 /* Extended */ | 0x02 /* Additional Length */);
         g_cmdBuf[i++] = (uint8_t)((wsSe05x_tag1Len >> 8) & 0xFF);
-        g_cmdBuf[i++] = (uint8_t)((wsSe05x_tag1Len)&0xFF);
+        g_cmdBuf[i++] = (uint8_t)((wsSe05x_tag1Len) & 0xFF);
     }
 
     dataToMac = &g_cmdBuf[i];
@@ -592,7 +620,7 @@ smStatus_t Se05x_API_ECKeyAuth_Encrypt(pSe05xSession_t session_ctx,
     memcpy(&g_cmdBuf[i], macData, 8);
     i = i + 8;
 
-    if (((i - 5) < 0xFF) && !hasle) {
+    if (((i - 5) < 0xFF) && !length_extended) {
         g_cmdBuf[4] = (uint8_t)(i - 5);
     }
     else {

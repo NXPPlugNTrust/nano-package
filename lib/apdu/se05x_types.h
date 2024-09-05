@@ -18,7 +18,7 @@
 
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 3
+#define VERSION_MINOR 4
 #define VERSION_DEV 0
 
 /**
@@ -28,7 +28,7 @@
 #if defined(CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE) && CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE > 0
 #define MAX_APDU_BUFFER CONFIG_PLUGANDTRUST_APDU_BUFFER_SIZE
 #else
-#define MAX_APDU_BUFFER 255
+#define MAX_APDU_BUFFER 512
 #endif
 
 /** NXP reserved object id */
@@ -206,6 +206,7 @@ typedef enum
     kSE05x_P2_SESSION_CLOSE   = 0x1C,
     kSE05x_P2_VERSION         = 0x20,
     kSE05x_P2_LIST            = 0x25,
+    kSE05x_P2_TYPE            = 0x26,
     kSE05x_P2_EXIST           = 0x27,
     kSE05x_P2_DELETE_OBJECT   = 0x28,
     kSE05x_P2_SESSION_UserID  = 0x2C,
@@ -214,6 +215,8 @@ typedef enum
     kSE05x_P2_DECRYPT_ONESHOT = 0x38,
     kSE05x_P2_SCP             = 0x52,
     kSE05x_P2_ONESHOT         = 0x0E,
+    kSE05x_P2_ID              = 0x36,
+    kSE05x_P2_PARAM           = 0x40,
 } SE05x_P2_t;
 
 /** ECC Curve Identifiers */
@@ -222,7 +225,27 @@ typedef enum
     /** Invalid */
     kSE05x_ECCurve_NA        = 0x00,
     kSE05x_ECCurve_NIST_P256 = 0x03,
+    kSE05x_ECCurve_NIST_P384 = 0x04,
 } SE05x_ECCurve_t;
+
+typedef enum
+{
+    /** Invalid */
+    kSE05x_SetIndicator_NA = 0,
+    kSE05x_SetIndicator_NOT_SET = 0x01,
+    kSE05x_SetIndicator_SET = 0x02,
+} SE05x_SetIndicator_t;
+
+/** Parameters while setting the curve */
+typedef enum
+{   /** Invalid */
+    kSE05x_ECCurveParam_NA = 0,
+    kSE05x_ECCurveParam_PARAM_A = 0x01,
+    kSE05x_ECCurveParam_PARAM_B = 0x02,
+    kSE05x_ECCurveParam_PARAM_G = 0x04,
+    kSE05x_ECCurveParam_PARAM_N = 0x08,
+    kSE05x_ECCurveParam_PARAM_PRIME = 0x10,
+} SE05x_ECCurveParam_t;
 
 /** Values for INS in ISO7816 APDU */
 typedef enum
@@ -365,5 +388,101 @@ typedef enum
     kSE05x_AttestationType_None = 0,
     kSE05x_AttestationType_AUTH = kSE05x_INS_AUTH_OBJECT,
 } SE05x_AttestationType_t;
+
+/** When there are more entries yet to be fetched from the APIs */
+typedef enum
+{
+    /** Invalid */
+    kSE05x_MoreIndicator_NA = 0,
+    /** No more data available */
+    kSE05x_MoreIndicator_NO_MORE = 0x01,
+    /** More data available */
+    kSE05x_MoreIndicator_MORE = 0x02,
+} SE05x_MoreIndicator_t;
+
+/** Type of Object */
+typedef enum
+{
+    kSE05x_SecObjTyp_NA                        = 0x00,
+    kSE05x_SecObjTyp_EC_KEY_PAIR               = 0x01,
+    kSE05x_SecObjTyp_EC_PRIV_KEY               = 0x02,
+    kSE05x_SecObjTyp_EC_PUB_KEY                = 0x03,
+    kSE05x_SecObjTyp_RSA_KEY_PAIR              = 0x04,
+    kSE05x_SecObjTyp_RSA_KEY_PAIR_CRT          = 0x05,
+    kSE05x_SecObjTyp_RSA_PRIV_KEY              = 0x06,
+    kSE05x_SecObjTyp_RSA_PRIV_KEY_CRT          = 0x07,
+    kSE05x_SecObjTyp_RSA_PUB_KEY               = 0x08,
+    kSE05x_SecObjTyp_AES_KEY                   = 0x09,
+    kSE05x_SecObjTyp_DES_KEY                   = 0x0A,
+    kSE05x_SecObjTyp_BINARY_FILE               = 0x0B,
+    kSE05x_SecObjTyp_UserID                    = 0x0C,
+    kSE05x_SecObjTyp_COUNTER                   = 0x0D,
+    kSE05x_SecObjTyp_PCR                       = 0x0F,
+    kSE05x_SecObjTyp_CURVE                     = 0x10,
+    kSE05x_SecObjTyp_HMAC_KEY                  = 0x11,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_NIST_P192     = 0x21,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_NIST_P192     = 0x22,
+    kSE05x_SecObjTyp_EC_PUB_KEY_NIST_P192      = 0x23,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_NIST_P224     = 0x25,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_NIST_P224     = 0x26,
+    kSE05x_SecObjTyp_EC_PUB_KEY_NIST_P224      = 0x27,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_NIST_P256     = 0x29,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_NIST_P256     = 0x2A,
+    kSE05x_SecObjTyp_EC_PUB_KEY_NIST_P256      = 0x2B,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_NIST_P384     = 0x2D,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_NIST_P384     = 0x2E,
+    kSE05x_SecObjTyp_EC_PUB_KEY_NIST_P384      = 0x2F,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_NIST_P521     = 0x31,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_NIST_P521     = 0x32,
+    kSE05x_SecObjTyp_EC_PUB_KEY_NIST_P521      = 0x33,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool160  = 0x35,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool160  = 0x36,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool160   = 0x37,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool192  = 0x39,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool192  = 0x3A,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool192   = 0x3B,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool224  = 0x3D,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool224  = 0x3E,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool224   = 0x3F,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool256  = 0x41,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool256  = 0x42,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool256   = 0x43,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool320  = 0x45,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool320  = 0x46,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool320   = 0x47,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool384  = 0x49,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool384  = 0x4A,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool384   = 0x4B,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Brainpool512  = 0x4D,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Brainpool512  = 0x4E,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Brainpool512   = 0x4F,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Secp160k1     = 0x51,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Secp160k1     = 0x52,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Secp160k1      = 0x53,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Secp192k1     = 0x55,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Secp192k1     = 0x56,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Secp192k1      = 0x57,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Secp224k1     = 0x59,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Secp224k1     = 0x5A,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Secp224k1      = 0x5B,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_Secp256k1     = 0x5D,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_Secp256k1     = 0x5E,
+    kSE05x_SecObjTyp_EC_PUB_KEY_Secp256k1      = 0x5F,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_BN_P256       = 0x61,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_BN_P256       = 0x62,
+    kSE05x_SecObjTyp_EC_PUB_KEY_BN_P256        = 0x63,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_ED25519       = 0x65,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_ED25519       = 0x66,
+    kSE05x_SecObjTyp_EC_PUB_KEY_ED25519        = 0x67,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_MONT_DH_25519 = 0x69,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_MONT_DH_25519 = 0x6A,
+    kSE05x_SecObjTyp_EC_PUB_KEY_MONT_DH_25519  = 0x6B,
+    kSE05x_SecObjTyp_EC_KEY_PAIR_MONT_DH_448   = 0x71,
+    kSE05x_SecObjTyp_EC_PRIV_KEY_MONT_DH_448   = 0x72,
+    kSE05x_SecObjTyp_EC_PUB_KEY_MONT_DH_448    = 0x73,
+} SE05x_SecObjTyp_t;
+
+/** @copydoc SE05x_SecObjTyp_t */
+typedef SE05x_SecObjTyp_t SE05x_SecureObjectType_t;
 
 #endif //#ifndef SE05X_TYPES_H_INC

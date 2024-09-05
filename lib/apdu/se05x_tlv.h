@@ -35,6 +35,7 @@ int tlvSet_ECCurve(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, SE05x_ECCurve
 int tlvSet_KeyID(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint32_t keyID);
 int tlvSet_header(uint8_t **buf, size_t *bufLen, tlvHeader_t *hdr);
 int tlvGet_U8(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint8_t *pRsp);
+int tlvGet_U16(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint16_t *pRsp);
 int tlvGet_u8buf(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint8_t *rsp, size_t *pRspLen);
 int tlvGet_Result(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t tag, SE05x_Result_t *presult);
 smStatus_t DoAPDUTx(
@@ -100,5 +101,6 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 
 #define TLVSET_ECSignatureAlgo TLVSET_U8
 #define TLVSET_CipherMode TLVSET_U8
+#define TLVSET_ECCurveParam TLVSET_U8
 
 #endif // #ifndef SE05X_TLV_H_INC

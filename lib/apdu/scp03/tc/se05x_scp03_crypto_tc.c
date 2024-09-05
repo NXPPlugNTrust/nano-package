@@ -218,9 +218,14 @@ exit:
     return ret;
 }
 
-void *hcrypto_gen_eckey()
+void *hcrypto_gen_eckey(uint16_t keylen)
 {
     int ret = 0;
+
+    if (keylen != 32){
+        /* Only nist256 is supported in TC wrapper */
+        return NULL;
+    }
 
     ret = uECC_make_key(ecc_key[0].pubkey, ecc_key[0].privkey, uECC_secp256r1());
     ENSURE_OR_RETURN_ON_ERROR((ret == TC_CRYPTO_SUCCESS), NULL);

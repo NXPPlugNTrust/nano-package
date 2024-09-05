@@ -27,7 +27,7 @@ extern void test_se05x(uint8_t *pass, uint8_t *fail, uint8_t *ignore);
 #define unit_test_setup_teardown(TEST_GROUP, TEST_SETUP, TEST_TEARDOWN) \
     TEST_SETUP();                                                       \
     TEST_GROUP();                                                       \
-    TEST_TEARDOWN();
+    TEST_TEARDOWN(NULL);
 
 uint8_t gPass   = 0;
 uint8_t gFail   = 0;
