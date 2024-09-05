@@ -234,13 +234,14 @@ exit:
     return ret;
 }
 
-void *hcrypto_gen_eckey()
+void *hcrypto_gen_eckey(uint16_t keylen)
 {
     int ret                            = 1;
     const char pers[]                  = "gen_key";
     mbedtls_pk_context *pKey           = NULL;
     mbedtls_entropy_context *entropy   = NULL;
     mbedtls_ctr_drbg_context *ctr_drbg = NULL;
+    int curve_id                       = 0;
 
     pKey = mbedtls_calloc(1, sizeof(mbedtls_pk_context));
     ENSURE_OR_GO_EXIT(pKey != NULL);
@@ -261,7 +262,17 @@ void *hcrypto_gen_eckey()
     ret = mbedtls_ctr_drbg_seed(ctr_drbg, mbedtls_entropy_func, entropy, (const unsigned char *)pers, sizeof(pers) - 1);
     ENSURE_OR_GO_EXIT(ret == 0);
 
-    ret = mbedtls_ecp_gen_key(MBEDTLS_ECP_DP_SECP256R1, mbedtls_pk_ec(*pKey), mbedtls_ctr_drbg_random, ctr_drbg);
+    curve_id = (keylen == 32) ? MBEDTLS_ECP_DP_SECP256R1 :
+               (keylen == 48) ? MBEDTLS_ECP_DP_SECP384R1 :
+                                0; // Handle unsupported key length
+
+    if (curve_id == 0) {
+        SMLOG_E("Key length not supported.");
+        ret = 1;
+        goto exit;
+    }
+
+    ret = mbedtls_ecp_gen_key(curve_id, mbedtls_pk_ec(*pKey), mbedtls_ctr_drbg_random, ctr_drbg);
     ENSURE_OR_GO_EXIT(ret == 0);
 
     ret = 0;
@@ -287,8 +298,8 @@ void hcrypto_free_eckey(void *eckey)
 
 void *hcrypto_set_eckey(uint8_t *Buf, size_t Len, int isPrivate)
 {
-    int ret                = 1;
-    mbedtls_pk_context *pK = NULL;
+    int ret                              = 1;
+    mbedtls_pk_context *pK               = NULL;
 
     ENSURE_OR_RETURN_ON_ERROR(Buf != NULL, NULL);
 
@@ -303,6 +314,7 @@ void *hcrypto_set_eckey(uint8_t *Buf, size_t Len, int isPrivate)
         ret = mbedtls_pk_parse_public_key(pK, Buf, Len);
         ENSURE_OR_GO_EXIT(ret == 0);
     }
+
     ret = 0;
 exit:
     return (void *)pK;

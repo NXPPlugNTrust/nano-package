@@ -30,8 +30,8 @@ int hcrypto_aes_cbc_encrypt(
 int hcrypto_aes_cbc_decrypt(
     uint8_t *key, size_t keylen, uint8_t *iv, size_t ivLen, const uint8_t *srcData, uint8_t *destData, size_t dataLen);
 
-/**** ecc nist256 operations ****/
-void *hcrypto_gen_eckey();
+/**** ecc key operations ****/
+void *hcrypto_gen_eckey(uint16_t keylen);
 void hcrypto_free_eckey(void *eckey);
 void *hcrypto_set_eckey(uint8_t *pubBuf, size_t Len, int isPrivate);
 int hcrypto_get_publickey(void *privkey, uint8_t *data, size_t *dataLen);

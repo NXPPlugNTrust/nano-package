@@ -1,0 +1,8 @@
+build
+/Release/
+/debug/
+/Debug/
+.settings
+script.jlink
+frdmk64f_se05x_eckey_session_provision JLink Debug.launch
+frdmk64f_se05x_eckey_session_provision JLink Release.launch

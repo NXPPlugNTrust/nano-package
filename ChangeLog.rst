@@ -6,6 +6,16 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.4.0**
+
+- Zephyr integration updated to v3.7.0
+- New APDUs added: Se05x_API_ReadIDList, Se05x_API_ReadSize, Se05x_API_ReadType, Se05x_API_CreateECCurve, Se05x_API_DeleteECCurve, Se05x_API_SetECCurveParam, Se05x_API_ReadECCurveList.
+- NIST P384 curve supported.
+- Default max APDU buffer size increased to 512 (`MAX_APDU_BUFFER` in se05x_types.h).
+- se05x_ReadIDList example added (Example to read the contents of secure element).
+- se05x_eckey_session_provision example added (Example to provision key for EC-Key authentication session).
+
+
 **Release v1.3.0**
 
 - EC Key Authentication support added.

@@ -269,6 +269,32 @@ cleanup:
     return retVal;
 }
 
+int tlvGet_U16(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint16_t *pRsp)
+{
+    int retVal      = 1;
+    uint8_t *pBuf   = buf + (*pBufIndex);
+    uint8_t got_tag = *pBuf++;
+    size_t rspLen;
+
+    if ((*pBufIndex) > bufLen) {
+        goto cleanup;
+    }
+
+    if (got_tag != tag) {
+        goto cleanup;
+    }
+    rspLen = *pBuf++;
+    if (rspLen > 2) {
+        goto cleanup;
+    }
+    *pRsp = (*pBuf++) << 8;
+    *pRsp |= *pBuf++;
+    *pBufIndex += (1 + 1 + (rspLen));
+    retVal = 0;
+cleanup:
+    return retVal;
+}
+
 int tlvGet_u8buf(uint8_t *buf, size_t *pBufIndex, const size_t bufLen, SE05x_TAG_t tag, uint8_t *rsp, size_t *pRspLen)
 {
     int retVal      = 1;
@@ -344,7 +370,7 @@ int tlvGet_Result(uint8_t *buf, size_t *pBufIndex, size_t bufLen, SE05x_TAG_t ta
 }
 
 smStatus_t DoAPDUTx(
-    pSe05xSession_t session_ctx, const tlvHeader_t *hdr, uint8_t *cmdBuf, size_t cmdBufLen, uint8_t hasle)
+    pSe05xSession_t session_ctx, const tlvHeader_t *hdr, uint8_t *cmdBuf, size_t cmdBufLen, uint8_t length_extended)
 {
     smStatus_t apduStatus = SM_NOT_OK;
 #if (defined(WITH_ECKEY_SCP03_SESSION) || defined(WITH_ECKEY_SESSION))
@@ -364,7 +390,7 @@ smStatus_t DoAPDUTx(
 
 #if defined(WITH_PLATFORM_SCP03)
     if (session_ctx->scp03_session) {
-        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, cmdBuf, &cmdBufLen);
+        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
@@ -379,7 +405,7 @@ smStatus_t DoAPDUTx(
 
 #if defined(WITH_ECKEY_SCP03_SESSION)
         if (session_ctx->ecKey_session == 0 && session_ctx->scp03_session == 1) {
-        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, cmdBuf, &cmdBufLen);
+        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
@@ -392,14 +418,14 @@ smStatus_t DoAPDUTx(
     else if (session_ctx->ecKey_session == 1 && session_ctx->scp03_session == 1) {
         size_t cmd_index = 0;
 
-        apduStatus =
-            Se05x_API_ECKeyAuth_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, &outHdr, cmdBuf, &cmdBufLen);
+        apduStatus = Se05x_API_ECKeyAuth_Encrypt(
+            session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, &outHdr, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         cmd_index = (cmdBuf[4] == 0) ? (7) : (5);
 
         apduStatus = Se05x_API_SCP03_Encrypt(
-            session_ctx, &outHdr, &cmdBuf[cmd_index], cmdBufLen - cmd_index, hasle, cmdBuf, &cmdBufLen);
+            session_ctx, &outHdr, &cmdBuf[cmd_index], cmdBufLen - cmd_index, length_extended, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
@@ -420,8 +446,8 @@ smStatus_t DoAPDUTx(
 
 #if defined(WITH_ECKEY_SESSION)
         if (session_ctx->ecKey_session == 1) {
-        apduStatus =
-            Se05x_API_ECKeyAuth_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, &outHdr, cmdBuf, &cmdBufLen);
+        apduStatus = Se05x_API_ECKeyAuth_Encrypt(
+            session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, &outHdr, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
@@ -434,9 +460,9 @@ smStatus_t DoAPDUTx(
     else
 #endif //#if defined(WITH_ECKEY_SESSION)
     {
-        (void)hasle;
+        (void)length_extended;
         if (cmdBufLen > 0) {
-            if ((cmdBufLen < 0xFF) && !hasle) {
+            if ((cmdBufLen < 0xFF) && !length_extended) {
                 ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 5) >= cmdBufLen);
                 memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
                 memcpy(cmdBuf, hdr, 4);
@@ -461,6 +487,12 @@ smStatus_t DoAPDUTx(
             memcpy(cmdBuf, hdr, 4);
             cmdBufLen = 4;
         }
+        if (length_extended) {
+            ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 2) >= cmdBufLen);
+            ENSURE_OR_GO_EXIT((UINT_MAX - 2) >= cmdBufLen);
+            cmdBuf[cmdBufLen++] = 0x00;
+            cmdBuf[cmdBufLen++] = 0x00;
+        }
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, &rxBufLen);
         if (rxBufLen >= 2) {
             apduStatus = rspBuf[(rxBufLen)-2] << 8 | rspBuf[(rxBufLen)-1];
@@ -477,7 +509,7 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     size_t cmdBufLen,
     uint8_t *rspBuf,
     size_t *pRspBufLen,
-    uint8_t hasle)
+    uint8_t length_extended)
 {
     smStatus_t apduStatus = SM_NOT_OK;
 #if (defined(WITH_ECKEY_SCP03_SESSION) || defined(WITH_ECKEY_SESSION))
@@ -502,7 +534,7 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 
 #if defined(WITH_PLATFORM_SCP03)
     if (session_ctx->scp03_session) {
-        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, cmdBuf, &cmdBufLen);
+        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, cmdBuf, &cmdBufLen);
         ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
         apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
@@ -518,93 +550,100 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 #if defined(WITH_ECKEY_SCP03_SESSION)
         /*Only PlatformSCP session is opened*/
         if (session_ctx->ecKey_session == 0 && session_ctx->scp03_session == 1) {
-        apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, cmdBuf, &cmdBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+            apduStatus =
+                Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, cmdBuf, &cmdBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
-        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
-        ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
+            apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+            ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
 
-        apduStatus = Se05x_API_SCP03_Decrypt(session_ctx, org_cmd_len, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
-    }
-    /*Both PlatformSCP and ECKey sessions are opened*/
-    else if (session_ctx->ecKey_session == 1 && session_ctx->scp03_session == 1) {
-        size_t cmd_index = 0;
-
-        apduStatus =
-            Se05x_API_ECKeyAuth_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, &outHdr, cmdBuf, &cmdBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
-
-        cmd_index = (cmdBuf[4] == 0) ? (7) : (5);
-
-        apduStatus = Se05x_API_SCP03_Encrypt(
-            session_ctx, &outHdr, &cmdBuf[cmd_index], cmdBufLen - cmd_index, hasle, cmdBuf, &cmdBufLen);
-
-        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
-        ENSURE_OR_RETURN_ON_ERROR((apduStatus == SM_OK), apduStatus);
-        ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
-
-        apduStatus = Se05x_API_SCP03_Decrypt(session_ctx, org_cmd_len, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
-        if (apduStatus != SM_OK) {
-            Se05x_API_Auth_IncCommandCounter(&session_ctx->eckey_counter[0]);
-            goto exit;
+            apduStatus = Se05x_API_SCP03_Decrypt(session_ctx, org_cmd_len, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
         }
-        else {
-            apduStatus = Se05x_API_ECKeyAuth_Decrypt(session_ctx, rspBuf, *pRspBufLen, rspBuf, pRspBufLen);
+        /*Both PlatformSCP and ECKey sessions are opened*/
+        else if (session_ctx->ecKey_session == 1 && session_ctx->scp03_session == 1) {
+            size_t cmd_index = 0;
+
+            apduStatus = Se05x_API_ECKeyAuth_Encrypt(
+                session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, &outHdr, cmdBuf, &cmdBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+
+            cmd_index = (cmdBuf[4] == 0) ? (7) : (5);
+
+            apduStatus = Se05x_API_SCP03_Encrypt(
+                session_ctx, &outHdr, &cmdBuf[cmd_index], cmdBufLen - cmd_index, length_extended, cmdBuf, &cmdBufLen);
+
+            apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
+            ENSURE_OR_RETURN_ON_ERROR((apduStatus == SM_OK), apduStatus);
+            ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
+
+            apduStatus = Se05x_API_SCP03_Decrypt(session_ctx, org_cmd_len, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
+            if (apduStatus != SM_OK) {
+                Se05x_API_Auth_IncCommandCounter(&session_ctx->eckey_counter[0]);
+                goto exit;
+            }
+            else {
+                apduStatus = Se05x_API_ECKeyAuth_Decrypt(session_ctx, rspBuf, *pRspBufLen, rspBuf, pRspBufLen);
+            }
         }
-    }
-    else
+        else
 #endif //#if defined(WITH_ECKEY_SCP03_SESSION)
 
 #if defined(WITH_ECKEY_SESSION)
-        if (session_ctx->ecKey_session == 1) {
-        apduStatus =
-            Se05x_API_ECKeyAuth_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, hasle, &outHdr, cmdBuf, &cmdBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+            if (session_ctx->ecKey_session == 1) {
+            apduStatus = Se05x_API_ECKeyAuth_Encrypt(
+                session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, &outHdr, cmdBuf, &cmdBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
 
-        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
-        ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
+            apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, cmdBuf, &rxBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+            ENSURE_OR_RETURN_ON_ERROR((rxBufLen >= SCP_GP_SW_LEN), SM_NOT_OK);
 
-        apduStatus = Se05x_API_ECKeyAuth_Decrypt(session_ctx, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
-        ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
-    }
-    else
+            apduStatus = Se05x_API_ECKeyAuth_Decrypt(session_ctx, cmdBuf, rxBufLen, rspBuf, pRspBufLen);
+            ENSURE_OR_GO_EXIT(apduStatus == SM_OK);
+        }
+        else
 #endif //#if defined(WITH_ECKEY_SESSION)
 
-    {
-        if (cmdBufLen > 0) {
-            if ((cmdBufLen < 0xFF) && !hasle) {
-                ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 5) >= cmdBufLen);
-                memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
-                memcpy(cmdBuf, hdr, 4);
-                cmdBuf[4] = cmdBufLen;
-                ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
-                cmdBufLen += 5;
+        {
+            if (cmdBufLen > 0) {
+                if ((cmdBufLen < 0xFF) && !length_extended) {
+                    ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 5) >= cmdBufLen);
+                    memmove((cmdBuf + 5), cmdBuf, cmdBufLen);
+                    memcpy(cmdBuf, hdr, 4);
+                    cmdBuf[4] = cmdBufLen;
+                    ENSURE_OR_GO_EXIT((UINT_MAX - 5) >= cmdBufLen);
+                    cmdBufLen += 5;
+                }
+                else {
+                    ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 7) >= cmdBufLen);
+                    memmove((cmdBuf + 7), cmdBuf, cmdBufLen);
+                    memcpy(cmdBuf, hdr, 4);
+
+                    cmdBuf[4] = 0x00;
+                    cmdBuf[5] = 0xFFu & (cmdBufLen >> 8);
+                    cmdBuf[6] = 0xFFu & (cmdBufLen);
+
+                    ENSURE_OR_GO_EXIT((UINT_MAX - 7) >= cmdBufLen);
+                    cmdBufLen += 7;
+                }
             }
             else {
-                ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 7) >= cmdBufLen);
-                memmove((cmdBuf + 7), cmdBuf, cmdBufLen);
                 memcpy(cmdBuf, hdr, 4);
-
-                cmdBuf[4] = 0x00;
-                cmdBuf[5] = 0xFFu & (cmdBufLen >> 8);
-                cmdBuf[6] = 0xFFu & (cmdBufLen);
-
-                ENSURE_OR_GO_EXIT((UINT_MAX - 7) >= cmdBufLen);
-                cmdBufLen += 7;
+                cmdBufLen = 4;
+            }
+            if (length_extended) {
+                ENSURE_OR_GO_EXIT((MAX_APDU_BUFFER - 2) >= cmdBufLen);
+                ENSURE_OR_GO_EXIT((UINT_MAX - 2) >= cmdBufLen);
+                cmdBuf[cmdBufLen++] = 0x00;
+                cmdBuf[cmdBufLen++] = 0x00;
+            }
+            apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, pRspBufLen);
+            if (*pRspBufLen >= 2) {
+                apduStatus = rspBuf[(*pRspBufLen) - 2] << 8 | rspBuf[(*pRspBufLen) - 1];
             }
         }
-        else {
-            memcpy(cmdBuf, hdr, 4);
-            cmdBufLen = 4;
-        }
-        apduStatus = smComT1oI2C_TransceiveRaw(session_ctx->conn_context, cmdBuf, cmdBufLen, rspBuf, pRspBufLen);
-        if (*pRspBufLen >= 2) {
-            apduStatus = rspBuf[(*pRspBufLen) - 2] << 8 | rspBuf[(*pRspBufLen) - 1];
-        }
-    }
 
 exit:
     return apduStatus;

@@ -1,0 +1,16 @@
+/*
+ * Copyright 2024 NXP
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/
+
+{
+	aliases {
+		se05x-i2c = &flexcomm2_lpi2c2;
+	};
+};
+
+&flexcomm2_lpi2c2 {
+	status = "okay";
+};

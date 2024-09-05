@@ -89,7 +89,7 @@ void ex_set_ec_auth_keys(pSe05xSession_t session_ctx)
     return;
 }
 
-void test_setup(void)
+void *test_setup(void)
 {
     smStatus_t status;
 
@@ -102,11 +102,11 @@ void test_setup(void)
     if (status != SM_OK) {
         test_fail();
         SMLOG_E("Error in Se05x_API_SessionOpen \n");
-        return;
     }
+    return NULL;
 }
 
-void test_teardown(void)
+void test_teardown(void *ignore)
 {
     smStatus_t status;
 
@@ -114,6 +114,6 @@ void test_teardown(void)
     if (status != SM_OK) {
         test_fail();
         SMLOG_E("Error in Se05x_API_SessionClose \n");
-        return;
     }
+    return;
 }

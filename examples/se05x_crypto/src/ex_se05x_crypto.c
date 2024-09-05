@@ -39,8 +39,16 @@ uint8_t scp03_enc_key[16] = {
 uint8_t scp03_mac_key[16] = {
     0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0xAB, 0xCD, 0x00, 0x02};
 
+// Certificate buffers
+uint8_t certificate_ret[CERT_SIZE] = {0};
+uint8_t certificate[CERT_SIZE]     = {0};
+size_t certificate_len;
+size_t certificate_ret_len;
+
 /**** EC Auth Key ****/
+/* Key pair corresponding to - ECKEY_AUTH_OBJECT_ID */
 /* clang-format off */
+/* Key pair corresponding to - ECKEY_AUTH_OBJECT_ID */
 uint8_t ec_auth_key[] = {                                                 \
         0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13,                   \
         0x06, 0x07, 0x2A, 0x86, 0x48, 0xCE, 0x3D, 0x02,                   \
@@ -79,7 +87,105 @@ const uint8_t nist256PubKey[] = {
 };
 /* clang-format on */
 
+/**** nist384 key pair ****/
+/* clang-format off */
+const uint8_t nist384PrivKey[] = {
+    0x7d, 0x79, 0xa9, 0xa9, 0xbd, 0x20, 0x28, 0x31, 0xbd, 0x00, 0xd7, 0x51, 0x35, 0x3c, 0xd4, 0xe0,
+    0x2c, 0xd3, 0x93, 0x53, 0xc1, 0x4d, 0x0c, 0x36, 0xde, 0x29, 0xb1, 0x3e, 0x56, 0xc9, 0x48, 0xff,
+    0x37, 0xe5, 0x73, 0x22, 0xf8, 0xe5, 0xe5, 0x2e, 0xb9, 0x34, 0xbc, 0x85, 0xbf, 0xa4, 0xaa, 0xc5
+};
+const uint8_t nist384PubKey[] = {
+    0x04, 0x74, 0x19, 0x1f, 0x4f, 0x1e, 0x4a, 0x03, 0xff, 0x6d, 0x4c, 0x59, 0x2c, 0x55, 0x7d, 0x1d,
+    0x2c, 0x9e, 0xb9, 0x91, 0x65, 0xa9, 0xbe, 0xe6, 0x67, 0x38, 0xa6, 0x67, 0x6e, 0x74, 0xff, 0x8e,
+    0x1e, 0x90, 0x6e, 0x90, 0x01, 0xd1, 0xc8, 0x79, 0xff, 0x48, 0xd1, 0x3e, 0x6b, 0xe2, 0x0a, 0x1f,
+    0x51, 0x76, 0xb5, 0x1a, 0x23, 0xc4, 0xb5, 0xf5, 0xef, 0x0a, 0x6a, 0x08, 0x6a, 0xc3, 0x3e, 0x76,
+    0x75, 0xa5, 0xc8, 0xf1, 0xdb, 0x38, 0x27, 0xc6, 0x7b, 0xaf, 0x6b, 0x14, 0xfc, 0xca, 0xa2, 0xf3,
+    0xd6, 0xfb, 0xa0, 0x56, 0x55, 0xdb, 0x72, 0x64, 0x89, 0x66, 0x92, 0x4a, 0x4c, 0xe5, 0xea, 0x17,
+    0xa0
+};
+/* clang-format on */
+
+/* clang-format off */
+#define EC_PARAM_prime  \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, \
+    0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF
+#define EC_PARAM_a      \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, \
+    0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFC
+#define EC_PARAM_b      \
+    0xB3, 0x31, 0x2F, 0xA7, 0xE2, 0x3E, 0xE7, 0xE4, \
+    0x98, 0x8E, 0x05, 0x6B, 0xE3, 0xF8, 0x2D, 0x19, \
+    0x18, 0x1D, 0x9C, 0x6E, 0xFE, 0x81, 0x41, 0x12, \
+    0x03, 0x14, 0x08, 0x8F, 0x50, 0x13, 0x87, 0x5A, \
+    0xC6, 0x56, 0x39, 0x8D, 0x8A, 0x2E, 0xD1, 0x9D, \
+    0x2A, 0x85, 0xC8, 0xED, 0xD3, 0xEC, 0x2A, 0xEF
+#define EC_PARAM_x      \
+    0xAA, 0x87, 0xCA, 0x22, 0xBE, 0x8B, 0x05, 0x37, \
+    0x8E, 0xB1, 0xC7, 0x1E, 0xF3, 0x20, 0xAD, 0x74, \
+    0x6E, 0x1D, 0x3B, 0x62, 0x8B, 0xA7, 0x9B, 0x98, \
+    0x59, 0xF7, 0x41, 0xE0, 0x82, 0x54, 0x2A, 0x38, \
+    0x55, 0x02, 0xF2, 0x5D, 0xBF, 0x55, 0x29, 0x6C, \
+    0x3A, 0x54, 0x5E, 0x38, 0x72, 0x76, 0x0A, 0xB7
+#define EC_PARAM_y      \
+    0x36, 0x17, 0xDE, 0x4A, 0x96, 0x26, 0x2C, 0x6F, \
+    0x5D, 0x9E, 0x98, 0xBF, 0x92, 0x92, 0xDC, 0x29, \
+    0xF8, 0xF4, 0x1D, 0xBD, 0x28, 0x9A, 0x14, 0x7C, \
+    0xE9, 0xDA, 0x31, 0x13, 0xB5, 0xF0, 0xB8, 0xC0, \
+    0x0A, 0x60, 0xB1, 0xCE, 0x1D, 0x7E, 0x81, 0x9D, \
+    0x7A, 0x43, 0x1D, 0x7C, 0x90, 0xEA, 0x0E, 0x5F
+#define EC_PARAM_order  \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, \
+    0xC7, 0x63, 0x4D, 0x81, 0xF4, 0x37, 0x2D, 0xDF, \
+    0x58, 0x1A, 0x0D, 0xB2, 0x48, 0xB0, 0xA7, 0x7A, \
+    0xEC, 0xEC, 0x19, 0x6A, 0xCC, 0xC5, 0x29, 0x73
+
+/* clang-format on */
+
+
 /* ********************** Functions ********************** */
+
+smStatus_t ex_se05x_create_curve(pSe05xSession_t session_ctx, uint32_t curve_id)
+{
+    smStatus_t status;
+    const uint8_t ecc_prime[]  = {EC_PARAM_prime};
+    const uint8_t ecc_a[]      = {EC_PARAM_a};
+    const uint8_t ecc_b[]      = {EC_PARAM_b};
+    const uint8_t ecc_G[]      = {0x04, EC_PARAM_x, EC_PARAM_y};
+    const uint8_t ecc_ordern[] = {EC_PARAM_order};
+
+    status = Se05x_API_CreateECCurve(session_ctx, (SE05x_ECCurve_t)curve_id);
+    if(status != SM_OK) {
+        return status;
+    }
+    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_A, ecc_a, sizeof(ecc_a)/sizeof(ecc_a[0]));
+    if(status != SM_OK) {
+        return status;
+    }
+    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_B, ecc_b, sizeof(ecc_b)/sizeof(ecc_b[0]));
+    if(status != SM_OK) {
+        return status;
+    }
+    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_G, ecc_G, sizeof(ecc_G)/sizeof(ecc_G[0]));
+    if(status != SM_OK) {
+        return status;
+    }
+    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_N, ecc_ordern, sizeof(ecc_ordern)/sizeof(ecc_ordern[0]));
+    if(status != SM_OK) {
+        return status;
+    }
+    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_PRIME, ecc_prime, sizeof(ecc_prime)/sizeof(ecc_prime[0]));
+    return status;
+}
 
 void print_key(uint8_t *key_buf, size_t key_buflen)
 {
@@ -350,23 +456,280 @@ exit:
     EX_FAIL;
 }
 
+int ex_generate_nist384_key(pSe05xSession_t session_ctx)
+{
+    smStatus_t status;
+    uint32_t keyID = TEST_ID_BASE + __LINE__;
+    SE05x_Result_t result;
+    SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
+        uint8_t curveList[32] = {
+        0,
+    };
+    size_t curveListLen = 32;
+
+   status = Se05x_API_ReadECCurveList(session_ctx, curveList, &curveListLen);
+    if(status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ReadECCurveList \n");
+        goto exit;
+    }
+    else {
+        if (curveList[curveID - 1] == kSE05x_SetIndicator_SET) {
+           SMLOG_I("curveID = %0x already exists \n", curveID);
+        }
+        else {
+            status = ex_se05x_create_curve(session_ctx, curveID);
+            if(status != SM_OK) {
+                SMLOG_I("Error in ex_se05x_create_curve \n");
+                goto exit;
+            }
+        }
+    }
+
+    /* Check if the object exists in se05x already */
+    status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+        goto exit;
+    }
+
+    if (result == kSE05x_Result_SUCCESS) {
+        /* If key already exists, set curveID = NA  */
+        curveID = kSE05x_ECCurve_NA;
+    }
+
+    /* Generate key */
+    status = Se05x_API_WriteECKey(
+        session_ctx, NULL, 0, keyID, curveID, NULL, 0, NULL, 0, kSE05x_INS_NA, kSE05x_KeyPart_Pair);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_WriteECKey \n");
+        goto exit;
+    }
+
+    status = Se05x_API_DeleteSecureObject(session_ctx, keyID);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+        goto exit;
+    }
+
+    EX_PASS;
+exit:
+    EX_FAIL;
+}
+
+int ex_set_get_nist384_key(pSe05xSession_t session_ctx)
+{
+    smStatus_t status;
+    uint8_t key_buf[256] = {
+        0,
+    };
+    size_t key_buflen = sizeof(key_buf);
+    uint32_t keyID    = TEST_ID_BASE + __LINE__;
+    SE05x_Result_t result;
+    SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
+
+
+    /* Check if the object exists in se05x already */
+    status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+        goto exit;
+    }
+
+    if (result == kSE05x_Result_SUCCESS) {
+        /* If key already exists, set curveID = NA  */
+        curveID = kSE05x_ECCurve_NA;
+    }
+
+    /* Set nist384 key pair */
+    status = Se05x_API_WriteECKey(session_ctx,
+        NULL,
+        0,
+        keyID,
+        curveID,
+        nist384PrivKey,
+        sizeof(nist384PrivKey),
+        nist384PubKey,
+        sizeof(nist384PubKey),
+        kSE05x_INS_NA,
+        kSE05x_KeyPart_Pair);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_WriteECKey \n");
+        goto exit;
+    }
+
+    /* Read public key */
+    status = Se05x_API_ReadObject(session_ctx, keyID, 0, 0, key_buf, &key_buflen);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ReadObject \n");
+        goto exit;
+    }
+
+    if ((key_buflen != sizeof(nist384PubKey)) || (memcmp(key_buf, nist384PubKey, key_buflen) != 0)) {
+        SMLOG_E("Public key not same \n");
+        goto exit;
+    }
+
+    status = Se05x_API_DeleteSecureObject(session_ctx, keyID);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+        goto exit;
+    }
+
+    EX_PASS;
+exit:
+    EX_FAIL;
+}
+
+int ex_nist384_sign_verify(pSe05xSession_t session_ctx)
+{
+    smStatus_t status;
+    uint32_t keyID     = TEST_ID_BASE + __LINE__;
+    uint32_t pub_keyID = TEST_ID_BASE + __LINE__;
+    uint8_t input[32];
+    size_t input_len = sizeof(input);
+    for (int i = 0; i < input_len; i++) {
+        input[i] = i;
+    }
+    uint8_t signature[150] = {
+        0,
+    };
+    size_t signature_len = sizeof(signature);
+    uint8_t pub_key[128] = {
+        0,
+    };
+    size_t pub_key_len = sizeof(pub_key);
+    SE05x_Result_t sign_result;
+    SE05x_Result_t result;
+    SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
+
+
+    /* Check if the object exists in se05x already */
+    status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+        goto exit;
+    }
+
+    if (result == kSE05x_Result_SUCCESS) {
+        /* If key already exists, set curveID = NA */
+        curveID = kSE05x_ECCurve_NA;
+    }
+
+    /* Generate nist384 key */
+    status = Se05x_API_WriteECKey(
+        session_ctx, NULL, 0, keyID, curveID, NULL, 0, NULL, 0, kSE05x_INS_NA, kSE05x_KeyPart_Pair);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_WriteECKey \n");
+        goto exit;
+    }
+
+    /* Sign input data using key at 'keyId' */
+    status = Se05x_API_ECDSASign(
+        session_ctx, keyID, kSE05x_ECSignatureAlgo_SHA_256, input, input_len, signature, &signature_len);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ECDSASign \n");
+        goto exit;
+    }
+
+    /* Read public key at 'keyId' */
+    status = Se05x_API_ReadObject(session_ctx, keyID, 0, 0, pub_key, &pub_key_len);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ReadObject \n");
+        goto exit;
+    }
+
+    /* Check if the object exists in se05x already */
+    status = Se05x_API_CheckObjectExists(session_ctx, pub_keyID, &result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+        goto exit;
+    }
+
+    if (result == kSE05x_Result_SUCCESS) {
+        curveID = kSE05x_ECCurve_NA;
+    }
+    else {
+        curveID = kSE05x_ECCurve_NIST_P384;
+    }
+
+    /* Set public key */
+    status = Se05x_API_WriteECKey(
+        session_ctx, NULL, 0, pub_keyID, curveID, NULL, 0, pub_key, pub_key_len, kSE05x_INS_NA, kSE05x_KeyPart_Public);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_WriteECKey \n");
+        goto exit;
+    }
+
+    /* Verify signature using public key at location 'pub_keyID' */
+    status = Se05x_API_ECDSAVerify(session_ctx,
+        pub_keyID,
+        kSE05x_ECSignatureAlgo_SHA_256,
+        input,
+        input_len,
+        signature,
+        signature_len,
+        &sign_result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ECDSASign \n");
+        goto exit;
+    }
+
+    if (sign_result != kSE05x_Result_SUCCESS) {
+        SMLOG_E("verification failed \n");
+        goto exit;
+    }
+
+    /* Corrupt signature and expect verification failure */
+    signature[0] = 0;
+    signature[1] = 0;
+    status       = Se05x_API_ECDSAVerify(session_ctx,
+        pub_keyID,
+        kSE05x_ECSignatureAlgo_SHA_256,
+        input,
+        input_len,
+        signature,
+        signature_len,
+        &sign_result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ECDSASign \n");
+        goto exit;
+    }
+
+    if (sign_result != kSE05x_Result_FAILURE) {
+        SMLOG_E("verification should have failed \n");
+        goto exit;
+    }
+
+    status = Se05x_API_DeleteSecureObject(session_ctx, keyID);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+        goto exit;
+    }
+
+    status = Se05x_API_DeleteSecureObject(session_ctx, pub_keyID);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+        goto exit;
+    }
+
+    EX_PASS;
+exit:
+    EX_FAIL;
+}
+
+
 int ex_set_certificate(pSe05xSession_t session_ctx)
 {
     smStatus_t status;
-    uint8_t certificate[CERT_SIZE] = {
-        0,
-    };
-    size_t certificate_len             = sizeof(certificate);
-    uint8_t certificate_ret[CERT_SIZE] = {
-        0,
-    };
-    size_t certificate_ret_len = sizeof(certificate_ret);
-    uint32_t keyID             = TEST_ID_BASE + __LINE__;
-    size_t file_size           = sizeof(certificate);
-    size_t offset              = 0;
-    size_t blk_size            = SET_CERT_BLK_SIZE;
-    size_t i                   = 0;
+    uint32_t keyID   = TEST_ID_BASE + __LINE__;
+    size_t file_size = sizeof(certificate);
+    size_t offset    = 0;
+    size_t blk_size  = SET_CERT_BLK_SIZE;
+    size_t i         = 0;
     SE05x_Result_t result;
+
+    certificate_len     = sizeof(certificate);
+    certificate_ret_len = sizeof(certificate_ret);
 
     /* Check if the object exists in se05x already */
     status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
@@ -677,6 +1040,9 @@ int ex_se05x_crypto()
     ex_generate_nist256_key(&se05x_session);
     ex_set_get_nist256_key(&se05x_session);
     ex_nist256_sign_verify(&se05x_session);
+    ex_generate_nist384_key(&se05x_session);
+    ex_set_get_nist384_key(&se05x_session);
+    ex_nist384_sign_verify(&se05x_session);
     ex_set_certificate(&se05x_session);
     ex_ecdh(&se05x_session);
     ex_aes_ECB_NOPAD(&se05x_session);

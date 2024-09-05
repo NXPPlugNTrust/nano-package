@@ -586,7 +586,7 @@ smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
     const tlvHeader_t *inhdr,
     uint8_t *cmdBuf,
     size_t cmdBufLen,
-    uint8_t hasle,
+    uint8_t length_extended,
     uint8_t *encCmdBuf,
     size_t *encCmdBufLen)
 {
@@ -622,7 +622,7 @@ smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
     }
 
     se05xCmdLC  = cmdBufLen + SCP_GP_IU_CARD_CRYPTOGRAM_LEN;
-    se05xCmdLCW = (se05xCmdLC == 0) ? 0 : (((se05xCmdLC < 0xFF) && !(hasle)) ? 1 : 3);
+    se05xCmdLCW = (se05xCmdLC == 0) ? 0 : (((se05xCmdLC < 0xFF) && !(length_extended)) ? 1 : 3);
 
     if (se05xCmdLCW > 0) {
         if (se05xCmdLCW == 1) {
@@ -666,7 +666,7 @@ smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
     memcpy(&cmdBuf[i], macData, SCP_GP_IU_CARD_CRYPTOGRAM_LEN);
     i += SCP_GP_IU_CARD_CRYPTOGRAM_LEN;
 
-    if (hasle) {
+    if (length_extended) {
         if (i + 2 > MAX_APDU_BUFFER) {
             /* Restore session_ctx->scp03_mcv*/
             memcpy(session_ctx->scp03_mcv, se05x_mcv_tmp, SCP_CMAC_SIZE);

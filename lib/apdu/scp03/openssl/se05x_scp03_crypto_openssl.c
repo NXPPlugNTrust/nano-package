@@ -153,12 +153,21 @@ int hcrypto_aes_cbc_decrypt(
     return 0;
 }
 
-void *hcrypto_gen_eckey()
+void *hcrypto_gen_eckey(uint16_t keylen)
 {
     int ret             = 1;
     EC_KEY *pEcKey      = NULL;
     EC_GROUP *pEC_Group = NULL;
     EVP_PKEY *pEvpKey   = NULL;
+    int curve_id        = 0;
+
+    curve_id = (keylen == 32) ? NID_X9_62_prime256v1 : (keylen == 48) ? NID_secp384r1 : 0;
+
+    if (curve_id == 0) {
+        SMLOG_E("Key length not supported.");
+        ret = 1;
+        goto exit;
+    }
 
     pEvpKey = EVP_PKEY_new();
     ENSURE_OR_GO_EXIT(pEvpKey != NULL);
@@ -166,7 +175,7 @@ void *hcrypto_gen_eckey()
     pEcKey = EC_KEY_new();
     ENSURE_OR_GO_EXIT(pEcKey != NULL);
 
-    pEC_Group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
+    pEC_Group = EC_GROUP_new_by_curve_name(curve_id);
     ENSURE_OR_GO_EXIT(pEC_Group != NULL);
 
     EC_GROUP_set_asn1_flag(pEC_Group, 0x001);

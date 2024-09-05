@@ -26,10 +26,6 @@ SE05x Mandate SCP03 Example - frdm-k64
   :width: 400
   :alt: Import
 
-4. If the example is to be built with PlatformSCP / ECKey - ensure to enable the CMAC (`#define MBEDTLS_CMAC_C`) in mbedtls config file.
-file - `/frdmk64f-sdk/middleware/mbedtls/port/ksdk/ksdk_mbedtls_config.h`.
-
-
 **Build options**
 
 To build with Platform SCP using MbedTLS, following macros must be set in Properties->Settings->Preprocessor.
