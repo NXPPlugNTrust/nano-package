@@ -42,7 +42,7 @@
 #define SMLOG_D(...)     \
     PRINTF(COLOR_GREEN); \
     PRINTF(__VA_ARGS__); \
-    PRINTF(COLOR_RESET);                                    \
+    PRINTF(COLOR_RESET); \
     PRINTF("\r\n")
 #define SMLOG_AU8_D(BUF, LEN)                               \
     PRINTF(COLOR_GREEN);                                    \

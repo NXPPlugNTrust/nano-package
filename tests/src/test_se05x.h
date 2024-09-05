@@ -15,8 +15,8 @@
 extern Se05xSession_t se05x_session;
 
 /* Test functions */
-void test_setup(void);
-void test_teardown(void);
+void *test_setup(void);
+void test_teardown(void *ignore);
 void test_se05x_nist256(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
 void test_se05x_nist256_ecdsa(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
 void test_se05x_bin_objects(pSe05xSession_t session_ctx, uint8_t *pass, uint8_t *fail, uint8_t *ignore);
