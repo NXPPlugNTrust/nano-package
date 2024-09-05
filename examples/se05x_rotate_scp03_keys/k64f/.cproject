@@ -102,7 +102,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;ksdk_mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>
@@ -141,6 +141,7 @@
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/middleware/mmcau/"/>
 									<listOptionValue builtIn="false" value="../../../../lib/apdu"/>
 									<listOptionValue builtIn="false" value="../../../../lib/apdu/scp03"/>
+									<listOptionValue builtIn="false" value="../../../../lib/apdu/scp03/mbedtls"/>
 									<listOptionValue builtIn="false" value="../../../../lib/t1oi2c"/>
 									<listOptionValue builtIn="false" value="../../../../lib/platform/K64"/>
 									<listOptionValue builtIn="false" value="../../../../lib/platform/K64/board"/>
@@ -456,7 +457,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;ksdk_mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>
@@ -488,6 +489,7 @@
 									<listOptionValue builtIn="false" value="../../../../../frdmk64f-sdk/middleware/mmcau/"/>
 									<listOptionValue builtIn="false" value="../../../../lib/apdu"/>
 									<listOptionValue builtIn="false" value="../../../../lib/apdu/scp03"/>
+									<listOptionValue builtIn="false" value="../../../../lib/apdu/scp03/mbedtls"/>
 									<listOptionValue builtIn="false" value="../../../../lib/t1oi2c"/>
 									<listOptionValue builtIn="false" value="../../../../lib/platform/K64"/>
 									<listOptionValue builtIn="false" value="../../../../lib/platform/K64/board"/>

@@ -1,7 +1,7 @@
-.. _ex_se05x_mandate_scp03_k64:
+.. _ex_se05x_ReadIDList_k64:
 
-SE05x Mandate SCP03 Example - frdm-k64
-=======================================
+SE05x Read IDList  Example - frdm-k64
+=============================
 
 **Prequisite**
 
@@ -18,51 +18,48 @@ SE05x Mandate SCP03 Example - frdm-k64
 
 1. Click on File, Import, Existing project to workspace and click on next.
 
-2. Point to the "simw-nanopkg/examples/se05x_crypto/k64" folder.
+2. Point to the "simw-nanopkg/examples/se05x_ReadIDList/k64f" folder
 
-3. Select the Project and click on Finish.
+3. Select the Project and click on Finish
 
 .. image:: Import.JPG
   :width: 400
   :alt: Import
 
+
 **Build options**
 
 To build with Platform SCP using MbedTLS, following macros must be set in Properties->Settings->Preprocessor.
 
-    WITH_PLATFORM_SCP03
+    - WITH_PLATFORM_SCP03
 
-    EX_SE05X_USE_MBEDTLS=1
+    - EX_SE05X_USE_MBEDTLS=1
 
 .. image:: mbedtls_macros.jpg
   :width: 400
   :alt: folder
 
-To build without Platform SCP, simply remove these 2 macros.
+|
+
+To build the example with EC Key authentication using MbedTLS, following macro must be added in Properties->Settings->Preprocessor.
+
+    - WITH_ECKEY_SESSION
+
+    - EX_SE05X_USE_MBEDTLS=1
+
+.. image:: eckey_macros.jpg
+  :width: 400
+  :alt: folder
 
 |
 
-To set mandate Platform SCP, add the following macro in Properties->Settings->Preprocessor.
+To build with Platform SCP and EC Key authentication, following macro must be added in Properties->Settings->Preprocessor
 
-    WITH_PlatformSCPRequest_REQUIRED
+    - WITH_ECKEY_SCP03_SESSION
 
-.. image:: platformscp_required.png
-  :width: 400
-  :alt: folder
+    - EX_SE05X_USE_MBEDTLS=1
 
-
-If Platform SCP not required, add the following macro in Properties->Settings->Preprocessor.
-
-    WITH_PlatformSCPRequest_NOT_REQUIRED
-
-.. image:: platformscp_notrequired.png
-  :width: 400
-  :alt: folder
-
-.. note::
-
-	If you build demo without Platform SCP, WITH_PlatformSCPRequest_REQUIRED macro must be added.
-
+To build without Platform SCP or EC Key authentication, simply remove the respective macros.
 
 
 **Build and Debug**

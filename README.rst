@@ -24,7 +24,7 @@ Nano Package -
 
 **Nano package Features**
 
-	- ECDSA and ECDH with NIST P256
+	- ECDSA and ECDH with NIST P256, NIST P384
 	- AES Encrypt / Decrypt (ECB,CBC,CTR)
 	- Binary Objects
 	- Encrypted I2C communication using PlatformSCP channel baed on Global Platform SCP03 channel
@@ -167,6 +167,14 @@ Examples
 
 .. _se05x_resume_scp03 Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_resume_scp03/readme.rst
 
+`se05x_ReadIDList Linux`_.
+
+.. _se05x_ReadIDList Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_ReadIDList/readme.rst
+
+`se05x_eckey_session_provision Linux`_.
+
+.. _se05x_eckey_session_provision Linux: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_eckey_session_provision/readme.rst
+
 
 **Examples on FRDM-K64F**
 
@@ -189,6 +197,14 @@ Examples
 `se05x_rotate_scp03_keys k64f`_.
 
 .. _se05x_rotate_scp03_keys k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_rotate_scp03_keys/k64f/readme.rst
+
+`se05x_ReadIDList k64f`_.
+
+.. _se05x_ReadIDList k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_ReadIDList/k64f/readme.rst
+
+`se05x_eckey_session_provision k64f`_.
+
+.. _se05x_eckey_session_provision k64f: https://github.com/NXPPlugNTrust/nano-package/blob/master/examples/se05x_eckey_session_provision/k64f/readme.rst
 
 
 **Examples on FRDM-MCXN**
@@ -231,7 +247,7 @@ Examples
 
 **Examples on Zephyr OS**
 
-Integration of nano package in Zephyr OS (Tested with release tag - zephyr-v3.5.0).
+Integration of nano package in Zephyr OS (Tested with release tag - zephyr-v3.7.0).
 
 Refer `Zephyr Readme`_.
 

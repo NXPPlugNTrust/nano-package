@@ -82,7 +82,7 @@ smStatus_t ex_se05x_process_session_command(const tlvHeader_t *hdr,
         ENSURE_OR_GO_CLEANUP(i + 2 < (*outLen));
         out[i++] = (uint8_t)(0x80 /* Extended */ | 0x02 /* Additional Length */);
         out[i++] = (uint8_t)((STag1_Len >> 8) & 0xFF);
-        out[i++] = (uint8_t)((STag1_Len)&0xFF);
+        out[i++] = (uint8_t)((STag1_Len) & 0xFF);
     }
     ENSURE_OR_GO_CLEANUP(i + sizeof(*hdr) < (*outLen));
     memcpy(&out[i], hdr, sizeof(*hdr));

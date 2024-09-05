@@ -1,7 +1,7 @@
 /** @file main.c
  *  @brief .
  *
- * Copyright 2021-2022,2024 NXP
+ * Copyright 2024 NXP
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -9,17 +9,17 @@
 #include <stdio.h>
 
 /* ********************** Extern functions ********************** */
-extern int ex_se05x_crypto();
+extern int ex_se05x_ReadIDList();
 extern void platformInit();
 
 int main()
 {
     platformInit();
-    if (ex_se05x_crypto() != 0) {
-        printf("SE05x Sign Example Failed !\n");
+    if (ex_se05x_ReadIDList() != 0) {
+        printf("SE05x Read IDList Example Failed !\n");
     }
     else {
-        printf("SE05x Sign Example Success ! \n");
+        printf("SE05x Read IDList Example Success ! \n");
     }
     return 0;
 }
