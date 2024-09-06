@@ -20,6 +20,10 @@ several demo applications to showcase how to enable security on the MCX family.Â
     </nxp_compatible_hw>
     <nxp_ebh_hw>
         <ebh id="nxp_om_se050ard_e"></ebh>
+        <ebh id="nxp_om-A5000ard"></ebh>
+        <ebh id="nxp_om-SE051ard"></ebh>
+        <ebh id="mikroe_a5000_plug_trust_click"></ebh>
+        <ebh id="mikroe_se051_plug_trust_click"></ebh>
     </nxp_ebh_hw>
     <peripherals>
         <peripheral name="i2c"></peripheral>
