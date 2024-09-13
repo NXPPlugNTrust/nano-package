@@ -6,7 +6,7 @@
         <![CDATA[This demo project provides a detailed information on how to
 integrate the EdgeLock® SE05X series
 into the FRDM development boards of MCX family. Additionally, the project contains
-several demo applications to showcase how to enable security on the MCX family. ]]>
+several demo applications to showcase how to enable security on the MCX family.]]>
     </overview>
     <toolchains>
         <toolchain name="mcux"></toolchain>
@@ -15,19 +15,23 @@ several demo applications to showcase how to enable security on the MCX family.�
         <family name="mcx"></family>
     </families>
     <nxp_compatible_hw>
-        <hw id="FRDM-MCXA153"></hw>
         <hw id="FRDM-MCXN947"></hw>
+        <hw id="FRDM-MCXA153"></hw>
     </nxp_compatible_hw>
     <nxp_ebh_hw>
         <ebh id="nxp_om_se050ard_e"></ebh>
+        <ebh id="nxp_om_se051ard"></ebh>
+        <ebh id="mikroe_se051_plug_trust_click"></ebh>
+        <ebh id="mikroe_a5000_plug_trust_click"></ebh>
+        <ebh id="nxp_om_a5000ard"></ebh>
     </nxp_ebh_hw>
     <peripherals>
         <peripheral name="i2c"></peripheral>
     </peripherals>
     <categories>
-        <category name="industrial"></category>
-        <category name="sec_provi"></category>
         <category name="security"></category>
+        <category name="sec_provi"></category>
+        <category name="industrial"></category>
         <category name="cc_devices"></category>
     </categories>
 </data:item>
