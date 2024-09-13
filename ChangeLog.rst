@@ -14,6 +14,8 @@ ChangeLog
 - Default max APDU buffer size increased to 512 (`MAX_APDU_BUFFER` in se05x_types.h).
 - se05x_ReadIDList example added (Example to read the contents of secure element).
 - se05x_eckey_session_provision example added (Example to provision key for EC-Key authentication session).
+- MbedTLS ALT files (\lib\mbedtls_alt\) updated to support MbedTLS version 3.6.0
+- Bug fix: In MbedTLS ALT ECDSA function (mbedtls_ecdsa_sign in \lib\mbedtls_alt\ecdsa_se05x.c), key length calculation is corrected.
 
 
 **Release v1.3.0**

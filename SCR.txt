@@ -8,6 +8,7 @@ Description and comments: Plug&Trust Nano Package
 Release Location: https://github.com/NXPPlugNTrust/nano-package.git
 Origin: NXP (Apache-2.0)
         Mbedtls (Apache-2.0) Version: 2.26.0 - https://github.com/Mbed-TLS/mbedtls/tree/v2.26.0
+        Mbedtls-3 (Apache-2.0) Version: 3.6.0 - https://github.com/Mbed-TLS/mbedtls/tree/v3.6.0
         TinyCrypt (BSD-3-Clause) Version: 0.2.8 - https://github.com/intel/tinycrypt/tree/v0.2.8
         Openssl (Apache-2.0) Version: 1.1.1f - https://github.com/openssl/openssl/tree/OpenSSL_1_1_1f
 -----------------------------------

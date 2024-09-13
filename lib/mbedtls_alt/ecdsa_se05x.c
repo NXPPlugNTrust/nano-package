@@ -65,7 +65,7 @@ int mbedtls_ecdsa_sign(mbedtls_ecp_group *grp,
     const unsigned char *end = NULL;
     unsigned char *p = NULL;
     size_t len = 0;
-    size_t rawPrivatekeylen = mbedtls_mpi_size(d);
+    size_t rawPrivatekeylen = d->n * sizeof(mbedtls_mpi_uint);
 
     int ret                 = mbedtls_mpi_write_binary(d, buffer, rawPrivatekeylen);
     if (ret != 0) {
