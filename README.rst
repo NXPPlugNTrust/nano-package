@@ -27,7 +27,7 @@ Nano Package -
 	- ECDSA and ECDH with NIST P256, NIST P384
 	- AES Encrypt / Decrypt (ECB,CBC,CTR)
 	- Binary Objects
-	- Encrypted I2C communication using PlatformSCP channel baed on Global Platform SCP03 channel
+	- Encrypted I2C communication using PlatformSCP channel based on Global Platform SCP03 channel
 	- EC Key Authentication
 	- EC Key Authentication in combination with PlatformSCP03
 	- Platforms - Linux, frdm-k64 bare metal, mcxn947/mcxa153 bare metal, Zephyr OS
@@ -105,7 +105,7 @@ When building the example with 'EC Key Authentication' enabled, make sure to ass
 
 .. note::
 
-	Product Deployment => Make sure to store the EC keys securly.
+	Product Deployment => Make sure to store the EC keys securely.
 
 .. code-block:: c
 

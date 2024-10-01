@@ -65,7 +65,7 @@ Any platform can connect to the secure element due to minimal requirements
 6. [Support](#step6)
 7. [Release Notes](#step7)
 
-Below the steps neccessary to run the nano lib cryptography example on FRDM-MCXN947 are listed.
+Below the steps necessary to run the nano lib cryptography example on FRDM-MCXA153 are listed.
 
 ## 1. Software<a name="step1"></a>
 - Install latest MCUxpresso from https://nxp.com/mcuxpresso.
@@ -183,5 +183,5 @@ Questions regarding the content/correctness of this example can be entered as Is
 ## 7. Release Notes<a name="step7"></a>
 | Version | Description / Update                           | Date                        |
 |:-------:|------------------------------------------------|----------------------------:|
-| 1.0     | Initial release on Application Code Hub        | Sept 27<sup>st</sup> 2024 |
+| 1.0     | Initial release on Application Code Hub        | Sept 27<sup>th</sup> 2024 |
 
