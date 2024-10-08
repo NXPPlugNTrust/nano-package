@@ -584,7 +584,7 @@ static bool_t phNxpEseProro7816_SaveRxframeData(uint8_t *p_data, uint32_t data_l
             // LOG_W("Need '%ld' bytes. Got '%ld' to copy.", (size_t)(pRx_EseCntx->responseBytesRcvd + data_len), pRx_EseCntx->pRsp->len);
             return FALSE;
         }
-        phNxpEse_memcpy((pRx_EseCntx->pRsp->p_data + pRx_EseCntx->responseBytesRcvd), p_data, data_len);
+        memmove((pRx_EseCntx->pRsp->p_data + pRx_EseCntx->responseBytesRcvd), p_data, data_len);
         pRx_EseCntx->responseBytesRcvd += data_len;
         return TRUE;
     }
