@@ -7,6 +7,7 @@
 
 /* ********************** Include files ********************** */
 #include "se05x_APDU_apis.h"
+#include "se05x_scp03_crypto.h"
 #include "sm_port.h"
 
 /* ********************** Defines ********************** */
@@ -26,6 +27,7 @@
 #define TEST_ID_BASE 0x7B000100
 #define CERT_SIZE 1024
 #define SET_CERT_BLK_SIZE 128
+#define ATTESTATION_KEY_ID 0xF0000012
 
 /* ********************** Global variables ********************** */
 
@@ -151,7 +153,6 @@ const uint8_t nist384PubKey[] = {
 
 /* clang-format on */
 
-
 /* ********************** Functions ********************** */
 
 smStatus_t ex_se05x_create_curve(pSe05xSession_t session_ctx, uint32_t curve_id)
@@ -164,26 +165,37 @@ smStatus_t ex_se05x_create_curve(pSe05xSession_t session_ctx, uint32_t curve_id)
     const uint8_t ecc_ordern[] = {EC_PARAM_order};
 
     status = Se05x_API_CreateECCurve(session_ctx, (SE05x_ECCurve_t)curve_id);
-    if(status != SM_OK) {
+    if (status != SM_OK) {
         return status;
     }
-    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_A, ecc_a, sizeof(ecc_a)/sizeof(ecc_a[0]));
-    if(status != SM_OK) {
+    status = Se05x_API_SetECCurveParam(
+        session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_A, ecc_a, sizeof(ecc_a) / sizeof(ecc_a[0]));
+    if (status != SM_OK) {
         return status;
     }
-    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_B, ecc_b, sizeof(ecc_b)/sizeof(ecc_b[0]));
-    if(status != SM_OK) {
+    status = Se05x_API_SetECCurveParam(
+        session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_B, ecc_b, sizeof(ecc_b) / sizeof(ecc_b[0]));
+    if (status != SM_OK) {
         return status;
     }
-    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_G, ecc_G, sizeof(ecc_G)/sizeof(ecc_G[0]));
-    if(status != SM_OK) {
+    status = Se05x_API_SetECCurveParam(
+        session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_G, ecc_G, sizeof(ecc_G) / sizeof(ecc_G[0]));
+    if (status != SM_OK) {
         return status;
     }
-    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_N, ecc_ordern, sizeof(ecc_ordern)/sizeof(ecc_ordern[0]));
-    if(status != SM_OK) {
+    status = Se05x_API_SetECCurveParam(session_ctx,
+        (SE05x_ECCurve_t)curve_id,
+        kSE05x_ECCurveParam_PARAM_N,
+        ecc_ordern,
+        sizeof(ecc_ordern) / sizeof(ecc_ordern[0]));
+    if (status != SM_OK) {
         return status;
     }
-    status = Se05x_API_SetECCurveParam(session_ctx, (SE05x_ECCurve_t)curve_id, kSE05x_ECCurveParam_PARAM_PRIME, ecc_prime, sizeof(ecc_prime)/sizeof(ecc_prime[0]));
+    status = Se05x_API_SetECCurveParam(session_ctx,
+        (SE05x_ECCurve_t)curve_id,
+        kSE05x_ECCurveParam_PARAM_PRIME,
+        ecc_prime,
+        sizeof(ecc_prime) / sizeof(ecc_prime[0]));
     return status;
 }
 
@@ -356,7 +368,7 @@ int ex_nist256_sign_verify(pSe05xSession_t session_ctx)
 
     /* Generate nist256 key */
     status = Se05x_API_WriteECKey(
-        session_ctx, NULL, 0, keyID, curveID, NULL, 0, NULL, 0, kSE05x_INS_NA, kSE05x_KeyPart_Pair);
+        session_ctx, NULL, 0, keyID, curveID, NULL, 0, NULL, 0, kSE05x_INS_TRANSIENT, kSE05x_KeyPart_Pair);
     if (status != SM_OK) {
         SMLOG_E("Error in Se05x_API_WriteECKey \n");
         goto exit;
@@ -392,8 +404,17 @@ int ex_nist256_sign_verify(pSe05xSession_t session_ctx)
     }
 
     /* Set public key */
-    status = Se05x_API_WriteECKey(
-        session_ctx, NULL, 0, pub_keyID, curveID, NULL, 0, pub_key, pub_key_len, kSE05x_INS_NA, kSE05x_KeyPart_Public);
+    status = Se05x_API_WriteECKey(session_ctx,
+        NULL,
+        0,
+        pub_keyID,
+        curveID,
+        NULL,
+        0,
+        pub_key,
+        pub_key_len,
+        kSE05x_INS_TRANSIENT,
+        kSE05x_KeyPart_Public);
     if (status != SM_OK) {
         SMLOG_E("Error in Se05x_API_WriteECKey \n");
         goto exit;
@@ -462,23 +483,23 @@ int ex_generate_nist384_key(pSe05xSession_t session_ctx)
     uint32_t keyID = TEST_ID_BASE + __LINE__;
     SE05x_Result_t result;
     SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
-        uint8_t curveList[32] = {
+    uint8_t curveList[32]   = {
         0,
     };
     size_t curveListLen = 32;
 
-   status = Se05x_API_ReadECCurveList(session_ctx, curveList, &curveListLen);
-    if(status != SM_OK) {
+    status = Se05x_API_ReadECCurveList(session_ctx, curveList, &curveListLen);
+    if (status != SM_OK) {
         SMLOG_E("Error in Se05x_API_ReadECCurveList \n");
         goto exit;
     }
     else {
         if (curveList[curveID - 1] == kSE05x_SetIndicator_SET) {
-           SMLOG_I("curveID = %0x already exists \n", curveID);
+            SMLOG_I("curveID = %0x already exists \n", curveID);
         }
         else {
             status = ex_se05x_create_curve(session_ctx, curveID);
-            if(status != SM_OK) {
+            if (status != SM_OK) {
                 SMLOG_I("Error in ex_se05x_create_curve \n");
                 goto exit;
             }
@@ -526,7 +547,6 @@ int ex_set_get_nist384_key(pSe05xSession_t session_ctx)
     uint32_t keyID    = TEST_ID_BASE + __LINE__;
     SE05x_Result_t result;
     SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
-
 
     /* Check if the object exists in se05x already */
     status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
@@ -601,7 +621,6 @@ int ex_nist384_sign_verify(pSe05xSession_t session_ctx)
     SE05x_Result_t sign_result;
     SE05x_Result_t result;
     SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P384;
-
 
     /* Check if the object exists in se05x already */
     status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
@@ -716,7 +735,6 @@ int ex_nist384_sign_verify(pSe05xSession_t session_ctx)
 exit:
     EX_FAIL;
 }
-
 
 int ex_set_certificate(pSe05xSession_t session_ctx)
 {
@@ -894,6 +912,243 @@ exit:
     return -1;
 }
 
+int ex_read_attst_object(pSe05xSession_t session_ctx)
+{
+    smStatus_t status;
+    SE05x_Result_t result;
+    uint32_t keyID          = TEST_ID_BASE + __LINE__;
+    uint32_t pub_keyID      = TEST_ID_BASE + __LINE__;
+    SE05x_ECCurve_t curveID = kSE05x_ECCurve_NIST_P256;
+    uint8_t random[16]      = {
+        0,
+    };
+    size_t randomLen    = sizeof(random);
+    uint8_t cmd[256]    = {0};
+    size_t cmdLen       = sizeof(cmd);
+    uint8_t rspBuf[256] = {0};
+    size_t rspbufLen    = sizeof(rspBuf);
+
+    /* Check if the object exists in se05x already */
+    status = Se05x_API_CheckObjectExists(session_ctx, keyID, &result);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+        goto exit;
+    }
+
+    if (result == kSE05x_Result_SUCCESS) {
+        /* If key already exists, set curveID = NA */
+        curveID = kSE05x_ECCurve_NA;
+    }
+
+    /* Generate nist256 key */
+    status = Se05x_API_WriteECKey(
+        session_ctx, NULL, 0, keyID, curveID, NULL, 0, NULL, 0, kSE05x_INS_NA, kSE05x_KeyPart_Pair);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_WriteECKey \n");
+        goto exit;
+    }
+
+    /* Read the key at location 'keyID' and using the attestation from key id 'ATTESTATION_KEY_ID' */
+    status = Se05x_API_ReadObject_W_Attst(session_ctx,
+        keyID,
+        0,
+        0,
+        ATTESTATION_KEY_ID,
+        kSE05x_AttestationAlgo_EC_SHA_256,
+        random,
+        randomLen,
+        cmd,
+        &cmdLen,
+        rspBuf,
+        &rspbufLen);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_ReadObject_W_Attst \n");
+        goto exit;
+    }
+
+    /* Attestation Verification part */
+    /* Below part of the code require host crypto support */
+#if 0
+    {
+        int tlvRet               = 0;
+        uint8_t chipId[18]       = {0};
+        size_t chipIdLen         = sizeof(chipId);
+        uint8_t attribute[128]   = {0};
+        size_t attributeLen      = sizeof(attribute);
+        uint8_t data[256]        = {0};
+        size_t dataLen           = sizeof(data);
+        uint8_t objectSize[2]    = {0};
+        size_t objectSizeLen     = sizeof(objectSize);
+        uint8_t ts[32]           = {0};
+        size_t tsLen             = sizeof(ts);
+        uint8_t signature[128]   = {0};
+        size_t signatureLen      = sizeof(signature);
+        int ret                  = 0;
+        uint8_t cmd_digest[32]   ={0};
+        size_t cmd_digestLen     = sizeof(cmd_digest);
+        uint8_t digest[32]       ={0};
+        size_t digestLen         = sizeof(digest);
+        uint8_t inputData[256]   = {0};
+        size_t inputDataLen      = 0;
+        uint8_t pub_key[128]     = {0};
+        size_t pub_keylen        = sizeof(pub_key);
+        SE05x_Result_t sign_result = kSE05x_Result_FAILURE;
+        size_t rspIndex          = 0;
+        uint8_t outRandom[32]    = {0};
+        size_t outRandomLen      = sizeof(outRandom);
+
+        tlvRet  = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_1, data, &dataLen); /*  */
+        if (0 != tlvRet) {
+            /* Keys with no read policy will not return TAG1 */
+            //goto cleanup;
+        }
+        tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_2, chipId, &chipIdLen); /*  */
+        if (0 != tlvRet) {
+            goto exit;
+        }
+        tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_3, attribute, &attributeLen); /*  */
+        if (0 != tlvRet) {
+            goto exit;
+        }
+
+        if(session_ctx->applet_version >= 0x7020000){
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_4, objectSize, &objectSizeLen); /*  */
+            if (0 != tlvRet) {
+                goto exit;
+            }
+
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_TIMESTAMP, ts, &tsLen);
+            if(0 != tlvRet){
+                goto exit;
+            }
+
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_SIGNATURE, signature, &signatureLen); /*  */
+            if (0 != tlvRet) {
+                goto exit;
+            }
+        }
+        else {
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_4, outRandom, &outRandomLen); /*  */
+            if (0 != tlvRet) {
+                goto exit;
+            }
+
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_5, ts, &tsLen);
+            if(0 != tlvRet){
+                goto exit;
+            }
+
+            tlvRet = tlvGet_u8buf(rspBuf, &rspIndex, rspbufLen, kSE05x_TAG_6, signature, &signatureLen); /*  */
+            if (0 != tlvRet) {
+                goto exit;
+            }
+        }
+
+        if(session_ctx->applet_version >= 0x7020000){
+            /* Calculate the digest of command data */
+            ret = hcrypto_digest_one_go(cmd, cmdLen, cmd_digest, &cmd_digestLen);
+            if(ret != 0) {
+                goto exit;
+            }
+
+            /* Append digest(cmd) + Response data excuding the signature TLV */
+            memcpy(inputData, cmd_digest, cmd_digestLen);
+            inputDataLen += cmd_digestLen;
+            memcpy(inputData + inputDataLen, rspBuf, rspbufLen - signatureLen - 6); /* 6 ==> TLV of Signature and Response (0x9000)*/
+            inputDataLen += rspbufLen - signatureLen - 6;
+        }
+        else {
+
+            memcpy(inputData, data, dataLen);
+            inputDataLen += dataLen;
+
+            memcpy(inputData+inputDataLen, chipId, chipIdLen);
+            inputDataLen += chipIdLen;
+
+            memcpy(inputData+inputDataLen, attribute, attributeLen);
+            inputDataLen += attributeLen;
+
+            memcpy(inputData+inputDataLen, outRandom, outRandomLen);
+            inputDataLen += outRandomLen;
+
+            memcpy(inputData+inputDataLen, ts, tsLen);
+            inputDataLen += tsLen;
+        }
+
+        /* Caluclate digest of (digest(cmd) + Response data excuding the signature TLV) */
+        ret = hcrypto_digest_one_go(inputData, inputDataLen, digest, &digestLen);
+        if(ret != 0) {
+            goto exit;
+        }
+
+        /* Read Attestation Public Key */
+        status = Se05x_API_ReadObject(session_ctx, ATTESTATION_KEY_ID, 0, 0, pub_key, &pub_keylen);
+        if(status != SM_OK)
+        {
+            SMLOG_E("Error in Se05x_API_ReadObject \n");
+            goto exit;
+        }
+
+         /* Check if the object exists in se05x already */
+        status = Se05x_API_CheckObjectExists(session_ctx, pub_keyID, &result);
+        if (status != SM_OK) {
+            SMLOG_E("Error in Se05x_API_CheckObjectExists \n");
+            goto exit;
+        }
+
+        if (result == kSE05x_Result_SUCCESS) {
+            /* If key already exists, set curveID = NA */
+            curveID = kSE05x_ECCurve_NA;
+        }
+
+        /* Set Attestation Public Key */
+        status = Se05x_API_WriteECKey(
+            session_ctx, NULL, 0, pub_keyID, curveID, NULL, 0, pub_key, pub_keylen, kSE05x_INS_NA, kSE05x_KeyPart_Public);
+        if (status != SM_OK) {
+            SMLOG_E("Error in Se05x_API_WriteECKey \n");
+            goto exit;
+        }
+
+        /* Verify the signature received from SE */
+        status = Se05x_API_ECDSAVerify(session_ctx,
+            pub_keyID,
+            kSE05x_ECSignatureAlgo_SHA_256,
+            digest,
+            digestLen,
+            signature,
+            signatureLen,
+            &sign_result);
+        if(status != SM_OK) {
+            goto exit;
+        }
+
+        if (sign_result != kSE05x_Result_SUCCESS){
+            SMLOG_E("Verification of Attestation Signature failed \n");
+            goto exit;
+        }
+        SMLOG_I("Attestation Signature verification success \n");
+
+        status = Se05x_API_DeleteSecureObject(session_ctx, pub_keyID);
+        if (status != SM_OK) {
+            SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+            // Ignore the error
+            // goto exit;
+        }
+    }
+#endif
+
+    status = Se05x_API_DeleteSecureObject(session_ctx, keyID);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_DeleteSecureObject \n");
+        // Ignore the error
+        // goto exit;
+    }
+
+    EX_PASS;
+exit:
+    EX_FAIL;
+}
+
 #define EX_AES_FUNC(MODE)                                             \
     int ex_aes_##MODE(pSe05xSession_t session_ctx)                    \
     {                                                                 \
@@ -1049,6 +1304,7 @@ int ex_se05x_crypto()
     ex_aes_CBC_NOPAD(&se05x_session);
     ex_aes_CTR(&se05x_session);
     ex_nist256_sign_policy(&se05x_session);
+    ex_read_attst_object(&se05x_session);
 
     status = Se05x_API_SessionClose(&se05x_session);
     if (status != SM_OK) {

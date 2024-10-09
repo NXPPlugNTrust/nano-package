@@ -30,7 +30,7 @@ Nano Package -
 	- Encrypted I2C communication using PlatformSCP channel based on Global Platform SCP03 channel
 	- EC Key Authentication
 	- EC Key Authentication in combination with PlatformSCP03
-	- Platforms - Linux, frdm-k64 bare metal, mcxn947/mcxa153 bare metal, Zephyr OS
+	- Platforms - Linux, frdm-k64 bare metal, mcxn947 (with SDK 2.16.100) bare metal, mcxa153 (with SDK 2.16.100) bare metal, Zephyr OS
 
 
 **Folder structure**
@@ -60,6 +60,12 @@ Using nano package, host can establish encrypted I2C communication via PlatformS
 
 To use a different host crypto, re-implement the host crypto apis -
 `simw-nanopkg/lib/apdu/scp03/se05x_scp03_crypto.h`
+
+.. note::
+
+	**simw-nanopkg/lib/apdu/scp03/mbedtls** layer provides abstraction only for the mbedtls 2.x version.
+	It is tested only with the mbedtls which is part of frdm-k64f, mcxn947, mcxa153 SDKs.
+	For Zephyr, PlatformSCP03 is done using tinyCrypt support (**simw-nanopkg/lib/apdu/scp03/tc**).
 
 When building the example with 'Platform SCP' enabled, make sure to assign valid scp03 keys to session context.
 (DEK key is required only for key rotation - se05x_rotate_scp03_keys).
@@ -100,6 +106,12 @@ This requires some host crypto operations.
 
 To use a different host crypto, re-implement the host crypto apis -
 `simw-nanopkg/lib/apdu/scp03/se05x_scp03_crypto.h`
+
+.. note::
+
+	**simw-nanopkg/lib/apdu/scp03/mbedtls** layer provides abstraction only for the mbedtls 2.x version.
+	It is tested only with the mbedtls which is part of frdm-k64f, mcxn947, mcxa153 SDKs.
+	For Zephyr, EC-Key Auth is done using tinyCrypt support (**simw-nanopkg/lib/apdu/scp03/tc**).
 
 When building the example with 'EC Key Authentication' enabled, make sure to assign valid eckey keys to session context.
 
@@ -268,26 +280,25 @@ Platform specific files are maintained in **simw-nanopkg/lib/platform** folder.
 Modify / add the files here to support other platforms. By default port files are available for Linux, Zephyr, MCXN947, MCXA153 and K64 MCU.
 
 
-Mbedtls Alt files
------------------
 
-Nano package provides MbedTLS Alt files as an alternative/additional approach to access the secure element using mbedTLS.
+Mbedtls Alt files (Tested with Zephyr OS)
+-----------------------------------------
+
+Nano package provides MbedTLS Alt files as an alternative/additional approach to access the secure element using mbedTLS in Zephyr OS.
 
 In the current implementation only ECDSA Sign is supported via MbedTLS ALT files.
 
 Note - The session for se05x is opened and closed for every ECDSA sign. For the product deployment, make sure to change the logic as required.
 
-
-**Using Mbedtls Alt files in Zephyr OS**
-
 Set **CONFIG_PLUGANDTRUST_MBEDTLS_ALT** to build Plug and Trust with Mbedtls Alt files.
 
-GCP cloud example in Zephyr OS is modified to use SE05x for ECDSA sign.
+For MbedTLS ALT example, refer - **se05x_mbedtls_alt_test**.
+The example will set the actual key in secure element and using reference key, ECDSA Sign is offloaded to secure element via alt files.
 
-Prerequisite - SE05x provisioned with private key at location (say 0x11223344).
 
-Replace the private key in `zephyr/samples/net/cloud/google_iot_mqtt/src/private_info/key.c`
-with the reference to provisioned private key.
+Reference key Details -
+
+Reference key is a Key data structure with only a reference to the Private Key inside the Secure Element instead of the actual Private Key.
 
 The following provides an example of an EC reference key. The value reserved
 for the private key has been used to contain:
@@ -306,5 +317,3 @@ for the private key has been used to contain:
            10:00:00:00:00:00:00:00:00:00:00:00:00:00:00:
            00:00:00:11:22:33:44:A5:A6:B5:B6:A5:A6:B5:B6:
            10:00
-
-Refer `zephyr/samples/net/cloud/google_iot_mqtt/README.rst` to build GCP cloud example.

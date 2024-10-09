@@ -18,7 +18,7 @@
 
 /** Plug and Trust Nano package version */
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 4
+#define VERSION_MINOR 5
 #define VERSION_DEV 0
 
 /**
@@ -39,6 +39,9 @@
 /* IoT Hub Access */
 #define EX_SSS_OBJID_IOT_HUB_A_START 0xF0000000u
 #define EX_SSS_OBJID_IOT_HUB_A_MASK(X) (0xF0000000u & (X))
+
+/** When we want to read with attestation */
+#define kSE05x_INS_READ_With_Attestation (kSE05x_INS_READ | kSE05x_INS_ATTEST)
 
 /** Policy constants */
 /* Access Rules for Object Policy*/
@@ -231,19 +234,19 @@ typedef enum
 typedef enum
 {
     /** Invalid */
-    kSE05x_SetIndicator_NA = 0,
+    kSE05x_SetIndicator_NA      = 0,
     kSE05x_SetIndicator_NOT_SET = 0x01,
-    kSE05x_SetIndicator_SET = 0x02,
+    kSE05x_SetIndicator_SET     = 0x02,
 } SE05x_SetIndicator_t;
 
 /** Parameters while setting the curve */
 typedef enum
-{   /** Invalid */
-    kSE05x_ECCurveParam_NA = 0,
-    kSE05x_ECCurveParam_PARAM_A = 0x01,
-    kSE05x_ECCurveParam_PARAM_B = 0x02,
-    kSE05x_ECCurveParam_PARAM_G = 0x04,
-    kSE05x_ECCurveParam_PARAM_N = 0x08,
+{ /** Invalid */
+    kSE05x_ECCurveParam_NA          = 0,
+    kSE05x_ECCurveParam_PARAM_A     = 0x01,
+    kSE05x_ECCurveParam_PARAM_B     = 0x02,
+    kSE05x_ECCurveParam_PARAM_G     = 0x04,
+    kSE05x_ECCurveParam_PARAM_N     = 0x08,
     kSE05x_ECCurveParam_PARAM_PRIME = 0x10,
 } SE05x_ECCurveParam_t;
 
@@ -310,6 +313,8 @@ typedef enum
     kSE05x_TAG_9                  = 0x49,
     kSE05x_TAG_10                 = 0x4A,
     kSE05x_TAG_11                 = 0x4B,
+    kSE05x_TAG_TIMESTAMP          = 0x4F,
+    kSE05x_TAG_SIGNATURE          = 0x52,
 } SE05x_TAG_t;
 
 /** Different signature algorithms for EC */
@@ -325,6 +330,15 @@ typedef enum
     kSE05x_ECSignatureAlgo_SHA_384 = 0x22,
     kSE05x_ECSignatureAlgo_SHA_512 = 0x26,
 } SE05x_ECSignatureAlgo_t;
+
+/** Different signature algorithms for ED */
+typedef enum
+{
+    /** Invalid */
+    kSE05x_EDSignatureAlgo_NA = 0,
+    /** Message input must be plain Data. Pure EDDSA algorithm */
+    kSE05x_EDSignatureAlgo_ED25519PURE_SHA_512 = 0xA3,
+} SE05x_EDSignatureAlgo_t;
 
 /** Result of operations */
 typedef enum
@@ -484,5 +498,18 @@ typedef enum
 
 /** @copydoc SE05x_SecObjTyp_t */
 typedef SE05x_SecObjTyp_t SE05x_SecureObjectType_t;
+
+/** Attestation */
+typedef enum
+{
+    kSE05x_AttestationAlgo_NA                  = 0,
+    kSE05x_AttestationAlgo_EC_PLAIN            = kSE05x_ECSignatureAlgo_PLAIN,
+    kSE05x_AttestationAlgo_EC_SHA              = kSE05x_ECSignatureAlgo_SHA,
+    kSE05x_AttestationAlgo_EC_SHA_224          = kSE05x_ECSignatureAlgo_SHA_224,
+    kSE05x_AttestationAlgo_EC_SHA_256          = kSE05x_ECSignatureAlgo_SHA_256,
+    kSE05x_AttestationAlgo_EC_SHA_384          = kSE05x_ECSignatureAlgo_SHA_384,
+    kSE05x_AttestationAlgo_EC_SHA_512          = kSE05x_ECSignatureAlgo_SHA_512,
+    kSE05x_AttestationAlgo_ED25519PURE_SHA_512 = kSE05x_EDSignatureAlgo_ED25519PURE_SHA_512,
+} SE05x_AttestationAlgo_t;
 
 #endif //#ifndef SE05X_TYPES_H_INC

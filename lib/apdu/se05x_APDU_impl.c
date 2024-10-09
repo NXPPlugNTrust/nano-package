@@ -420,7 +420,7 @@ smStatus_t Se05x_API_ECDSAVerify(pSe05xSession_t session_ctx,
     pRspbuf   = &session_ctx->apdu_buffer[0];
     rspbufLen = sizeof(session_ctx->apdu_buffer);
 
-    SMLOG_D("APDU -ECDSAVerify [] \n");
+    SMLOG_D("APDU - ECDSAVerify [] \n");
 
     tlvRet = TLVSET_U32("objectID", &pCmdbuf, &cmdbufLen, kSE05x_TAG_1, objectID);
     if (0 != tlvRet) {
@@ -1023,6 +1023,103 @@ smStatus_t Se05x_API_ReadECCurveList(pSe05xSession_t session_ctx, uint8_t *curve
             retStatus = (pRspbuf[rspIndex] << 8) | (pRspbuf[rspIndex + 1]);
         }
     }
+cleanup:
+    return retStatus;
+}
+
+smStatus_t Se05x_API_ReadObject_W_Attst(pSe05xSession_t session_ctx,
+    uint32_t objectID,
+    uint16_t offset,
+    uint16_t length,
+    uint32_t attestID,
+    SE05x_AttestationAlgo_t attestAlgo,
+    const uint8_t *random,
+    size_t randomLen,
+    uint8_t *pCmdapdu,
+    size_t *pCmdapduLen,
+    uint8_t *pRspBuf,
+    size_t *pRspBufLen)
+{
+    smStatus_t retStatus = SM_NOT_OK;
+    tlvHeader_t hdr      = {{kSE05x_CLA, kSE05x_INS_READ_With_Attestation, kSE05x_P1_DEFAULT, kSE05x_P2_DEFAULT}};
+
+    size_t cmdbufLen = 0;
+    uint8_t *pCmdbuf = &session_ctx->apdu_buffer[0];
+    int tlvRet       = 0;
+    size_t rspbufLen = 0;
+
+    ENSURE_OR_GO_CLEANUP(session_ctx != NULL);
+    ENSURE_OR_GO_CLEANUP(pRspBuf != NULL);
+    ENSURE_OR_GO_CLEANUP(pRspBufLen != NULL);
+
+    SMLOG_D("APDU - Se05x_API_ReadObject_W_Attst [] \n");
+    SMLOG_D(
+        "NOTE: Se05x_API_ReadObject_W_Attst API will return the secure element response as is. No parsing of the TLV "
+        "is done.\n");
+
+    pCmdbuf   = &session_ctx->apdu_buffer[0];
+    rspbufLen = *pRspBufLen;
+
+    tlvRet = TLVSET_U32("object id", &pCmdbuf, &cmdbufLen, kSE05x_TAG_1, objectID);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    tlvRet = TLVSET_U16Optional("offset", &pCmdbuf, &cmdbufLen, kSE05x_TAG_2, offset);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    tlvRet = TLVSET_U16Optional("length", &pCmdbuf, &cmdbufLen, kSE05x_TAG_3, length);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    tlvRet = TLVSET_U32("attestID", &pCmdbuf, &cmdbufLen, kSE05x_TAG_5, attestID);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    tlvRet = TLVSET_AttestationAlgo("attestAlgo", &pCmdbuf, &cmdbufLen, kSE05x_TAG_6, attestAlgo);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    tlvRet = TLVSET_u8bufOptional("random", &pCmdbuf, &cmdbufLen, kSE05x_TAG_7, random, randomLen);
+    if (0 != tlvRet) {
+        goto cleanup;
+    }
+
+    if ((pCmdapdu != NULL) && (pCmdapduLen != NULL)) {
+        if (*pCmdapduLen < 6) {
+            goto cleanup;
+        }
+        memcpy(pCmdapdu, &hdr, 4);
+
+        //As length is extended
+        pCmdapdu[4] = 0x00;
+        pCmdapdu[5] = 0x00;
+
+        if (cmdbufLen == 0) {
+            goto cleanup;
+        }
+        if (*pCmdapduLen < (cmdbufLen + 7)) {
+            goto cleanup;
+        }
+
+        pCmdapdu[6] = (uint8_t)cmdbufLen;
+        memcpy(pCmdapdu + 7, &session_ctx->apdu_buffer[0], cmdbufLen);
+        *pCmdapduLen = cmdbufLen + 7;
+    }
+
+    retStatus = DoAPDUTxRx(session_ctx, &hdr, &session_ctx->apdu_buffer[0], cmdbufLen, pRspBuf, &rspbufLen, 1);
+    if (retStatus == SM_OK) {
+        *pRspBufLen = rspbufLen;
+    }
+    else {
+        *pRspBufLen = 0;
+    }
+
 cleanup:
     return retStatus;
 }

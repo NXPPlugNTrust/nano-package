@@ -1303,4 +1303,102 @@ smStatus_t Se05x_API_SetECCurveParam(pSe05xSession_t session_ctx,
  */
 smStatus_t Se05x_API_ReadECCurveList(pSe05xSession_t session_ctx, uint8_t *curveList, size_t *pcurveListLen);
 
+/** Se05x_API_ReadObject_W_Attst
+ *
+ * Read with attestation
+ *
+ * See @ref Se05x_API_ReadObject_W_Attst
+ *
+ * When INS_ATTEST is set in addition to INS_READ, the secure object is read with
+ * attestation. In addition to the response in TLV[TAG_1], there are additional
+ * tags:
+ *
+ * TLV[TAG_2] will hold the object attributes (see ObjectAttributes).
+ *
+ * TLV[TAG_3] relative timestamp when the object has been retrieved
+ *
+ * TLV[TAG_4] will hold freshness random data
+ *
+ * TLV[TAG_5] will hold the unique ID of the device.
+ *
+ * TLV[TAG_6] will hold the signature over all concatenated Value fields tags of
+ * the response (TAG_1 until and including TAG_5).
+ *
+ * # Command to Applet
+ *
+ * @rst
+ * +-------+------------+----------------------------------------------+
+ * | Field | Value      | Description                                  |
+ * +=======+============+==============================================+
+ * | CLA   | 0x80       |                                              |
+ * +-------+------------+----------------------------------------------+
+ * | INS   | INS_READ   | See :cpp:type:`SE05x_INS_t`, in addition to  |
+ * |       |            | INS_READ, users can set the INS_ATTEST flag. |
+ * |       |            | In that case, attestation applies.           |
+ * +-------+------------+----------------------------------------------+
+ * | P1    | P1_DEFAULT | See :cpp:type:`SE05x_P1_t`                   |
+ * +-------+------------+----------------------------------------------+
+ * | P2    | P2_DEFAULT | See :cpp:type:`SE05x_P2_t`                   |
+ * +-------+------------+----------------------------------------------+
+ * | Lc    | #(Payload) | Payload Length.                              |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_1] | 4-byte object identifier                     |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_2] | 2-byte offset   [Optional: default 0]        |
+ * |       |            | [Conditional: only when the object is a      |
+ * |       |            | BinaryFile object]                           |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_3] | 2-byte length   [Optional: default 0]        |
+ * |       |            | [Conditional: only when the object is a      |
+ * |       |            | BinaryFile object]                           |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_4] | 1-byte :cpp:type:`SE05x_RSAKeyComponent_t`:  |
+ * |       |            | either RSA_COMP_MOD or RSA_COMP_PUB_EXP.     |
+ * |       |            | [Optional]   [Conditional: only for RSA key  |
+ * |       |            | components]                                  |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_5] | 4-byte attestation object identifier.        |
+ * |       |            | [Optional]   [Conditional: only when         |
+ * |       |            | INS_ATTEST is set]                           |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_6] | 1-byte :cpp:type:`SE05x_AttestationAlgo_t`   |
+ * |       |            | [Optional]   [Conditional: only when         |
+ * |       |            | INS_ATTEST is set]                           |
+ * +-------+------------+----------------------------------------------+
+ * |       | TLV[TAG_7] | 16-byte freshness random   [Optional]        |
+ * |       |            | [Conditional: only when INS_ATTEST is set]   |
+ * +-------+------------+----------------------------------------------+
+ * | Le    | 0x00       |                                              |
+ * +-------+------------+----------------------------------------------+
+ * @endrst
+ *
+ *
+ * @param[in]  session_ctx    The session context
+ * @param[in]  objectID       The object id
+ * @param[in]  offset         The offset
+ * @param[in]  length         The length
+ * @param[in]  attestID       The attest id
+ * @param[in]  attestAlgo     The attest algorithm
+ * @param[in]  random         The random
+ * @param[in]  randomLen      The random length
+ * @param      pCmd           The pointer to command buffer
+ * @param      pCmdLen        The length of Command Buffer
+ * @param      pRspBuf        The Response Buffer
+ * @param      pRspBufLen     The length of response Buffer
+ *
+ * @return     The sm status.
+ */
+
+smStatus_t Se05x_API_ReadObject_W_Attst(pSe05xSession_t session_ctx,
+    uint32_t objectID,
+    uint16_t offset,
+    uint16_t length,
+    uint32_t attestID,
+    SE05x_AttestationAlgo_t attestAlgo,
+    const uint8_t *random,
+    size_t randomLen,
+    uint8_t *pCmdapdu,
+    size_t *pCmdapduLen,
+    uint8_t *pRspBuf,
+    size_t *pRspBufLen);
 #endif //#ifndef SE05X_APDU_APIS_H_INC

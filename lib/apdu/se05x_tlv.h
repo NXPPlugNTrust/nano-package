@@ -102,5 +102,6 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
 #define TLVSET_ECSignatureAlgo TLVSET_U8
 #define TLVSET_CipherMode TLVSET_U8
 #define TLVSET_ECCurveParam TLVSET_U8
+#define TLVSET_AttestationAlgo TLVSET_U8
 
 #endif // #ifndef SE05X_TLV_H_INC

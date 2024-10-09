@@ -6,6 +6,13 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.5.0**
+
+- Example `se05x_mbedtls_alt_test` added to demonstrate MbedTLS ALT support in Zephyr.
+- mcxn947 and mcxa153 examples updated to use SDK version 2.16
+- Attestation APDU added. (Se05x_API_ReadObject_W_Attst).
+
+
 **Release v1.4.0**
 
 - Zephyr integration updated to v3.7.0
