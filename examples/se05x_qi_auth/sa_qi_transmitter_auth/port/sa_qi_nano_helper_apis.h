@@ -44,16 +44,6 @@ typedef union {
     uint8_t union_8bit;
 } SE05x_CryptoModeSubType_t;
 
-typedef enum
-{
-    /** Invalid */
-    kSE05x_MoreIndicator_NA = 0,
-    /** No more data available */
-    kSE05x_MoreIndicator_NO_MORE = 0x01,
-    /** More data available */
-    kSE05x_MoreIndicator_MORE = 0x02,
-} SE05x_MoreIndicator_t;
-
 smStatus_t Se05x_API_DigestInit(pSe05xSession_t session_ctx, SE05x_CryptoObjectID_t cryptoObjectID);
 smStatus_t Se05x_API_DigestUpdate(
     pSe05xSession_t session_ctx, SE05x_CryptoObjectID_t cryptoObjectID, const uint8_t *inputData, size_t inputDataLen);
@@ -69,14 +59,5 @@ smStatus_t Se05x_API_CreateCryptoObject(pSe05xSession_t session_ctx,
     SE05x_CryptoContext_t cryptoContext,
     SE05x_CryptoModeSubType_t subtype);
 smStatus_t Se05x_API_ReadCryptoObjectList(pSe05xSession_t session_ctx, uint8_t *idlist, size_t *pidlistLen);
-
-smStatus_t Se05x_API_ReadIDList(pSe05xSession_t session_ctx,
-    uint16_t outputOffset,
-    uint8_t filter,
-    uint8_t *pmore,
-    uint8_t *idlist,
-    size_t *pidlistLen);
-
-smStatus_t Se05x_API_ReadSize(pSe05xSession_t session_ctx, uint32_t objectID, uint16_t *psize);
 
 #endif // __SA_QI_NANO_HELPER_APIS_H__

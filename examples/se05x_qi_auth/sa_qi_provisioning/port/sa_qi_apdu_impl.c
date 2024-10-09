@@ -8,46 +8,6 @@
 
 extern pSe05xSession_t p_aes_session_ctx;
 
-smStatus_t Se05x_API_CreateSession(
-    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen)
-{
-    smStatus_t retStatus = SM_NOT_OK;
-    tlvHeader_t hdr      = {{0x80 /*kSE05x_CLA*/, kSE05x_INS_MGMT, kSE05x_P1_DEFAULT, kSE05x_P2_SESSION_CREATE}};
-    size_t cmdbufLen     = 0;
-    uint8_t *pCmdbuf     = NULL;
-    int tlvRet           = 0;
-    uint8_t *pRspbuf     = NULL;
-    size_t rspbufLen     = 0;
-
-    ENSURE_OR_GO_CLEANUP(session_ctx != NULL);
-
-    pCmdbuf   = &session_ctx->apdu_buffer[0];
-    pRspbuf   = &session_ctx->apdu_buffer[0];
-    rspbufLen = sizeof(session_ctx->apdu_buffer);
-
-    SMLOG_D("APDU - Se05x_API_CreateSession [] \n");
-
-    tlvRet = TLVSET_U32("auth", &pCmdbuf, &cmdbufLen, kSE05x_TAG_1, authObjectID);
-    if (0 != tlvRet) {
-        goto cleanup;
-    }
-    retStatus = DoAPDUTxRx(session_ctx, &hdr, &session_ctx->apdu_buffer[0], cmdbufLen, pRspbuf, &rspbufLen, 0);
-    if (retStatus == SM_OK) {
-        retStatus       = SM_NOT_OK;
-        size_t rspIndex = 0;
-        tlvRet          = tlvGet_u8buf(pRspbuf, &rspIndex, rspbufLen, kSE05x_TAG_1, sessionId, psessionIdLen); /*  */
-        if (0 != tlvRet) {
-            goto cleanup;
-        }
-        if ((rspIndex + 2) == rspbufLen) {
-            retStatus = (pRspbuf[rspIndex] << 8) | (pRspbuf[rspIndex + 1]);
-        }
-    }
-
-cleanup:
-    return retStatus;
-}
-
 smStatus_t Se05x_API_CheckObjectExists_AESAuth(pSe05xSession_t session_ctx, uint32_t objectID, SE05x_Result_t *presult)
 {
     smStatus_t retStatus = SM_NOT_OK;

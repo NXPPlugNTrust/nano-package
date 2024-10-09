@@ -102,7 +102,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config_se05x_auth.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>
@@ -118,7 +118,7 @@
 									<listOptionValue builtIn="false" value="__WITH_PLATFORM_SCP03"/>
 									<listOptionValue builtIn="false" value="__WITH_ECKEY_SESSION"/>
 									<listOptionValue builtIn="false" value="__WITH_ECKEY_SCP03_SESSION"/>
-									<listOptionValue builtIn="false" value="SMLOG_DEBUG_MESSAGES"/>
+									<listOptionValue builtIn="false" value="__SMLOG_DEBUG_MESSAGES"/>
 								</option>
 								<option id="com.crt.advproject.gcc.fpu.158192934" name="Floating point" superClass="com.crt.advproject.gcc.fpu" useByScannerDiscovery="true" value="com.crt.advproject.gcc.fpu.fpv4.hard" valueType="enumerated"/>
 								<option id="com.crt.advproject.gcc.thumb.366079626" name="Thumb mode" superClass="com.crt.advproject.gcc.thumb" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -461,7 +461,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config_se05x_auth.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>

@@ -102,7 +102,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config_se05x_auth.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>
@@ -461,7 +461,7 @@
 									<listOptionValue builtIn="false" value="PRINTF_ADVANCED_ENABLE=1"/>
 									<listOptionValue builtIn="false" value="FRDM_K64F"/>
 									<listOptionValue builtIn="false" value="FREEDOM"/>
-									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config.h&quot;'"/>
+									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE='&quot;mbedtls_config_se05x_auth.h&quot;'"/>
 									<listOptionValue builtIn="false" value="SERIAL_PORT_TYPE_UART=1"/>
 									<listOptionValue builtIn="false" value="T1oI2C"/>
 									<listOptionValue builtIn="false" value="T1oI2C_UM11225"/>

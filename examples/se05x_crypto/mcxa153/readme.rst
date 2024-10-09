@@ -5,7 +5,7 @@ SE05x Crypto Example - mcxa153
 
 **Prequisite**
 
-1. Download the latest mcxa153 SDK from https://mcuxpresso.nxp.com/en/select.
+1. Download the mcxa153 SDK version 2.16.100 from https://mcuxpresso.nxp.com/en/select.
 
 2. Unzip and place the sdk in parallel to the nano package as shown in the image below. Rename the sdk folder to "mcxa153-sdk".
 

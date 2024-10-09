@@ -3,9 +3,6 @@
 #ifndef __SA_QI_PORT_H__
 #define __SA_QI_PORT_H__
 
-smStatus_t Se05x_API_CreateSession(
-    pSe05xSession_t session_ctx, uint32_t authObjectID, uint8_t *sessionId, size_t *psessionIdLen);
-
 smStatus_t ex_se05x_aesauth_encrypt_data(pSe05xSession_t session_ctx,
     const tlvHeader_t *hdr,
     uint8_t *inBuf,

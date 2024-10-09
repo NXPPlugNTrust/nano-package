@@ -5,7 +5,7 @@ SE05x Mandate SCP03 Example - mcxn947
 
 **Prequisite**
 
-1. Download the latest mcxn947 SDK from https://mcuxpresso.nxp.com/en/select.
+1. Download the mcxn947 SDK version 2.16.100 from https://mcuxpresso.nxp.com/en/select.
 
 2. Unzip and place the sdk in parallel to the nano package as shown in the image below. Rename the sdk folder to "mcxn947-sdk".
 

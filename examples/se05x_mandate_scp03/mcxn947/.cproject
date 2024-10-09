@@ -117,6 +117,13 @@
 									<listOptionValue builtIn="false" value="MBEDTLS_MCUX_ELS_API"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_MCUX_USE_ELS"/>
 									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CSSL_MEMORY_C_FALLBACK"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_DERIVATION"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_DERIVATION_NIST_SP800_108"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_AGREEMENT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_SELFTEST"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CIPHER_RSA_ENCRYPT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CIPHER_RSA_DECRYPT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_ECC_ECDSA_DETERMINISTIC"/>
 									<listOptionValue builtIn="false" value="FLOW_SILENT"/>
 									<listOptionValue builtIn="false" value="WITH_PlatformSCPRequest_REQUIRED"/>
 									<listOptionValue builtIn="false" value="__EX_SE05X_USE_MBEDTLS=1"/>
@@ -152,6 +159,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/library&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClBuffer/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/inc/impl&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRandomModes/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRandomModes/inc/internal&quot;"/>
@@ -194,6 +202,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMath/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMath/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRsa/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRsa/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMac/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMac/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClPadding/inc&quot;"/>
@@ -204,6 +213,8 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClAead/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClCipher/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClCipher/inc/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClSignature/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClSignature/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/port/els&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../lib/apdu&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../lib/apdu/scp03&quot;"/>
@@ -406,7 +417,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="component/els_pkc/examples|component/els_pkc/src/comps/common|component/els_pkc/src/comps/mcuxClEls/src/mcuxClEls_GlitchDetector.c|component/els_pkc/src/comps/mcuxClOsccaSm3|component/els_pkc/src/comps/mcuxClOsccaPkc|component/els_pkc/src/comps/mcuxClTrng/src/mcuxClTrng_SA_TRNG.c" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
+						<entry excluding="component/els_pkc/src/comps/mcuxClPsaDriver|component/els_pkc/src/comps/mcuxClGlikey|component/els_pkc/src/comps/mcuxClCrc|component/els_pkc/src/comps/mcuxClOsccaSm4|component/els_pkc/src/comps/mcuxClOsccaSm2|component/els_pkc/src/comps/mcuxClOsccaSafo|component/els_pkc/src/comps/mcuxClOsccaRandomModes|component/els_pkc/src/comps/mcuxClOsccaMacModes|component/els_pkc/src/comps/mcuxClOsccaCipherModes|component/els_pkc/src/comps/mcuxClOsccaAeadModes|component/els_pkc/examples|component/els_pkc/src/comps/common|component/els_pkc/src/comps/mcuxClEls/src/mcuxClEls_GlitchDetector.c|component/els_pkc/src/comps/mcuxClOsccaSm3|component/els_pkc/src/comps/mcuxClOsccaPkc|component/els_pkc/src/comps/mcuxClTrng/src/mcuxClTrng_SA_TRNG.c" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -531,6 +542,13 @@
 									<listOptionValue builtIn="false" value="MBEDTLS_MCUX_ELS_API"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_MCUX_USE_ELS"/>
 									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CSSL_MEMORY_C_FALLBACK"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_DERIVATION"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_DERIVATION_NIST_SP800_108"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_AGREEMENT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_KEY_SELFTEST"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CIPHER_RSA_ENCRYPT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_CIPHER_RSA_DECRYPT"/>
+									<listOptionValue builtIn="false" value="MCUXCL_FEATURE_ECC_ECDSA_DETERMINISTIC"/>
 									<listOptionValue builtIn="false" value="FLOW_SILENT"/>
 									<listOptionValue builtIn="false" value="WITH_PLATFORM_SCP03"/>
 									<listOptionValue builtIn="false" value="WITH_PlatformSCPRequest_REQUIRED"/>
@@ -543,6 +561,7 @@
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.674875843" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol" useByScannerDiscovery="false"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.include.paths.646932164" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/startup}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/devices/MCXN947/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/devices/MCXN947&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/CMSIS/Core/Include&quot;"/>
@@ -552,7 +571,6 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/uart&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/serial_manager&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/lists&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/startup}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/platforms/mcxn&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/platforms/mcxn/inc&quot;"/>
@@ -560,6 +578,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/library&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClBuffer/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/inc/impl&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRandomModes/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRandomModes/inc/internal&quot;"/>
@@ -602,6 +621,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMath/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMath/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRsa/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClRsa/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMac/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClMac/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClPadding/inc&quot;"/>
@@ -612,6 +632,8 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClAead/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClCipher/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClCipher/inc/internal&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClSignature/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/components/els_pkc/src/comps/mcuxClSignature/inc/internal&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../mcxn947-sdk/middleware/mbedtls/port/els&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../lib/apdu&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../lib/apdu/scp03&quot;"/>
@@ -813,7 +835,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="component/els_pkc/examples|component/els_pkc/src/comps/common|component/els_pkc/src/comps/mcuxClEls/src/mcuxClEls_GlitchDetector.c|component/els_pkc/src/comps/mcuxClOsccaSm3|component/els_pkc/src/comps/mcuxClOsccaPkc|component/els_pkc/src/comps/mcuxClTrng/src/mcuxClTrng_SA_TRNG.c" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
+						<entry excluding="component/els_pkc/src/comps/mcuxClPsaDriver|component/els_pkc/src/comps/mcuxClGlikey|component/els_pkc/src/comps/mcuxClCrc|component/els_pkc/src/comps/mcuxClOsccaSm4|component/els_pkc/src/comps/mcuxClOsccaSm2|component/els_pkc/src/comps/mcuxClOsccaSafo|component/els_pkc/src/comps/mcuxClOsccaRandomModes|component/els_pkc/src/comps/mcuxClOsccaMacModes|component/els_pkc/src/comps/mcuxClOsccaCipherModes|component/els_pkc/src/comps/mcuxClOsccaAeadModes|component/els_pkc/examples|component/els_pkc/src/comps/common|component/els_pkc/src/comps/mcuxClEls/src/mcuxClEls_GlitchDetector.c|component/els_pkc/src/comps/mcuxClOsccaSm3|component/els_pkc/src/comps/mcuxClOsccaPkc|component/els_pkc/src/comps/mcuxClTrng/src/mcuxClTrng_SA_TRNG.c" flags="LOCAL|VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="source"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -841,7 +863,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_FRDM-MCXN947</sdkName>
-		<sdkVersion>2.14.0</sdkVersion>
+		<sdkVersion>2.16.100</sdkVersion>
 		<sdkComponents>middleware.baremetal.MCXN947;platform.drivers.reset.MCXN947;platform.drivers.clock.MCXN947;platform.drivers.lpflexcomm_lpuart.MCXN947;platform.drivers.port.MCXN947;platform.drivers.gpio.MCXN947;platform.drivers.mcx_spc.MCXN947;platform.drivers.lpflexcomm.MCXN947;platform.drivers.common.MCXN947;platform.drivers.lpflexcomm_lpi2c.MCXN947;platform.devices.MCXN947_system.MCXN947;CMSIS_Include_core_cm.MCXN947;platform.devices.MCXN947_CMSIS.MCXN947;utility.debug_console.MCXN947;component.lpuart_adapter.MCXN947;component.serial_manager_uart.MCXN947;component.serial_manager.MCXN947;platform.utilities.assert.MCXN947;component.lists.MCXN947;project_template.frdmmcxn947.MCXN947;platform.devices.MCXN947_startup.MCXN947;</sdkComponents>
 		<boardId>frdmmcxn947</boardId>
 		<package>MCXN947VDF</package>
