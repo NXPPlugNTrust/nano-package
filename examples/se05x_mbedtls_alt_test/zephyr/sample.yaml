@@ -1,0 +1,9 @@
+sample:
+  description: se05x mbedtls alt test
+  name: se05x_mbedtls_alt_test
+common:
+    tags: introduction
+    harness_config:
+      type: one_line
+      regex:
+        - "ecdsa verify using host (mbedtls) success.! (.*)"
