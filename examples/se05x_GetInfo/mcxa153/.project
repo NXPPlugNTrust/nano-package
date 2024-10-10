@@ -78,12 +78,12 @@
 		<link>
 			<name>source/ex_se05x_GetInfo.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/examples/se05x_GetInfo/src/ex_se05x_GetInfo.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/se05x_GetInfo/src/ex_se05x_GetInfo.c</locationURI>
 		</link>
 		<link>
 			<name>source/ex_se05x_GetInfo.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/examples/se05x_GetInfo/src/ex_se05x_GetInfo.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/examples/se05x_GetInfo/src/ex_se05x_GetInfo.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib</name>
@@ -228,7 +228,7 @@
 		<link>
 			<name>source/lib/CMakeLists.txt</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/CMakeLists.txt</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/CMakeLists.txt</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu</name>
@@ -343,47 +343,47 @@
 		<link>
 			<name>source/lib/apdu/se05x_APDU_apis.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/se05x_APDU_apis.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/se05x_APDU_apis.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/se05x_APDU_impl.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/se05x_APDU_impl.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/se05x_APDU_impl.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/se05x_tlv.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/se05x_tlv.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/se05x_tlv.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/se05x_tlv.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/se05x_tlv.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/se05x_tlv.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/se05x_types.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/se05x_types.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/se05x_types.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/smCom.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/smCom.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/smCom.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/smCom.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/smCom.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/smCom.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/smCom_jrcpv2.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/smCom_jrcpv2.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/smCom_jrcpv2.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/CMakeLists.txt</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/CMakeLists.txt</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/CMakeLists.txt</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc</name>
@@ -398,22 +398,22 @@
 		<link>
 			<name>source/lib/mbedtls_alt/ecdsa_o.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/mbedtls_alt/ecdsa_o.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/mbedtls_alt/ecdsa_o.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/mbedtls_alt/ecdsa_se05x.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/mbedtls_alt/ecdsa_se05x.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/mbedtls_alt/ecdsa_se05x.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/mbedtls_alt/se05x_mbedtls.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/mbedtls_alt/se05x_mbedtls.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/mbedtls_alt/se05x_mbedtls.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/mbedtls_alt/se05x_mbedtls.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/mbedtls_alt/se05x_mbedtls.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/mbedtls_alt/se05x_mbedtls.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64</name>
@@ -438,47 +438,47 @@
 		<link>
 			<name>source/lib/t1oi2c/phEseStatus.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phEseStatus.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phEseStatus.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phEseTypes.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phEseTypes.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phEseTypes.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEsePal_i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEsePal_i2c.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEsePal_i2c.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEsePal_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEsePal_i2c.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEsePal_i2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEseProto7816_3.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEseProto7816_3.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEseProto7816_3.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEseProto7816_3.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEseProto7816_3.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEseProto7816_3.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEse_Api.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEse_Api.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEse_Api.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEse_Api.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEse_Api.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEse_Api.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/t1oi2c/phNxpEse_Internal.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/t1oi2c/phNxpEse_Internal.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/t1oi2c/phNxpEse_Internal.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/openssl</name>
@@ -488,17 +488,17 @@
 		<link>
 			<name>source/lib/apdu/scp03/se05x_scp03.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/scp03/se05x_scp03.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/scp03/se05x_scp03.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/se05x_scp03.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/scp03/se05x_scp03.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/scp03/se05x_scp03.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/se05x_scp03_crypto.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/scp03/se05x_scp03_crypto.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/scp03/se05x_scp03_crypto.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/tc</name>
@@ -523,67 +523,67 @@
 		<link>
 			<name>source/lib/platform/k64/i2c_frdm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/i2c_frdm.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/i2c_frdm.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/platformInit.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/platformInit.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/platformInit.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/se05x_reset.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/se05x_reset.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/se05x_reset.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/sm_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/sm_i2c.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/sm_i2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/sm_port.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/sm_port.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/sm_port.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/sm_printf.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/sm_printf.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/sm_printf.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/sm_timer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/sm_timer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/sm_timer.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/timer_kinetis_bm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/timer_kinetis_bm.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/timer_kinetis_bm.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/linux/sm_i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/linux/sm_i2c.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/linux/sm_i2c.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/linux/sm_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/linux/sm_i2c.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/linux/sm_i2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/linux/sm_port.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/linux/sm_port.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/linux/sm_port.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/linux/sm_timer.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/linux/sm_timer.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/linux/sm_timer.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/linux/sm_timer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/linux/sm_timer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/linux/sm_timer.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board</name>
@@ -593,112 +593,112 @@
 		<link>
 			<name>source/lib/platform/mcxa/i2c_mcxa.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/i2c_mcxa.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/i2c_mcxa.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/platformInit.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/platformInit.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/platformInit.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/se05x_reset.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/se05x_reset.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/se05x_reset.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/sm_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/sm_i2c.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/sm_i2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/sm_port.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/sm_port.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/sm_port.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/sm_printf.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/sm_printf.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/sm_printf.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/sm_timer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/sm_timer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/sm_timer.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/timer_kinetis_bm.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/timer_kinetis_bm.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/timer_kinetis_bm.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/zephyr/sm_i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/zephyr/sm_i2c.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/zephyr/sm_i2c.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/zephyr/sm_i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/zephyr/sm_i2c.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/zephyr/sm_i2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/zephyr/sm_port.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/zephyr/sm_port.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/zephyr/sm_port.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/zephyr/sm_timer.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/zephyr/sm_timer.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/zephyr/sm_timer.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/zephyr/sm_timer.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/zephyr/sm_timer.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/zephyr/sm_timer.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/openssl/se05x_scp03_crypto_openssl.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/scp03/openssl/se05x_scp03_crypto_openssl.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/scp03/openssl/se05x_scp03_crypto_openssl.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/apdu/scp03/tc/se05x_scp03_crypto_tc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/apdu/scp03/tc/se05x_scp03_crypto_tc.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/apdu/scp03/tc/se05x_scp03_crypto_tc.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/api.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/api.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/api.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/data_types.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/data_types.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/data_types.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/device.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/device.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/device.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/deviceregistry.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/deviceregistry.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/deviceregistry.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/errors.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/errors.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/errors.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/jrcplib.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/jrcplib.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/jrcplib.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/messages.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/messages.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/messages.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/networking</name>
@@ -718,112 +718,112 @@
 		<link>
 			<name>source/lib/platform/k64/board/board.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/board.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/board.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/board/board.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/board.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/board.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/board/clock_config.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/clock_config.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/clock_config.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/board/clock_config.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/clock_config.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/clock_config.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/board/pin_mux.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/pin_mux.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/pin_mux.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/k64/board/pin_mux.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/k64/board/pin_mux.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/k64/board/pin_mux.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/board.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/board.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/board.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/board.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/board.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/board.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/clock_config.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/clock_config.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/clock_config.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/clock_config.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/clock_config.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/clock_config.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/pin_mux.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/pin_mux.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/pin_mux.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/pin_mux.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/pin_mux.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/pin_mux.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/se_board_config.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/se_board_config.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/se_board_config.c</locationURI>
 		</link>
 		<link>
 			<name>source/lib/platform/mcxa/board/se_board_config.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/platform/mcxa/board/se_board_config.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/platform/mcxa/board/se_board_config.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/inc/jrcplib/networking/tcpclient.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/inc/jrcplib/networking/tcpclient.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/inc/jrcplib/networking/tcpclient.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/device.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/device.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/device.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/deviceregistry.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/deviceregistry.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/deviceregistry.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/errors.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/errors.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/errors.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/jrcplib.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/jrcplib.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/jrcplib.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/messages_base.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/messages_base.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/messages_base.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/messages_exported.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/messages_exported.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/messages_exported.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/messages_specialized.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/messages_specialized.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/messages_specialized.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/networking</name>
@@ -833,7 +833,7 @@
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/utils.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/utils.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/utils.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/include/network</name>
@@ -843,17 +843,17 @@
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/include/utils.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/include/utils.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/include/utils.h</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/cpp/networking/tcpclient.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/cpp/networking/tcpclient.cpp</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/cpp/networking/tcpclient.cpp</locationURI>
 		</link>
 		<link>
 			<name>source/lib/jrcplib/src/jrcplib/include/network/server.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/simw-nanopkg/lib/jrcplib/src/jrcplib/include/network/server.h</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/lib/jrcplib/src/jrcplib/include/network/server.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
