@@ -77,6 +77,7 @@ When building the example with 'Platform SCP' enabled, make sure to assign valid
 The Default Platform SCP keys for ease of use configurations are present in
 	- SE050 Configuration: https://www.nxp.com/docs/en/application-note/AN12436.pdf
 	- SE051 Configuration: https://www.nxp.com/webapp/Download?colCode=AN12973
+	- SE052 Configuration: https://www.nxp.com/webapp/Download?colCode=AN14277
 
 .. code-block:: c
 

@@ -85,7 +85,7 @@ And a MCU baseboard, here we use:
 - [FRDM-MCXA153](https://www.nxp.com/design/design-center/development-boards-and-designs/general-purpose-mcus/frdm-development-board-for-mcx-a14x-a15x-mcus:FRDM-MCXA153)
 
 Place one of the ARD devkits on the MCU baseboard. The jumpers of the ARD devkit can stay in their default position as listed in [OM-SE05xARD Hardware Overview](https://www.nxp.com/webapp/Download?colCode=AN13539)
-![SE050E on top ov MCX-N947](./images/ConnectedBoards-MCXA_top.jpg)
+![SE050E on top ov MCX-A153](./images/ConnectedBoards-MCXA_top.jpg)
 
 
 ## 3. Setup<a name="step3"></a>
@@ -163,7 +163,6 @@ NXP support community for IoT secure elements: [Community Secure Authentication]
 [![Category badge](https://img.shields.io/badge/Category-INDUSTRIAL-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+industrial+in%3Areadme&type=Repositories)
 [![Category badge](https://img.shields.io/badge/Category-SECURE%20PROVISIONING-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+sec_provi+in%3Areadme&type=Repositories)
 [![Category badge](https://img.shields.io/badge/Category-SECURITY-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+security+in%3Areadme&type=Repositories)
-[![Category badge](https://img.shields.io/badge/Category-CLOUD%20CONNECTED%20DEVICES-yellowgreen)](https://github.com/search?q=org%3Anxp-appcodehub+cc_devices+in%3Areadme&type=Repositories)
 
 <!----- Peripherals ----->
 [![Peripheral badge](https://img.shields.io/badge/Peripheral-I2C-yellow)](https://github.com/search?q=org%3Anxp-appcodehub+i2c+in%3Areadme&type=Repositories)

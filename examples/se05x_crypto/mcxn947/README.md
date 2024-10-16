@@ -4,7 +4,7 @@
 #	 	Integrating EdgeLock® SE05X to FRDM-MCX-N development boards
 
 
-This demo project provides a detailed information on how to integrate the EdgeLock® SE05X Secure Element family and EdgeLock® A5000 into the FRDM development boards of MCX family. 
+This demo project provides a detailed information on how to integrate the EdgeLock® SE05X Secure Element family and EdgeLock® A5000 into the FRDM development boards of MCX-N family. 
 Additionally, the project contains several demo applications to showcase how to enable security on the MCX family. 
 
 A ***Secure Element (SE)*** and ***Secure Authenticator (SA)*** are discrete companion chips which can be connected to any MPU or MCU.  
@@ -51,7 +51,7 @@ Any platform can connect to the secure element due to minimal requirements
 
 #### Boards: [FRDM-MCXN947](https://www.nxp.com/design/design-center/development-boards-and-designs/general-purpose-mcus/frdm-development-board-for-mcx-n94-n54-mcus:FRDM-MCXN947)
 
-#### Expansion Boards: [OM-A5000ARD](https://www.nxp.com/products/security-and-authentication/authentication/development-board-for-edgelock-a5000-secure-authenticator:OM-A5000ARD), [OM-SE050ARD-E](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-development-kits:OM-SE050X), [OM-SE051ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE051ARD)
+#### Expansion Boards: [OM-A5000ARD](https://www.nxp.com/products/security-and-authentication/authentication/development-board-for-edgelock-a5000-secure-authenticator:OM-A5000ARD), [OM-SE050ARD-E](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-development-kits:OM-SE050X), [OM-SE051ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE051ARD), [OM-SE052ARD](https://www.nxp.com/products/security-and-authentication/authentication/om-se052ard-development-board-for-edgelock-se052f-secure-element:OM-SE052ARD)
 #### Categories: Industrial, Secure Provisioning, Security, Cloud Connected Devices	
 #### Peripherals: I2C
 #### Toolchains: MCUXpresso IDE
@@ -65,7 +65,7 @@ Any platform can connect to the secure element due to minimal requirements
 6. [Support](#step6)
 7. [Release Notes](#step7)
 
-Below the steps neccessary to run the nano lib cryptography example on FRDM-MCXN947 are listed.
+Below the steps necessary to run the nano lib cryptography example on FRDM-MCXN947 are listed.
 
 ## 1. Software<a name="step1"></a>
 - Install latest MCUxpresso from https://nxp.com/mcuxpresso.
@@ -79,13 +79,13 @@ You need either one of these SE/SA ARD development kits:
 - [OM-A5000ARD](https://www.nxp.com/products/security-and-authentication/authentication/development-board-for-edgelock-a5000-secure-authenticator:OM-A5000ARD)
 - [OM-SE050ARD-E](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-development-kits:OM-SE050X)
 - [OM-SE051ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE051ARD)
-
+- [OM-SE052ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE052ARD)
 
 And a MCU baseboard, here we use:
 - [FRDM-MCXN947](https://www.nxp.com/design/design-center/development-boards-and-designs/general-purpose-mcus/frdm-development-board-for-mcx-n94-n54-mcus:FRDM-MCXN947)
 
-Place one of the ARD devkits on the MCU baseboard. The jumpers of the ARD devkit can stay in their default position as listed in [OM-SE05xARD Hardware Overview](https://www.nxp.com/webapp/Download?colCode=AN13539)
-![SE050E on top ov MCX-N947](./images/ConnectedBoards-MCXN_top.jpg)
+Place one of the ARD devkits on the MCU baseboard. The jumpers of the ARD devkit can stay in their default position as listed in [OM-SE05xARD Hardware Overview](https://www.nxp.com/webapp/Download?colCode=AN13539) respectivly [OM-SE052ARD Hardware Overview](https://www.nxp.com/webapp/Download?colCode=AN14262)
+![SE050E on top of MCX-N947](./images/ConnectedBoards-MCXN_top.jpg)
 
 
 ## 3. Setup<a name="step3"></a>
@@ -110,7 +110,7 @@ Unzip and place the MCX SDK in parallel to the nano package as shown in the imag
 3. Select the Project and click on Finish
 ![](./images/mcxn_import.png)
 
-### 3.3 Build options 
+### 3.3 Build options <a name="build-options"></a>
 
 To build with Platform SCP using MbedTLS, following macros must be set in Properties->Settings->Preprocessor.
 
@@ -167,10 +167,10 @@ Executing the example results in output like this, showing the operations done w
 
 ### Are any changes needed for the different ARD boards?
 
-No, the functions used by the Plug & Trust nano library are the same on these boards:
-- [OM-A5000ARD](https://www.nxp.com/products/security-and-authentication/authentication/development-board-for-edgelock-a5000-secure-authenticator:OM-A5000ARD)
-- [OM-SE050ARD-E](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-development-kits:OM-SE050X)
-- [OM-SE051ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE051ARD)
+- [OM-A5000ARD](https://www.nxp.com/products/security-and-authentication/authentication/development-board-for-edgelock-a5000-secure-authenticator:OM-A5000ARD) - no changes
+- [OM-SE050ARD-E](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-development-kits:OM-SE050X) - no changes
+- [OM-SE051ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE051ARD) - no changes
+- [OM-SE052ARD](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-development-kit:OM-SE052ARD) - this board with FIPS-certified IC has enforced PlatformSCP in the delivery configuration. As such PlatformSCP authentication need to be enabled (see [Build options](#build-options)) and keys  need to be set (see [PlatformSCP03](https://github.com/NXPPlugNTrust/nano-package?tab=readme-ov-file#platformscp03)). 
 
 ### How can other examples be executed?
 
