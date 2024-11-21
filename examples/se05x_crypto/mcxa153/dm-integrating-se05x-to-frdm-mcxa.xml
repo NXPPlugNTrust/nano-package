@@ -1,4 +1,4 @@
-<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="projectfile" versionSchema="1.0.0" name="Integrating SE05X to FRDM MCXA" uuid="8c9b31a0-cf6e-44a0-97cc-807ccbfeceae">
+<data:item xmlns:data="data" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="data ../../xsd/alp.xsd" type="demo" format="projectfile" versionSchema="1.0.0" name="Integrating SE05X to FRDM MCXA" uuid="0599498e-75ae-4e7e-8550-3cdac88747d0">
     <display_title>
         Integrating EdgeLock® SE05X to FRDM-MCX-A development boards
     </display_title>
