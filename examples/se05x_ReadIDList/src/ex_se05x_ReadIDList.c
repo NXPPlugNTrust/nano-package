@@ -196,8 +196,10 @@ int ex_se05x_ReadIDList(void)
         }
         outputOffset = (uint16_t)listlen;
         for (size_t i = 0; i < listlen; i += 4) {
-            uint32_t id = 0 | (list[i + 0] << (3 * 8)) | (list[i + 1] << (2 * 8)) | (list[i + 2] << (1 * 8)) |
-                          (list[i + 3] << (0 * 8));
+            uint32_t id = 0 | ((uint32_t)list[i + 0] << (3 * 8)) |
+                ((uint32_t)list[i + 1] << (2 * 8)) |
+                ((uint32_t)list[i + 2] << (1 * 8)) |
+                ((uint32_t)list[i + 3] << (0 * 8));
 
             status =
                 Se05x_API_ReadType(&se05x_session, id, &retObjectType, &retTransientType, kSE05x_AttestationType_None);

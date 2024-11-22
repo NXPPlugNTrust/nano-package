@@ -6,6 +6,10 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.5.1**
+
+- Memory overlap issue fixed in function - Se05x_API_SCP03_Encrypt.
+
 **Release v1.5.0**
 
 - Example `se05x_mbedtls_alt_test` added to demonstrate MbedTLS ALT support in Zephyr.

@@ -677,7 +677,7 @@ smStatus_t Se05x_API_SCP03_Encrypt(pSe05xSession_t session_ctx,
     }
 
     *encCmdBufLen = i;
-    memcpy(encCmdBuf, cmdBuf, *encCmdBufLen);
+    memmove(encCmdBuf, cmdBuf, *encCmdBufLen);
     SMLOG_MAU8_D("SCP03: Encrypted Data ==>", encCmdBuf, *encCmdBufLen);
     apduStatus = SM_OK;
     return apduStatus;
