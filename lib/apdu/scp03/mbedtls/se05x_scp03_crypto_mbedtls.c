@@ -100,6 +100,7 @@ int hcrypto_cmac_oneshot(
 
 exit:
     mbedtls_cipher_free(cmac_cipher_ctx);
+    mbedtls_free(cmac_cipher_ctx);
     return ret;
 }
 
@@ -134,12 +135,14 @@ void *hcrypto_cmac_setup(uint8_t *key, size_t keylen)
         ret = mbedtls_cipher_setup(cmac_cipher_ctx, cipher_info);
         if (ret != 0) {
             mbedtls_cipher_free((mbedtls_cipher_context_t *)cmac_cipher_ctx);
+            mbedtls_free((mbedtls_cipher_context_t *)cmac_cipher_ctx);
             return NULL;
         }
 
         ret = mbedtls_cipher_cmac_starts(cmac_cipher_ctx, key, keylen * 8);
         if (ret != 0) {
             mbedtls_cipher_free(cmac_cipher_ctx);
+            mbedtls_free((mbedtls_cipher_context_t *)cmac_cipher_ctx);
             return NULL;
         }
     }
@@ -180,6 +183,8 @@ int hcrypto_cmac_final(void *cmac_cipher_ctx, uint8_t *outSignature, size_t *out
     *outSignatureLen = cmac_ctx->cipher_info->block_size;
 
     mbedtls_cipher_free(cmac_ctx);
+
+    mbedtls_free(cmac_ctx);
 
     ENSURE_OR_RETURN_ON_ERROR((ret == 0), 1);
 
@@ -293,6 +298,7 @@ void hcrypto_free_eckey(void *eckey)
     mbedtls_pk_context *pkey = (mbedtls_pk_context *)eckey;
     if (pkey != NULL) {
         mbedtls_pk_free(pkey);
+        mbedtls_free(pkey);
     }
 }
 
@@ -463,6 +469,11 @@ exit:
     if (pEcpExt != NULL) {
         mbedtls_ecp_keypair_free(pEcpExt);
     }
+    if(pKeyExt != NULL)
+    {
+        mbedtls_pk_free(pKeyExt);
+        mbedtls_free(pKeyExt);
+    }
     if (entropy != NULL) {
         mbedtls_entropy_free(entropy);
         mbedtls_free(entropy);
@@ -471,6 +482,7 @@ exit:
         mbedtls_ctr_drbg_free(ctr_drbg);
         mbedtls_free(ctr_drbg);
     }
+    mbedtls_mpi_free(&rawSharedData);
     return ret;
 }
 

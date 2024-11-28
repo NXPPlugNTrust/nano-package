@@ -6,6 +6,10 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.5.2**
+
+- Memory leak fixes in MbedTLS host crypto function (se05x_scp03_crypto_mbedtls.c).
+
 **Release v1.5.1**
 
 - Memory overlap issue fixed in function - Se05x_API_SCP03_Encrypt.
