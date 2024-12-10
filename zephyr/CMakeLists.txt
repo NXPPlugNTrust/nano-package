@@ -66,4 +66,7 @@ if(CONFIG_PLUGANDTRUST)
     add_definitions(-DWITH_ECKEY_SCP03_SESSION)
   endif()
 
+  if(CONFIG_PLUGANDTRUST_SM_APDU_MUTEX)
+     add_definitions(-DENABLE_SM_APDU_MUTEX)
+  endif()
 endif()

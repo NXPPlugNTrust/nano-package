@@ -6,6 +6,11 @@ ChangeLog
 ChangeLog
 ---------
 
+**Release v1.5.3**
+
+- Added mutex protection at APDU layer. This is required in case multiple tasks call Se05x_API_* APIs. The feature is disabled by default. Refer `Build option`.
+- Fixes for static analysis findings.
+
 **Release v1.5.2**
 
 - Memory leak fixes in MbedTLS host crypto function (se05x_scp03_crypto_mbedtls.c).

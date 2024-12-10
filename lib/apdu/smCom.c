@@ -20,6 +20,9 @@
 
 /* ********************** Global vaiables ********************** */
 SM_MUTEX_DEFINE(g_sm_mutex);
+#ifdef ENABLE_SM_APDU_MUTEX
+SM_MUTEX_DEFINE(g_sm_apdu_mutex);
+#endif
 
 /* ********************** Functions ********************** */
 
@@ -37,6 +40,9 @@ smStatus_t smComT1oI2C_Close(void *conn_ctx, uint8_t mode)
     ENSURE_OR_RETURN_ON_ERROR((status == ESESTATUS_SUCCESS), SM_NOT_OK);
 
     SM_MUTEX_DEINIT(g_sm_mutex);
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_DEINIT(g_sm_apdu_mutex);
+#endif
 
     return SM_OK;
 }
@@ -51,6 +57,9 @@ smStatus_t smComT1oI2C_Init(void **conn_ctx, const char *pConnString)
     ENSURE_OR_RETURN_ON_ERROR((status == ESESTATUS_SUCCESS), SM_NOT_OK);
 
     SM_MUTEX_INIT(g_sm_mutex);
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_INIT(g_sm_apdu_mutex);
+#endif
 
     return SM_OK;
 }

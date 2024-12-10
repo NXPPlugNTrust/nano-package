@@ -155,6 +155,16 @@ Debug Logs ::
 	-DPLUGANDTRUST_DEBUG_LOGS=OFF : Build with Debug logs disabled
 
 
+In case multiple tasks call Se05x_API_* APIs, enable mutex at APDU layer.
+The feature is disabled by default.
+
+Mutex at APDU layer ::
+
+	-DPLUGANDTRUST_ENABLE_SM_APDU_MUTEX=ON : Enable Mutex at APDU layer
+	-DPLUGANDTRUST_ENABLE_SM_APDU_MUTEX=OFF : Disable Mutex at APDU layer
+
+
+
 Examples
 --------
 

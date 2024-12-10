@@ -69,6 +69,7 @@
 #define sm_free free
 
 #define SM_MUTEX_DEFINE(x)
+#define SM_MUTEX_EXTERN_DEFINE(x)
 #define SM_MUTEX_INIT(x)
 #define SM_MUTEX_DEINIT(x)
 #define SM_MUTEX_LOCK(x)

@@ -43,6 +43,7 @@ Use the below options in prj.conf file of the example.
 	CONFIG_PLUGANDTRUST_ECKEY=y/n =============> Enable / Disable ECKey Auth support.
 	CONFIG_PLUGANDTRUST_ECKEY_SCP03=y/n =======> Enable / Disable ECKey + Platform SCP03 support.
 	CONFIG_PLUGANDTRUST_LOG_LEVEL_DBG=y/n =====> Enable / Disable Plug and Trust logs.
+	CONFIG_PLUGANDTRUST_SM_APDU_MUTEX=y/n =====> Enable / Disable Mutex at APDU Layer (Required if multiple tasks call se05x APIs).
 
 
 Use the board overlay files to set the i2c port to alias - `se05x-i2c`. Refer frdm_k64f.overlay file for reference.

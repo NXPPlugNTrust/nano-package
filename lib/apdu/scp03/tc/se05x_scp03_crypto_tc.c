@@ -151,7 +151,7 @@ int hcrypto_aes_cbc_encrypt(
 {
     struct tc_aes_key_sched_struct aes_cbc_sched;
     int ret                             = 1;
-    int i                               = 0;
+    size_t i                            = 0;
     uint8_t temp[2 * TC_AES_BLOCK_SIZE] = {
         0,
     };
@@ -187,9 +187,9 @@ exit:
 int hcrypto_aes_cbc_decrypt(
     uint8_t *key, size_t keylen, uint8_t *iv, size_t ivLen, const uint8_t *srcData, uint8_t *destData, size_t dataLen)
 {
-    int i = 0;
     struct tc_aes_key_sched_struct aes_cbc_sched;
     int ret                            = 1;
+    size_t i                           = 0;
     uint8_t temp_iv[TC_AES_BLOCK_SIZE] = {
         0,
     };
@@ -242,6 +242,7 @@ void hcrypto_free_eckey(void *eckey)
 
 void *hcrypto_set_eckey(uint8_t *Buf, size_t Len, int isPrivate)
 {
+    (void)Len;
     ENSURE_OR_RETURN_ON_ERROR(Buf != NULL, NULL);
 
     if (isPrivate) {
@@ -322,7 +323,7 @@ int hcrypto_sign_digest(void *key, const uint8_t *digest, size_t digestLen, uint
     ENSURE_OR_RETURN_ON_ERROR((signature != NULL), 1);
     ENSURE_OR_RETURN_ON_ERROR((signatureLen != NULL), 1);
 
-    ret = uECC_sign(pkey->privkey, digest, digestLen, rawSig, uECC_secp256r1());
+    ret = uECC_sign(pkey->privkey, digest, (unsigned int)digestLen, rawSig, uECC_secp256r1());
     ENSURE_OR_RETURN_ON_ERROR((ret == TC_CRYPTO_SUCCESS), 1);
 
     signature[0] = 0x30;
@@ -371,6 +372,7 @@ int hcrypto_derive_dh(pSe05xSession_t session_ctx,
     size_t *shSecretLen)
 {
     int ret = 0;
+    (void)pubkeyLen;
     ENSURE_OR_RETURN_ON_ERROR(session_ctx != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(HostKeyPair != NULL, 1);
     ENSURE_OR_RETURN_ON_ERROR(pubkey != NULL, 1);

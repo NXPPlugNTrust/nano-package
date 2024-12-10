@@ -59,6 +59,9 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
     uint8_t *pCmdbuf                    = NULL;
     uint8_t cmdbuf_tmp[MAX_APDU_BUFFER] = {0};
     uint16_t i                          = 0;
+    size_t SCmd_Lc                      = 0;
+    size_t STag1_Len                    = 0;
+    size_t rspIndex                     = 0;
     size_t rspbufLen                    = sizeof(g_rspbuf) / sizeof(g_rspbuf[0]);
 
     const tlvHeader_t hdr = {
@@ -139,8 +142,8 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
     memcpy(&g_cmdBuf[i], session_ctx->eckey_applet_session_value, sizeof(session_ctx->eckey_applet_session_value));
     i += sizeof(session_ctx->eckey_applet_session_value);
 
-    size_t SCmd_Lc   = (cmdbufLen == 0) ? 0 : (((cmdbufLen < 0xFF) && !0) ? 1 : 3);
-    size_t STag1_Len = 0 /* cla ins */ + 4 + SCmd_Lc + cmdbufLen;
+    SCmd_Lc   = (cmdbufLen == 0) ? 0 : (((cmdbufLen < 0xFF) && !0) ? 1 : 3);
+    STag1_Len = 0 /* cla ins */ + 4 + SCmd_Lc + cmdbufLen;
 
     g_cmdBuf[i++] = kSE05x_TAG_1;
     if (STag1_Len <= 0x7Fu) {
@@ -163,8 +166,6 @@ static smStatus_t nxECKey_InternalAuthenticate(pSe05xSession_t session_ctx,
 
     status = DoAPDUTxRx(session_ctx, &hdr_last, g_cmdBuf, i, g_rspbuf, &rspbufLen, 0);
     ENSURE_OR_GO_CLEANUP(status == SM_OK);
-
-    size_t rspIndex = 0;
 
     tlvRet = tlvGet_u8buf(
         g_rspbuf, &rspIndex, rspbufLen, 0x85 /* kSE05x_GP_TAG_DR_SE*/, rndData, rndDataLen); /*Get the Random*/
@@ -452,10 +453,6 @@ smStatus_t Se05x_API_ECKey_CreateSession(pSe05xSession_t session_ctx)
     ENSURE_OR_GO_EXIT(hostEckaPubLen > header_size);
     ENSURE_OR_GO_EXIT((hostEckaPubLen - header_size) < UINT8_MAX);
     hostEckaPub[offset++] = hostEckaPubLen - header_size; // public key len
-    if (hostEckaPubLen < header_size) {
-        status = SM_NOT_OK;
-        goto exit;
-    }
 
     memcpy(
         hostEckaPub + offset, hostPubkey + header_size, hostEckaPubLen - header_size);
@@ -722,12 +719,8 @@ smStatus_t Se05x_API_ECKeyAuth_Decrypt(
         }
     }
 
-    if (session_ctx->applet_version >= 0x04030000) {
-        Se05x_API_Auth_IncCommandCounter(session_ctx->eckey_counter);
-    }
-    else {
-        Se05x_API_Auth_IncCommandCounter(session_ctx->eckey_counter);
-    }
+    Se05x_API_Auth_IncCommandCounter(session_ctx->eckey_counter);
+
     return apduStatus;
 }
 

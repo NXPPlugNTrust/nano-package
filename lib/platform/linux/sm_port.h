@@ -68,6 +68,7 @@
 #define sm_free free
 
 #define SM_MUTEX_DEFINE(x) pthread_mutex_t x
+#define SM_MUTEX_EXTERN_DEFINE(x) extern SM_MUTEX_DEFINE(x)
 #define SM_MUTEX_INIT(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_init(&x, NULL) == 0, SM_NOT_OK)
 #define SM_MUTEX_DEINIT(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_destroy(&x) == 0, SM_NOT_OK)
 #define SM_MUTEX_LOCK(x) ENSURE_OR_RETURN_ON_ERROR(pthread_mutex_lock(&x) == 0, SM_NOT_OK)

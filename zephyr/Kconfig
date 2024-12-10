@@ -29,6 +29,11 @@ config PLUGANDTRUST_ECKEY_SCP03
 	help
 	  This option enables eckey + scp03 for SE05x.
 
+config PLUGANDTRUST_SM_APDU_MUTEX
+	bool "Enable Mutex at APDU layer"
+	help
+		This option enable mutex at APDU layer.
+
 config PLUGANDTRUST_MBEDTLS_ALT
 	bool "Use ALT implementation for mbedTLS of SE05x"
 	help

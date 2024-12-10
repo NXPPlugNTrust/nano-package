@@ -32,6 +32,7 @@ LOG_MODULE_DECLARE(plugandtrust, CONFIG_PLUGANDTRUST_LOG_LEVEL);
 #define sm_free k_free
 
 #define SM_MUTEX_DEFINE(x) K_MUTEX_DEFINE(x)
+#define SM_MUTEX_EXTERN_DEFINE(x) extern struct k_mutex x
 #define SM_MUTEX_INIT(x) k_mutex_init(&x)
 #define SM_MUTEX_DEINIT(x)
 #define SM_MUTEX_LOCK(x) k_mutex_lock(&x, K_FOREVER)

@@ -927,9 +927,6 @@ static bool_t phNxpEseProto7816_DecodeFrame(uint8_t *p_data, uint32_t data_len)
             if (p_data[PH_PROPTO_7816_FRAME_LENGTH_OFFSET] > 0) {
                 phNxpEseProto7816_DecodeSFrameData(p_data);
             }
-            if (data_len < PH_PROTO_7816_INF_FILED) {
-                return FALSE;
-            }
             if (FALSE == phNxpEseProro7816_SaveRxframeData(
                              &p_data[PH_PROPTO_7816_INF_BYTE_OFFSET], data_len - PH_PROTO_7816_INF_FILED)) {
                 phNxpEseProto7816_3_Var.phNxpEseProto7816_nextTransceiveState = IDLE_STATE;

@@ -13,6 +13,17 @@
 #include "se05x_scp03.h"
 #include <limits.h>
 
+/* ********************** Global vaiables ********************** */
+
+#ifdef ENABLE_SM_APDU_MUTEX
+/*
+    Mutex used at the se05x_tlv.c (DoAPDUTxRx/DoAPDUTx functions) layer
+    Use this feature, in case multiple tasks call Se05x_API_* APIs.
+    Set `PLUGANDTRUST_ENABLE_SM_APDU_MUTEX` cmake option to ON to enable this feature.
+*/
+SM_MUTEX_EXTERN_DEFINE(g_sm_apdu_mutex);
+#endif
+
 /* ********************** Function ********************** */
 
 int tlvSet_U8(uint8_t **buf, size_t *bufLen, SE05x_TAG_t tag, uint8_t value)
@@ -388,6 +399,10 @@ smStatus_t DoAPDUTx(
         ENSURE_OR_GO_EXIT(cmdBuf != NULL);
     }
 
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_LOCK(g_sm_apdu_mutex);
+#endif
+
 #if defined(WITH_PLATFORM_SCP03)
     if (session_ctx->scp03_session) {
         apduStatus = Se05x_API_SCP03_Encrypt(session_ctx, hdr, cmdBuf, cmdBufLen, length_extended, cmdBuf, &cmdBufLen);
@@ -500,6 +515,9 @@ smStatus_t DoAPDUTx(
     }
 
 exit:
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_UNLOCK(g_sm_apdu_mutex);
+#endif
     return apduStatus;
 }
 
@@ -531,6 +549,10 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
     }
     ENSURE_OR_GO_EXIT(pRspBufLen != NULL);
     ENSURE_OR_GO_EXIT(rspBuf != NULL);
+
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_LOCK(g_sm_apdu_mutex);
+#endif
 
 #if defined(WITH_PLATFORM_SCP03)
     if (session_ctx->scp03_session) {
@@ -646,5 +668,8 @@ smStatus_t DoAPDUTxRx(pSe05xSession_t session_ctx,
         }
 
 exit:
+#ifdef ENABLE_SM_APDU_MUTEX
+    SM_MUTEX_UNLOCK(g_sm_apdu_mutex);
+#endif
     return apduStatus;
 }
