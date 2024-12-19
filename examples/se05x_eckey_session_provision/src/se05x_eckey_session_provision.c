@@ -226,7 +226,6 @@ smStatus_t ex_se05x_create_curve(uint32_t curve_id)
 int se05x_eckey_session_provision(void)
 {
     smStatus_t status;
-    SE05x_Result_t result;
     SE05x_ECCurve_t curveID = PUBLIC_KEY_TYPE;
     SE05x_Result_t objExists = kSE05x_Result_NA;
     uint16_t attempt = 0;
@@ -237,7 +236,6 @@ int se05x_eckey_session_provision(void)
 
     /* Policy for auth object */
     uint32_t delete_policy = POLICY_OBJ_ALLOW_DELETE;
-    uint32_t read_delete_policy = POLICY_OBJ_ALLOW_DELETE | POLICY_OBJ_ALLOW_READ;
     uint8_t policy_buf[POLICY_BUF_LEN] = {0};
     Se05xPolicy_t policy_for_auth_obj = {0};
     policy_buf[0] = POLICY_BUF_POLICY_LEN;

@@ -1,0 +1,6 @@
+/Debug/
+/Release/
+.settings
+MCXN947_se05x_eckey_session_provision LinkServer Debug.launch
+MCXN947_se05x_eckey_session_provision LinkServer Release.launch
+script.jlink

@@ -103,7 +103,7 @@ uint8_t test_se05x_set_cert_invalid_len(pSe05xSession_t session_ctx)
 
     /* Set certificate */
     status = Se05x_API_WriteBinary(session_ctx, NULL, keyID, offset, file_size, certificate + offset, blk_size);
-    TEST_ENSURE_OR_GOTO_EXIT(status == SM_NOT_OK);
+    TEST_ENSURE_OR_GOTO_EXIT(status == SM_ERR_WRONG_DATA);
 
     test_status = SM_OK;
 exit:
