@@ -69,7 +69,7 @@ Below the steps necessary to run the nano lib cryptography example on FRDM-MCXN9
 
 ## 1. Software<a name="step1"></a>
 - Install latest MCUxpresso from https://nxp.com/mcuxpresso.
-- Download the latest mcxn947 SDK from https://mcuxpresso.nxp.com/en/select.
+- Download mcxn947 SDK version 2.16.100 from https://mcuxpresso.nxp.com/en/select.
 - Download the latest Plug & Trust Se05x nano library from https://github.com/NXPPlugNTrust/nano-package/
 
 
