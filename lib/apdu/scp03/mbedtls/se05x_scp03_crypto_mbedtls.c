@@ -264,6 +264,24 @@ exit:
     return ret;
 }
 
+#if MBEDTLS_VERSION_NUMBER >= 0x03000000
+    #define SE05X_ENTROPY_FUNC mbedtls_entropy_func_3_X
+    int mbedtls_entropy_func_3_X(void *data, unsigned char *output, size_t len)
+    {
+        SMLOG_W(
+            "mbedtls_entropy_func_3_X is a dummy implementation with hardcoded entropy. Mandatory to port it to the Micro "
+            "Controller being used.");
+        unsigned char buf[MBEDTLS_ENTROPY_BLOCK_SIZE] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        if (len > MBEDTLS_ENTROPY_BLOCK_SIZE) {
+            return MBEDTLS_ERR_ENTROPY_SOURCE_FAILED;
+        }
+        memcpy(output, buf, len);
+        return 0;
+    }
+#else
+    #define SE05X_ENTROPY_FUNC mbedtls_entropy_func
+#endif
+
 void *hcrypto_gen_eckey(uint16_t keylen)
 {
     int ret                            = 1;
@@ -289,7 +307,7 @@ void *hcrypto_gen_eckey(uint16_t keylen)
     ret = mbedtls_pk_setup(pKey, mbedtls_pk_info_from_type(MBEDTLS_PK_ECKEY));
     ENSURE_OR_GO_EXIT(ret == 0);
 
-    ret = mbedtls_ctr_drbg_seed(ctr_drbg, mbedtls_entropy_func, entropy, (const unsigned char *)pers, sizeof(pers) - 1);
+    ret = mbedtls_ctr_drbg_seed(ctr_drbg, SE05X_ENTROPY_FUNC, entropy, (const unsigned char *)pers, sizeof(pers) - 1);
     ENSURE_OR_GO_EXIT(ret == 0);
 
     curve_id = (keylen == 32) ? MBEDTLS_ECP_DP_SECP256R1 :
@@ -405,7 +423,7 @@ int hcrypto_sign_digest(void *key, const uint8_t *digest, size_t digestLen, uint
     mbedtls_ctr_drbg_init(ctr_drbg);
     mbedtls_entropy_init(entropy);
 
-    ret = mbedtls_ctr_drbg_seed(ctr_drbg, mbedtls_entropy_func, entropy, (const unsigned char *)pers, strlen(pers));
+    ret = mbedtls_ctr_drbg_seed(ctr_drbg, SE05X_ENTROPY_FUNC, entropy, (const unsigned char *)pers, strlen(pers));
     ENSURE_OR_GO_EXIT(ret == 0);
 
 #if MBEDTLS_VERSION_NUMBER >= 0x03000000
@@ -476,7 +494,7 @@ int hcrypto_derive_dh(pSe05xSession_t session_ctx,
     mbedtls_ctr_drbg_init(ctr_drbg);
     mbedtls_entropy_init(entropy);
 
-    ret = mbedtls_ctr_drbg_seed(ctr_drbg, mbedtls_entropy_func, entropy, (const unsigned char *)pers, sizeof(pers) - 1);
+    ret = mbedtls_ctr_drbg_seed(ctr_drbg, SE05X_ENTROPY_FUNC, entropy, (const unsigned char *)pers, sizeof(pers) - 1);
     ENSURE_OR_GO_EXIT(ret == 0);
 
     /*Set Public key*/

@@ -509,6 +509,7 @@ static int phNxpEse_readPacket(void *conn_ctx, void *pDevHandle, uint8_t *pBuffe
     do {
         sof_counter++;
         ret = -1;
+        sm_sleep(ESE_POLL_DELAY_MS); /* 1ms delay to give ESE polling delay */
         ret = phPalEse_i2c_read(pDevHandle, pBuffer, 2); /*read NAD PCB byte first*/
         if (ret < 0) {
             /*Polling for read on i2c, hence Debug log*/

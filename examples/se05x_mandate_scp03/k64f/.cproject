@@ -111,7 +111,7 @@
 									<listOptionValue builtIn="false" value="MCUXPRESSO_SDK"/>
 									<listOptionValue builtIn="false" value="CR_INTEGER_PRINTF"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="EX_SE05X_USE_MBEDTLS"/>
+									<listOptionValue builtIn="false" value="EX_SE05X_USE_MBEDTLS2X=1"/>
 									<listOptionValue builtIn="false" value="WITH_PlatformSCPRequest_REQUIRED"/>
 									<listOptionValue builtIn="false" value="__MCUXPRESSO"/>
 									<listOptionValue builtIn="false" value="__USE_CMSIS"/>
@@ -467,7 +467,7 @@
 									<listOptionValue builtIn="false" value="NO_SECURE_CHANNEL_SUPPORT"/>
 									<listOptionValue builtIn="false" value="MCUXPRESSO_SDK"/>
 									<listOptionValue builtIn="false" value="CR_INTEGER_PRINTF"/>
-									<listOptionValue builtIn="false" value="EX_SE05X_USE_MBEDTLS"/>
+									<listOptionValue builtIn="false" value="EX_SE05X_USE_MBEDTLS2X=1"/>
 									<listOptionValue builtIn="false" value="WITH_PlatformSCPRequest_REQUIRED"/>
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 									<listOptionValue builtIn="false" value="__MCUXPRESSO"/>

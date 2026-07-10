@@ -294,6 +294,7 @@ Modify / add the files here to support other platforms. By default port files ar
 
 Mbedtls Alt files (Tested with Zephyr OS)
 -----------------------------------------
+By default MbedTLS is not checked out. To use MbedTLS with Zephyr, add mbedtls in zephyr/west.yml under the section name-allowlist.
 
 Nano package provides MbedTLS Alt files as an alternative/additional approach to access the secure element using mbedTLS in Zephyr OS.
 
@@ -306,6 +307,7 @@ Set **CONFIG_PLUGANDTRUST_MBEDTLS_ALT** to build Plug and Trust with Mbedtls Alt
 For MbedTLS ALT example, refer - **se05x_mbedtls_alt_test**.
 The example will set the actual key in secure element and using reference key, ECDSA Sign is offloaded to secure element via alt files.
 
+Uncomment the code for SCP03, ECKEY or ECKEY_SCP03 Authenticated sessions in ``lib/mbedtls_alt/se05x_mbedtls.c``
 
 Reference key Details -
 

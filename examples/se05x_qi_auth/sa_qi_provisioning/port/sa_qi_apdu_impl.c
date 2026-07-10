@@ -1,3 +1,7 @@
+/* Copyright 2022, 2024-2025 NXP
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "smCom.h"
 #include "sm_port.h"
 #include "se05x_types.h"

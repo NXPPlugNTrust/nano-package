@@ -120,6 +120,11 @@ int ex_se05x_GetInfo()
             }
         }
     }
+    status = Se05x_API_SessionClose(p_session_ctx);
+    if (status != SM_OK) {
+        SMLOG_I("Error in Se05x_API_SessionClose \n");
+        return 1;
+    }
     else {
         SMLOG_W("No SemsLite Applet Available. \n");
         /* Try connecting to iot applet */
@@ -134,6 +139,17 @@ int ex_se05x_GetInfo()
                 SMLOG_I("Error in Iot_Applet_Identify \n");
             }
         }
+    }
+
+    ex_set_scp03_keys(p_session_ctx);
+    ex_set_ec_auth_keys(p_session_ctx);
+
+    p_session_ctx->skip_applet_select = 1;
+
+    status = Se05x_API_SessionOpen(p_session_ctx);
+    if (status != SM_OK) {
+        SMLOG_E("Error in Se05x_API_SessionOpen \n");
+        return 1;
     }
 
     ret = JCOP4_GetDataIdentify(p_session_ctx);

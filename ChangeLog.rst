@@ -3,8 +3,13 @@
 ChangeLog
 =========
 
-ChangeLog
----------
+**Release v1.6.1**
+
+- Restored `sm_sleep(ESE_POLL_DELAY_MS)` call in `phNxpEse_readPacket()` to reintroduce the necessary 1ms ESE polling delay that was removed in previous release.(:file:`hostLib/libCommon/smCom/T1oI2C/phNxpEse_Api.c`)
+- Added reference code (commented out) in `lib\mbedtls_alt\se05x_mbedtls.c` to support ECKey and SCP03 session authentication
+- Updated build instructions for K64F examples to use `EX_SE05X_USE_MBEDTLS2X=1` (MbedTLS 2.x) and for MCXN947 examples to use `EX_SE05X_USE_MBEDTLS3X=1` (MbedTLS 3.x)
+- Introduced a reference entropy function for MbedTLS 3.x (`mbedtls_entropy_func_3_X`) in `lib/apdu/scp03/mbedtls/se05x_scp03_crypto_mbedtls.c`, used for `mbedtls_ctr_drbg_seed`. **Note:** The default implementation uses hardcoded entropy and must be ported to the target platform's hardware RNG.
+- SBOM.spdx.json replaces SCR.txt
 
 **Pre-Release (v1.6.0)**
 

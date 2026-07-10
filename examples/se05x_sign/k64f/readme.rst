@@ -33,7 +33,7 @@ To build with Platform SCP using MbedTLS, following macros must be set in Proper
 
     - WITH_PLATFORM_SCP03
 
-    - EX_SE05X_USE_MBEDTLS=1
+    - EX_SE05X_USE_MBEDTLS2X=1
 
 .. image:: mbedtls_macros.jpg
   :width: 400
@@ -45,7 +45,7 @@ To build the example with EC Key authentication using MbedTLS, following macro m
 
     - WITH_ECKEY_SESSION
 
-    - EX_SE05X_USE_MBEDTLS=1
+    - EX_SE05X_USE_MBEDTLS2X=1
 
 .. image:: eckey_macros.jpg
   :width: 400
@@ -57,7 +57,7 @@ To build with Platform SCP and EC Key authentication, following macro must be ad
 
     - WITH_ECKEY_SCP03_SESSION
 
-    - EX_SE05X_USE_MBEDTLS=1
+    - EX_SE05X_USE_MBEDTLS2X=1
 
 To build without Platform SCP or EC Key authentication, simply remove the respective macros.
 

@@ -32,7 +32,7 @@ To build with Platform SCP using MbedTLS, following macros must be set in Proper
 
     WITH_PLATFORM_SCP03
 
-    EX_SE05X_USE_MBEDTLS=1
+    EX_SE05X_USE_MBEDTLS2X=1
 
 .. image:: mbedtls_macros.jpg
   :width: 400

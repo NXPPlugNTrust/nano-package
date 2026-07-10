@@ -1,3 +1,7 @@
+/*
+ * Copyright 2021-2022 NXP
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #define EX_SSS_SCP03_FILE_DIR "/tmp/"
 #define RESUME_SCP03_FILE_PATH EX_SSS_SCP03_FILE_DIR "resume_scp.txt"

@@ -1,4 +1,6 @@
-/* License text */
+/* Copyright 2022,2024-2025 NXP
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #ifndef __SA_QI_PORT_H__
 #define __SA_QI_PORT_H__
