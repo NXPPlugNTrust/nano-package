@@ -2,13 +2,13 @@
   "SPDXID": "SPDXRef-DOCUMENT",
   "spdxVersion": "SPDX-2.3",
   "creationInfo": {
-    "created": "2026-07-09T06:33:03Z",
+    "created": "2026-07-10T11:18:27Z",
     "creators": [
       "Organization: NXP"
     ],
     "licenseListVersion": "3.28"
   },
-  "name": "nano-package-1.6.0",
+  "name": "nano-package-1.6.1",
   "dataLicense": "CC0-1.0",
   "hasExtractedLicensingInfos": [
     {
@@ -17,12 +17,12 @@
       "extractedText": "END-USER LICENSE AGREEMENT FOR ACME SOFTWARE\n============================================\n\nIMPORTANT READ CAREFULLY: This ACME End-User License Agreement (\"EULA\") is a\nlegal agreement between you (either an individual or a single entity) and ACME\nCorporation for the ACME software product identified above, which includes\ncomputer software and may include associated media, printed materials, and\n\"online\" or electronic documentation (\"SOFTWARE PRODUCT\"). The SOFTWARE PRODUCT\nalso includes any updates and supplements to the original SOFTWARE PRODUCT\nprovided to you by ACME. Any software provided along with the SOFTWARE PRODUCT\nthat is associated with a separate end-user license agreement is licensed to you\nunder the terms of that license agreement. By installing, copying, downloading,\naccessing, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the\nterms of this EULA. If you do not agree to the terms of this EULA, do not install\nor use the SOFTWARE PRODUCT; you may, however, return it to your place of\npurchase for a full refund.\n\n\nSOFTWARE PRODUCT LICENSE\n------------------------\n\nThe SOFTWARE PRODUCT is protected by copyright laws and international copyright\ntreaties, as well as other intellectual property laws and treaties. The SOFTWARE\nPRODUCT is licensed, not sold.\n\n  1. GRANT OF LICENSE. This EULA grants you the following rights:\n\n      * Applications Software. You may install, use, access, display, run, or\n        otherwise interact with (\"RUN\") one copy of the SOFTWARE PRODUCT, or any\n        prior version for the same operating system, on a single computer,\n        workstation, terminal, handheld PC, pager, \"smart phone,\" or other\n        digital electronic device (\"COMPUTER\"). The primary user of the COMPUTER\n        on which the SOFTWARE PRODUCT is installed may make a second copy for his\n        or her exclusive use on a portable computer.\n\n      * Reservation of Rights. All rights not expressly granted are reserved by\n        ACME.\n\n  2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS.\n\n      * Not for Resale Software. If the SOFTWARE PRODUCT is labeled \"Not For\n        Resale\" or \"NFR,\" then, notwithstanding other sections of this EULA, your\n        use of the SOFTWARE PRODUCT is limited to use for demonstration, test, or\n        evaluation purposes and you may not resell, or otherwise transfer for\n        value, the SOFTWARE PRODUCT.\n\n      * Limitations on Reverse Engineering, Decompilation, and Disassembly. You\n        may not reverse engineer, decompile, or disassemble the SOFTWARE PRODUCT,\n        except and only to the extent that such activity is expressly permitted\n        by applicable law.\n\n      * Separation of Components. The SOFTWARE PRODUCT is licensed as a single\n        product. Its component parts may not be separated for use on more than\n        one COMPUTER.\n\n      * Trademarks. This EULA does not grant you any rights in connection with\n        any trademarks or service marks of ACME.\n\n      * Rental. You may not rent, lease, or lend the SOFTWARE PRODUCT.\n\n      * Support Services. ACME may provide you with support services related to\n        the SOFTWARE PRODUCT (\"Support Services\"). Use of Support Services is\n        governed by the ACME policies and programs described in the user manual,\n        in \"online\" documentation, and/or in other ACME-provided materials. Any\n        supplemental software code provided to you as part of the Support\n        Services shall be considered part of the SOFTWARE PRODUCT and subject to\n        the terms and conditions of this EULA.\n\n      * Software Transfer. The initial licensee of the SOFTWARE PRODUCT may make\n        a one-time permanent transfer of this EULA and SOFTWARE PRODUCT only\n        directly to an end user. This transfer must include all of the SOFTWARE\n        PRODUCT (including all component parts, the media and printed materials,\n        any upgrades, this EULA, and, if applicable, the Certificate of\n        Authenticity). Such transfer may not be by way of consignment or any\n        other indirect transfer. The transferee of such one-time transfer must\n        agree to comply with the terms of this EULA, including the obligation not\n        to further transfer this EULA and SOFTWARE PRODUCT.\n\n      * Termination. Without prejudice to any other rights, ACME may terminate\n        this EULA if you fail to comply with the terms and conditions of this\n        EULA. In such event, you must destroy all copies of the SOFTWARE PRODUCT\n        and all of its component parts.\n\n  3. COPYRIGHT. All title and copyrights in and to the SOFTWARE PRODUCT\n    (including but not limited to any images, photographs, animations, video,\n    audio, music, text, and \"applets\" incorporated into the SOFTWARE PRODUCT),\n    the accompanying printed materials, and any copies of the SOFTWARE PRODUCT\n    are owned by ACME or its suppliers. All title and intellectual property\n    rights in and to the content that may be accessed through use of the SOFTWARE\n    PRODUCT is the property of the respective content owner and may be protected\n    by applicable copyright or other intellectual property laws and treaties.\n    This EULA grants you no rights to use such content. If this SOFTWARE PRODUCT\n    contains documentation that is provided only in electronic form, you may\n    print one copy of such electronic documentation. You may not copy the printed\n    materials accompanying the SOFTWARE PRODUCT.\n\n  4. BACKUP COPY. After installation of one copy of the SOFTWARE PRODUCT pursuant\n    to this EULA, you may keep the original media on which the SOFTWARE PRODUCT\n    was provided by ACME solely for backup or archival purposes. If the original\n    media is required to use the SOFTWARE PRODUCT on the COMPUTER, you may make\n    one copy of the SOFTWARE PRODUCT solely for backup or archival purposes.\n    Except as expressly provided in this EULA, you may not otherwise make copies\n    of the SOFTWARE PRODUCT or the printed materials accompanying the SOFTWARE\n    PRODUCT.\n\n  5. U.S. GOVERNMENT RESTRICTED RIGHTS. All SOFTWARE PRODUCT provided to the U.S.\n    Government pursuant to solicitations issued on or after December 1, 1995 is\n    provided with the commercial rights and restrictions described elsewhere\n    herein. All SOFTWARE PRODUCT provided to the U.S. Government pursuant to\n    solicitations issued prior to December 1, 1995 is provided with RESTRICTED\n    RIGHTS as provided for in FAR, 48 CFR 52.227-14 (JUNE 1987) or FAR, 48 CFR\n    252.227-7013 (OCT 1988), as applicable.\n\n  6. EXPORT RESTRICTIONS. This SOFTWARE PRODUCT has been classified by the US\n    Government as exportable under License Exception TSU. Therefore the following\n    terms apply: You agree that you will not export or re-export the SOFTWARE\n    PRODUCT, any part thereof, or any process or service that is the direct\n    product of the SOFTWARE PRODUCT (the foregoing collectively referred to as\n    the Restricted Components), to any country, person or entity subject to U.S.\n    export restrictions. You specifically agree not to export or re-export any of\n    the Restricted Components (i) to any country to which the U.S. has embargoed\n    or restricted the export of goods or services, which currently include, but\n    are not necessarily limited to Cuba, Iran, Iraq, Libya, North Korea, Sudan\n    and Syria, or to any national of any such country, wherever located, who\n    intends to transmit or transport the Restricted Components back to such\n    country; (ii) to any person or entity who you know or have reason to know\n    will utilize the Restricted Components in the design, development or\n    production of nuclear, chemical or biological weapons; or (iii) to any person\n    or entity who has been prohibited from participating in U.S. export\n    transactions by any federal agency of the U.S. government. You warrant and\n    represent that neither the Bureau of Export Administration nor any other U.S.\n    federal agency has suspended, revoked or denied your export privileges.\n\n\nMISCELLANEOUS\n-------------\n\nThis EULA is governed by the laws of the Commonwealth of Massachusetts and the\nUnited States of America.\n\n\nLIMITED WARRANTY\n----------------\n\nACME warrants that (a) the SOFTWARE PRODUCT will perform substantially in\naccordance with the accompanying written materials for a period of ninety (90)\ndays from the date of receipt, and (b) any Support Services provided by ACME\nshall be substantially as described in applicable written materials provided to\nyou by ACME, and ACME support engineers will make commercially reasonable efforts\nto solve any problem issues. Some states and jurisdictions do not allow\nlimitations on duration of an implied warranty, so the above limitation may not\napply to you.\n\n\nCUSTOMER REMEDIES. ACMEs and its suppliersentire liability and your exclusive\nremedy shall be, at ACMEs option, either (a) return of the price paid, if any, or\n(b) repair or replacement of the SOFTWARE PRODUCT that does not meet ACMEs\nLimited Warranty and which is returned to ACME with a copy of your receipt. This\nLimited Warranty is void if failure of the SOFTWARE PRODUCT has resulted from\naccident, abuse, or misapplication. Any replacement SOFTWARE PRODUCT will be\nwarranted for the remainder of the original warranty period or thirty (30) days,\nwhichever is longer.\n\nNO OTHER WARRANTIES. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, ACME AND\nITS SUPPLIERS DISCLAIM ALL OTHER WARRANTIES AND CONDITIONS, EITHER EXPRESS OR\nIMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, WITH REGARD TO THE\nSOFTWARE PRODUCT, AND THE PROVISION OF OR FAILURE TO PROVIDE SUPPORT SERVICES.\nTHIS LIMITED WARRANTY GIVES YOU SPECIFIC LEGAL RIGHTS. YOU MAY HAVE OTHERS, WHICH\nVARY FROM STATE/JURISDICTION TO STATE/JURISDICTION.\n \nLIMITATION OF LIABILITY. To the maximum extent permitted by applicable law, in no\nevent shall ACME or its suppliers be liable for any special, incidental,\nindirect, or consequential damages whatsoever (including, without limitation,\ndamages for loss of business profits, business interruption, loss of business\ninformation, or any other pecuniary loss) arising out of the use of or inability\nto use the SOFTWARE PRODUCT or the provision of or failure to provide Support\nServices, even if ACME has been advised of the possibility of such damages. In\nany case, ACMEs entire liability under any provision of this EULA shall be\nlimited to the greater of the amount actually paid by you for the SOFTWARE\nPRODUCT or U.S. $5.00; provided, however, if you have entered into a ACME Support\nServices Agreement, ACMEs entire liability regarding Support Services shall be\ngoverned by the terms of that agreement. Because some states and jurisdictions do\nnot allow the exclusion or limitation of liability, the above limitation may not\napply to you."
     }
   ],
-  "documentNamespace": "https://nxp.com/spdx/acffece7-559d-4e15-be23-5fa3b57a6049",
+  "documentNamespace": "https://nxp.com/spdx/757336ac-fc1e-4d43-abd6-dc389f909e6b",
   "packages": [
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "name": "nano-package",
-      "versionInfo": "1.6.0",
+      "versionInfo": "1.6.1",
       "licenseConcluded": "(Apache-2.0)",
       "licenseDeclared": "(Apache-2.0)",
       "downloadLocation": "https://github.com/NXPPlugNTrust/nano-package",
@@ -32,7 +32,7 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---0cd07fc6-f927-460b-9d4d-b64d8ab5224f",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---0cd07fc6-f927-460b-9d4d-b64d8ab5224f",
       "name": "intel/tinycrypt",
       "versionInfo": "v0.2.8",
       "licenseConcluded": "LicenseRef-3eca8fb9-fca4-4b49-b4bd-189ba8efd691",
@@ -55,7 +55,7 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---e66b18cd-ed35-42ec-b476-f3584122e0cb",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---e66b18cd-ed35-42ec-b476-f3584122e0cb",
       "name": "mbed TLS",
       "versionInfo": "2.28.5",
       "licenseConcluded": "Apache-2.0",
@@ -104,7 +104,7 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---93ff9297-b6b8-4bd5-ba66-054528427fa3",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---93ff9297-b6b8-4bd5-ba66-054528427fa3",
       "name": "mbed TLS",
       "versionInfo": "3.6.2",
       "licenseConcluded": "Apache-2.0",
@@ -143,7 +143,7 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---5f7d1554-d815-482d-8943-957dd73c8a82",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---5f7d1554-d815-482d-8943-957dd73c8a82",
       "name": "nxp-mcuxpresso/mcux-sdk",
       "versionInfo": "MCUX_2.16.000",
       "licenseConcluded": "BSD-3-Clause",
@@ -155,7 +155,7 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---9deb7a64-c045-4990-a3aa-7319f9dc1174",
+      "SPDXID": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---9deb7a64-c045-4990-a3aa-7319f9dc1174",
       "name": "OpenSSL",
       "versionInfo": "1.1.1f",
       "licenseConcluded": "(OpenSSL AND SSLeay-standalone)",
@@ -208,32 +208,32 @@
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
       "relationshipType": "DESCRIBES",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b"
     },
     {
-      "spdxElementId": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "spdxElementId": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "relationshipType": "STATIC_LINK",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---0cd07fc6-f927-460b-9d4d-b64d8ab5224f"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---0cd07fc6-f927-460b-9d4d-b64d8ab5224f"
     },
     {
-      "spdxElementId": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "spdxElementId": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "relationshipType": "CONTAINS",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---5f7d1554-d815-482d-8943-957dd73c8a82"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---5f7d1554-d815-482d-8943-957dd73c8a82"
     },
     {
-      "spdxElementId": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "spdxElementId": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "relationshipType": "STATIC_LINK",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---93ff9297-b6b8-4bd5-ba66-054528427fa3"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---93ff9297-b6b8-4bd5-ba66-054528427fa3"
     },
     {
-      "spdxElementId": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "spdxElementId": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "relationshipType": "DYNAMIC_LINK",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---9deb7a64-c045-4990-a3aa-7319f9dc1174"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---9deb7a64-c045-4990-a3aa-7319f9dc1174"
     },
     {
-      "spdxElementId": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049",
+      "spdxElementId": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b",
       "relationshipType": "STATIC_LINK",
-      "relatedSpdxElement": "SPDXRef-package-acffece7-559d-4e15-be23-5fa3b57a6049---e66b18cd-ed35-42ec-b476-f3584122e0cb"
+      "relatedSpdxElement": "SPDXRef-package-757336ac-fc1e-4d43-abd6-dc389f909e6b---e66b18cd-ed35-42ec-b476-f3584122e0cb"
     }
   ]
 }
